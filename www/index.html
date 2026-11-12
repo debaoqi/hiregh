@@ -1118,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.10.0',APP_BUILD=22;
+const APP_VER='1.11.0',APP_BUILD=23;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1606,6 +1606,110 @@ async function checkUpdate(manual){
 function updLater(b){LS.set('updLater',{b,t:Date.now()});LS.set('apkLater',Date.now());closeSheet()}
 
 render(false);
+</script>
+<script>
+/* ================= v1.11 · 招聘方注册（企业 / 个人）→ 认证信息 → 浏览用工 ================= */
+/* 首页恢复称呼栏：显示的是注册时填写的招聘方信息 */
+V.home=_vh10;
+function coHeader(){const g=greet();const c=S.company;const who=c.type==='personal'?c.name:((c.contact||'').trim()?c.contact+' · '+coShort():coShort());
+  const ini=(c.type==='personal'?c.name:(c.contact||coShort())).replace(/[（(].*$/,'').trim().slice(0,1)||'企';
+  const st={approved:['已认证','var(--lime)'],pending:['认证中','var(--gold)'],rejected:['未通过','#FAD2CB'],disabled:['已停用','#E3E0DA']}[c.status||'pending'];
+  return `<div class="row gap" style="cursor:pointer;min-width:0" onclick="tab('me')"><div class="av" style="background:var(--gold)">${esc(ini)}</div><div style="min-width:0"><div class="muted sm">${g[0]} · ${g[1]}</div><div class="b row gap6" style="white-space:nowrap;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis">${esc(who)}</span><span class="xs" style="font-weight:600;padding:2px 8px;border-radius:10px;background:${st[1]};flex:none">${st[0]}</span></div></div></div>`}
+
+/* ---------- 注册表单 ---------- */
+const EREG_DEF=()=>({step:1,type:'company',name:'',en:'',license:'',contact:'',phone:'',city:0,ind:'ind',needs:{},start:'now',note:'',consent:false});
+S.ereg=Object.assign(EREG_DEF(),LS.get('ereg',{}));
+const ereg=()=>S.ereg;
+function eSet(k,v,re){S.ereg[k]=v;LS.set('ereg',S.ereg);if(re)render(false)}
+function eNeed(role,d){const n=S.ereg.needs;n[role]=Math.max(0,(n[role]||0)+d);if(!n[role])delete n[role];LS.set('ereg',S.ereg);render(false)}
+function eNext(){const r=S.ereg;
+  if(r.step===1){if(!r.name.trim()){toast(r.type==='company'?'请填写企业名称':'请填写你的姓名');return}
+    if(r.type==='company'&&!r.contact.trim()){toast('请填写联系人');return}
+    if(r.phone.replace(/\D/g,'').length<9){toast('请填写正确的手机号');return}
+    if(!LOCS.ereg){const c=CITY_LL[CITIES[r.city][0]];LOCS.ereg={lat:c[0],lng:c[1],addr:CITIES[r.city][1]+', Ghana',approx:true}}}
+  if(r.step===3){if(!Object.keys(r.needs).length){toast('请至少选择一个需要招聘的工种');return}if(!r.consent){toast('请先确认招聘承诺');return}return eSubmit()}
+  r.step++;LS.set('ereg',r);render(true)}
+function eBack(){if(S.ereg.step>1){S.ereg.step--;render(true)}else toWelcome()}
+V.e_reg=()=>{const r=ereg();const steps=['招聘方信息','所在位置','招聘需求'];
+  const head=`<div class="hdr"><button class="icbtn" onclick="eBack()">${ic('back')}</button><b style="font-size:16px">招聘方注册 ${r.step}/3</b><span style="width:44px"></span></div>
+   <div class="pad" style="padding-top:0"><div class="row gap6" style="margin:4px 0 14px">${steps.map((s,k)=>`<div style="flex:1"><div style="height:6px;border-radius:6px;background:${k<r.step?'#161616':'#DDD7CA'}"></div><div class="xs ${k+1===r.step?'b':'muted'}" style="margin-top:6px">${s}</div></div>`).join('')}</div>`;
+  let body='';
+  if(r.step===1){const co=r.type==='company';
+    body=`<div class="sm muted" style="line-height:1.6;margin-bottom:12px">注册后才能浏览人才库、发布招工。信息会提交平台认证，并显示在“我的”认证信息中。</div>
+    <div class="seg">${[['company','企业 / 单位'],['personal','个人雇主']].map(x=>`<button class="${r.type===x[0]?'on':''}" onclick="eSet('type','${x[0]}',true)">${x[1]}</button>`).join('')}</div>
+    ${co?`<div class="fl">企业名称（中文）</div><input class="fi" id="erName" value="${esc(r.name)}" oninput="eSet('name',this.value);autoEn('erName','erEn')" placeholder="例如：鑫源建材（加纳）有限公司">
+      <div class="fl">英文名称 <span class="xs muted">· 自动翻译，可修改</span></div><input class="fi" id="erEn" value="${esc(r.en)}" oninput="this.dataset.manual='1';eSet('en',this.value)" onchange="eSet('en',this.value)" placeholder="English name">
+      <div class="fl">营业执照 / 注册号 <span class="xs muted">· 选填，填写后更快通过认证</span></div><input class="fi" value="${esc(r.license)}" oninput="eSet('license',this.value)" placeholder="例如：CS123456789">
+      <div class="fl">联系人</div><input class="fi" value="${esc(r.contact)}" oninput="eSet('contact',this.value)" placeholder="例如：王经理">`
+     :`<div class="fl">你的姓名</div><input class="fi" value="${esc(r.name)}" oninput="eSet('name',this.value)" placeholder="例如：王先生">
+      <div class="fl">用工场景</div><div class="chips wrap">${['家庭用工','个体经营','工程项目','农场'].map(x=>`<span class="chip sm ${r.license===x?'on':''}" onclick="eSet('license','${x}',true)">${x}</span>`).join('')}</div>`}
+    <div class="fl">手机号</div><input class="fi" inputmode="tel" value="${esc(r.phone)}" oninput="eSet('phone',this.value)" placeholder="+233 或 +86 手机号">
+    <div class="fl">所在城市</div><div class="chips wrap">${CITIES.map((c,k)=>`<span class="chip sm ${r.city===k?'on':''}" onclick="eSet('city',${k},true);LOCS.ereg=null">${c[0]}</span>`).join('')}</div>
+    ${co?`<div class="fl">主营行业</div><div class="chips wrap">${IND.map(i=>`<span class="chip sm ${r.ind===i.id?'on':''}" onclick="eSet('ind','${i.id}',true)">${i.zh}</span>`).join('')}</div>`:''}`}
+  else if(r.step===2){body=`<div class="sm muted" style="line-height:1.6;margin-bottom:12px">设置${r.type==='company'?'企业':'用工'}位置，工人可以在谷歌地图上看到并导航。可自动定位，也可以搜索地址。</div>${locBox('ereg')}`}
+  else{const tot=Object.values(r.needs).reduce((a,b)=>a+b,0);
+    body=`<div class="sm muted" style="line-height:1.6;margin-bottom:6px">选择需要招聘的工种和人数（可多选）。注册后可以随时发布具体岗位。</div>
+    ${tot?`<div class="box" style="margin-top:8px;padding:12px 14px"><b class="sm">已选 ${Object.keys(r.needs).length} 个工种，共 ${tot} 人</b><div class="chips wrap" style="margin-top:8px">${Object.entries(r.needs).map(([k,n])=>`<span class="chip sm on">${k} × ${n}</span>`).join('')}</div></div>`:''}
+    ${IND.map(i=>`<div style="margin-top:12px"><div class="row gap6 b sm" style="margin-bottom:8px"><i style="width:10px;height:10px;border-radius:50%;background:${i.color};display:inline-block"></i>${i.zh}</div>
+      <div class="chips wrap">${i.roles.map(x=>{const n=r.needs[x[0]]||0;return n?`<span class="chip sm on" style="padding-right:4px">${x[0]}<span style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><b onclick="event.stopPropagation();eNeed('${x[0]}',-1)" style="width:22px;height:22px;border-radius:50%;background:#fff;color:#161616;display:grid;place-items:center">−</b>${n}<b onclick="event.stopPropagation();eNeed('${x[0]}',1)" style="width:22px;height:22px;border-radius:50%;background:#fff;color:#161616;display:grid;place-items:center">+</b></span></span>`:`<span class="chip sm" onclick="eNeed('${x[0]}',1)">${x[0]}</span>`}).join('')}</div></div>`).join('')}
+    <div class="fl">期望到岗</div><div class="chips wrap">${[['now','尽快'],['w1','1周内'],['m1','1个月内']].map(o=>`<span class="chip sm ${r.start===o[0]?'on':''}" onclick="eSet('start','${o[0]}',true)">${o[1]}</span>`).join('')}</div>
+    <div class="fl">补充说明 <span class="xs muted">· 选填</span></div><textarea class="fi" oninput="eSet('note',this.value)" placeholder="例如：包住宿、需要会中文、长期用工…">${esc(r.note)}</textarea>
+    <label class="row gap" style="margin-top:16px;align-items:flex-start;cursor:pointer"><input type="checkbox" ${r.consent?'checked':''} onchange="eSet('consent',this.checked)" style="width:20px;height:20px;margin-top:2px"><span class="sm" style="line-height:1.6">我承诺所填信息真实，<b>不向求职者收取任何费用</b>，遵守加纳劳动法规。</span></label>`}
+  return head+body+`</div><div class="bbar"><button class="bigbtn" style="width:100%" onclick="eNext()">${r.step<3?'下一步':'提交注册'}</button></div>`};
+
+async function eSubmit(){const r=S.ereg;const btn=document.querySelector('.bbar .bigbtn');if(btn){btn.disabled=true;btn.textContent='提交中…'}
+  const co=r.type==='company';let en=r.en.trim();if(co&&!en)en=await zh2en(r.name)||r.name;
+  const loc=LOCS.ereg||(()=>{const c=CITY_LL[CITIES[r.city][0]];return {lat:c[0],lng:c[1],addr:CITIES[r.city][1]+', Ghana',approx:true}})();
+  const needs=Object.entries(r.needs).map(([role,n])=>({role,n}));
+  const token=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36))+Math.random().toString(36).slice(2);
+  S.company={type:r.type,name:r.name.trim(),en:co?en:r.name.trim(),license:r.license,contact:co?r.contact.trim():r.name.trim(),phone:r.phone.trim(),
+    city:CITIES[r.city][0],ind:co?r.ind:'',loc,needs,start:r.start,note:r.note,registered:true,status:'pending',regAt:new Date().toISOString(),token};
+  // 新账号：清空演示用的“我的岗位 / 聊天 / 面试”，从零开始
+  S.jobs=S.jobs.filter(j=>!(j.owner==='me'&&j.id<1000));S.chats=[];S.interviews=[];S.saved=new Set();
+  saveCompany();LS.set('ereg',null);S.ereg=EREG_DEF();LOCS.ereg=null;
+  if(DB.on){const d=companyRow();const id=await dbSafe(()=>DB.q('rpc/register_employer',{method:'POST',body:JSON.stringify({p_data:{...d,_token:token}})}));if(id){S.company.dbid=id;LS.set('company',S.company)}}
+  S.mode='emp';tab('home');setTimeout(()=>openSheet(`<div class="b" style="font-size:20px">注册成功</div><p class="sm" style="line-height:1.7;margin:8px 0 0">现在可以浏览人才库、发布招工。平台会在 1 个工作日内完成认证，认证结果显示在“我的”中。</p><button class="bigbtn" style="width:100%;margin-top:16px" onclick="closeSheet();go('post')">发布第一个岗位</button><button class="bigbtn" style="width:100%;margin-top:10px;background:var(--card);color:#161616" onclick="closeSheet();tab('browse')">先看看人才库</button>`),300)}
+function companyRow(){const c=S.company;return {type:c.type,name:c.name,en:c.en,license:c.license||'',contact:c.contact,phone:c.phone,city:c.city,
+  industry:c.type==='personal'?'个人雇主':(IND.find(i=>i.id===c.ind)||{}).zh||'',loc:c.loc,needs:c.needs,start:c.start,note:c.note||''}}
+
+/* 未注册不能进入企业端页面 */
+const EMP_FREE=['e_reg','welcome'];
+startEmployer=function(){S.mode='emp';S.hist=[];if(!S.company.registered){S.view='e_reg';render(true)}else tab('home')};
+const _render11=render;
+render=function(top){if(S.mode==='emp'&&!S.company.registered&&!EMP_FREE.includes(S.view)){S.view='e_reg';S.hist=[];top=true}return _render11(top)};
+FORM_VIEWS.push('e_reg');
+if(S.mode==='emp'&&!S.company.registered){S.view='e_reg';render(true)}
+
+/* 欢迎页：“我要招人”显示注册状态 */
+const _vwel11=V.welcome;
+V.welcome=()=>_vwel11().replace('<div class="roles">中国企业 · 个人雇主</div>',`<div class="roles">${S.company.registered?'已注册：'+esc(S.company.name):'企业 / 个人雇主 · 先注册，再找人'}</div>`);
+
+/* ---------- “我的”：认证信息卡 ---------- */
+const _vme11=V.me;
+V.me=()=>{let h=_vme11();const a=h.indexOf('<div class="ccard"');const b=h.indexOf('<div class="row3">',a);if(a<0||b<0)return h;
+  const c=S.company;const st={approved:['已认证','var(--lime)','#161616'],pending:['认证审核中','#161616','var(--lime)'],rejected:['认证未通过','#EE5A47','#fff'],disabled:['已停用','#555','#fff']}[c.status||'pending'];
+  const ph=c.phone?c.phone.replace(/(\d{3})\d+(\d{3})$/,'$1 **** $2'):'';
+  const card=`<div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:${st[1]};color:${st[2]};padding:6px 12px">${ic('shield',14)} ${st[0]} · ${c.type==='personal'?'个人雇主':'企业'}</span><button class="pill" style="background:#161616;color:#fff;border:0;padding:7px 12px" onclick="go('company')">${ic('edit',14)} 修改</button></div>
+   <div class="cn">${esc(c.name)}</div>${c.type!=='personal'&&c.en?`<div class="sm" style="opacity:.7;margin-top:2px">${esc(c.en)}</div>`:''}
+   <div class="sm" style="margin-top:10px;line-height:1.8">${ic('user',14)} ${esc(c.contact||'')}${ph?' · '+esc(ph):''}${c.license?'<br>'+ic('doc',14)+' '+(c.type==='personal'?'用工场景：':'注册号：')+esc(c.license):''}${c.ind?'<br>'+ic('brief',14)+' 主营：'+esc((IND.find(i=>i.id===c.ind)||{}).zh||''):''}</div>
+   <div class="sm" style="margin-top:4px;cursor:pointer;text-decoration:underline" onclick="openExt(mapLink(S.company.loc))">${ic('pin',14)} ${esc((c.loc&&c.loc.addr)||c.city||'设置位置')} · 谷歌地图</div>
+   ${c.needs&&c.needs.length?`<div class="xs" style="margin-top:10px;opacity:.75">招聘需求${c.start?' · '+({now:'尽快到岗',w1:'1周内到岗',m1:'1个月内到岗'}[c.start]||''):''}</div><div class="chips wrap" style="margin-top:6px">${c.needs.map(x=>`<span class="chip sm" style="background:rgba(255,255,255,.55)">${esc(x.role)} × ${x.n}</span>`).join('')}</div>`:''}
+   ${c.status==='rejected'&&c.review?`<div class="sm" style="margin-top:8px;color:#B42318">原因：${esc(c.review)}</div>`:''}`;
+  return h.slice(0,a)+card+h.slice(b)};
+
+/* 企业信息修改后同步到云端 */
+const _saveCo11=saveCo;
+saveCo=async function(){await _saveCo11();if(DB.on&&S.company.dbid&&S.company.token)dbSafe(()=>DB.q('rpc/update_employer',{method:'POST',body:JSON.stringify({p_id:S.company.dbid,p_token:S.company.token,p_data:companyRow()})}))};
+/* 认证状态同步（后台通过/驳回/停用/删除后，手机上立即更新） */
+async function syncCo(){const c=S.company;if(!DB.on||!c.registered||!c.dbid||!c.token)return;
+  let r;try{r=await DB.q('rpc/get_my_employer',{method:'POST',body:JSON.stringify({p_id:c.dbid,p_token:c.token})})}catch(e){return}
+  if(r===null){S.company={...S.company,registered:false,status:null,dbid:null};LS.set('company',S.company);
+    if(S.mode==='emp'){S.view='e_reg';render(true);openSheet(`<div class="b" style="font-size:18px;line-height:1.5">你的招聘方注册信息已被平台删除，请重新注册。</div><button class="bigbtn" style="width:100%;margin-top:16px" onclick="closeSheet()">知道了</button>`)}return}
+  if(r.status!==c.status||(r.review||null)!==(c.review||null)){S.company.status=r.status;S.company.review=r.review||null;LS.set('company',S.company);if(S.mode==='emp')render(false)}}
+setTimeout(syncCo,1800);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncCo()});
+setInterval(()=>{if(document.visibilityState==='visible')syncCo()},30000);
+
 </script>
 </body>
 </html>
