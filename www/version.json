@@ -1,6 +1,6 @@
 {
-  "version": "1.11.0",
-  "build": 23,
+  "version": "2.0.0",
+  "build": 24,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,14 +8,18 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "“我要招人”需要先注册：企业或个人雇主，填写联系人、手机号、位置和招聘需求",
-      "注册后才能浏览人才库、发布招工",
-      "首页顶部显示你注册的称呼和认证状态（认证中 / 已认证）",
-      "“我的”中显示完整认证信息，可修改",
-      "后台通过、驳回、停用或删除后，手机上立即同步"
+      "全非洲 54 国通用：自动识别所在国家，显示对应国旗",
+      "工人端语言自动切换为该国官方语言（法语、葡萄牙语、阿拉伯语、斯瓦希里语等）",
+      "货币、手机区号、城市随国家自动切换",
+      "可随时手动切换国家（首页国旗按钮）",
+      "各国只显示本国的工人和岗位",
+      "欢迎页重新设计，两个入口卡片更大更清晰"
     ],
     "en": [
-      "Employers now register before hiring"
+      "Works in all 54 African countries",
+      "Your country is detected automatically, with its flag, currency and cities",
+      "The app uses your country’s official language",
+      "Switch country any time from the flag button"
     ]
   }
 }

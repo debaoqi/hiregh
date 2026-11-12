@@ -287,7 +287,7 @@ const NATS={
  GH:{zh:'加纳',en:'Ghana',flag:'linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)',star:'#000'},
  CN:{zh:'中国',en:'China',flag:'#DE2910',star:'#FFDE00'},
 };
-const flag=c=>{const n=NATS[c];return `<span class="flag" style="background:${n.flag}">${n.star?`<i style="color:${n.star}">★</i>`:''}</span>`};
+const flag=c=>{const n=NATS[c];if(!n||n.emoji)return `<span class="flag" style="background:none;box-shadow:none;width:auto;font-size:15px;line-height:15px">${n?n.emoji:''}</span>`;return `<span class="flag" style="background:${n.flag}">${n.star?`<i style="color:${n.star}">★</i>`:''}</span>`};
 
 const IND=[
  {id:'ind',zh:'工业制造',en:'Manufacturing',color:'#9D7DFF',ink:'#fff',icon:'factory',roles:[
@@ -444,7 +444,7 @@ function mCard(w){
 /* ============ VIEWS ============ */
 const V={};
 V.home=()=>{
-  const VW=typeof visW==='function'?WORKERS.filter(visW):WORKERS;
+  const VW=typeof visW==='function'?WORKERS.filter(w=>visW(w)&&(typeof inC!=='function'||inC(w))):WORKERS;
   const natCount=c=>VW.filter(w=>w.nat===c).length;
   const recs=[...VW.filter(w=>w.isNew&&w.self),...[...VW].sort((a,b)=>(!!b.photo-!!a.photo)||((+b.rating||0)-(+a.rating||0)))].filter((w,i,a)=>a.indexOf(w)===i).slice(0,8);
   return `<div class="pad">
@@ -460,7 +460,7 @@ V.home=()=>{
     <div class="row between"><div class="row gap"><div class="ic">${ic(i.icon)}</div><div><div class="t">${i.zh}</div><div class="roles">${i.roles.slice(0,4).map(r=>r[0]).join(' · ')}…</div></div></div>
     <div class="row gap"><span class="sm" style="opacity:.8">${VW.filter(w=>w.ind===i.id).length}人</span><div class="go">${ic('arrow',18)}</div></div></div></div>`).join('')}</div>
   <div class="sec-h">按国籍 <a>Nationality</a></div>
-  <div class="hscroll">${Object.keys(NATS).map(c=>`<div class="natc" onclick="S.f.nat='${c}';S.f.ind='all';S.f.role='all';tab('browse')"><div class="row gap6">${flag(c)}<span class="sm b">${NATS[c].zh}</span></div><div class="n">${natCount(c)}</div><div class="xs muted">${NATS[c].en}</div></div>`).join('')}</div>
+  <div class="hscroll">${(typeof natKeys==='function'?natKeys():Object.keys(NATS)).map(c=>`<div class="natc" onclick="S.f.nat='${c}';S.f.ind='all';S.f.role='all';tab('browse')"><div class="row gap6">${flag(c)}<span class="sm b">${NATS[c].zh}</span></div><div class="n">${natCount(c)}</div><div class="xs muted">${NATS[c].en}</div></div>`).join('')}</div>
   <div class="sec-h">今日推荐 <a onclick="S.f.sort='rate';tab('browse')">更多 ›</a></div>
   <div class="hscroll">${recs.map(mCard).join('')}</div>
   <div class="box" style="background:#161616;color:#fff;margin-top:22px;cursor:pointer" onclick="go('permit')"><div class="row between"><div><div class="b" style="font-size:17px">用工合规小贴士</div><div class="sm" style="opacity:.7;margin-top:4px;line-height:1.5">2026年加纳全国最低日薪 GH₵21.77。外籍员工需持有效工作许可；加纳员工需登记 SSNIT。薪资参考 WageIndicator / Paylab 公开数据，具体以官方最新规定为准。</div></div><div class="go" style="width:40px;height:40px;border-radius:50%;background:var(--lime);color:#111;display:grid;place-items:center;flex:none;margin-left:10px">${ic('arrow')}</div></div></div>
@@ -475,7 +475,7 @@ V.browse=()=>{
    <div class="tabsx"><div class="tabx" style="${f.ind==='all'?'background:#161616;color:#fff':''}" onclick="setF('ind','all')">全部行业</div>
     ${IND.map(i=>`<div class="tabx" style="${f.ind===i.id?`background:${i.color};color:${i.ink}`:''}" onclick="setF('ind','${i.id}')">${i.zh}</div>`).join('')}</div>
    ${ind?`<div class="chips" style="margin-top:10px"><span class="chip sm ${f.role==='all'?'on':''}" onclick="setF('role','all')">全部工种</span>${ind.roles.map(r=>`<span class="chip sm ${f.role===r[0]?'on':''}" onclick="setF('role','${r[0]}')">${r[0]}</span>`).join('')}</div>`:''}
-   <div class="chips" style="margin-top:10px"><span class="chip sm ${f.nat==='all'?'on':''}" onclick="setF('nat','all')">全部国籍</span>${Object.keys(NATS).map(c=>`<span class="chip sm ${f.nat===c?'on':''}" onclick="setF('nat','${c}')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
+   <div class="chips" style="margin-top:10px"><span class="chip sm ${f.nat==='all'?'on':''}" onclick="setF('nat','all')">全部国籍</span>${(typeof natKeys==='function'?natKeys():Object.keys(NATS)).map(c=>`<span class="chip sm ${f.nat===c?'on':''}" onclick="setF('nat','${c}')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
    <div class="row between" style="margin-top:6px;gap:8px"><div class="toggles">
      <span class="tg ${f.zh?'on':''}" onclick="setF('zh',${!f.zh})">会中文</span><span class="tg ${f.ver?'on':''}" onclick="setF('ver',${!f.ver})">证件齐全</span><span class="tg ${f.now?'on':''}" onclick="setF('now',${!f.now})">可立即上岗</span></div>
      <select class="select" style="margin-top:10px" onchange="setF('sort',this.value)">${[['rec','综合'],['rate','评分'],['exp','经验'],['sal','薪资低→高']].map(o=>`<option value="${o[0]}" ${f.sort===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
@@ -539,7 +539,7 @@ V.post=()=>{
     <div><div class="fl">经验要求</div><select class="fi" id="pExp" style="padding:14px 16px">${['不限','1+ 年','3+ 年','5+ 年','8+ 年'].map(x=>`<option ${e&&e.exp===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
    <div class="fl">月薪范围 (GH₵)</div><div class="two"><input class="fi" id="pLo" inputmode="numeric" placeholder="最低 2,000" value="${lo}"><input class="fi" id="pHi" inputmode="numeric" placeholder="最高 3,500" value="${hi}"></div>
    <div class="fl">工作地点</div><div class="chips wrap" id="pCity">${CITIES.map((c,k)=>`<span class="chip sm ${(e?e.city===c[0]:k===0)?'on':''}" onclick="pickOne(this)">${c[0]}</span>`).join('')}</div>
-   <div class="fl">国籍偏好（可多选）</div><div class="chips wrap" id="pNat">${Object.keys(NATS).map(c=>`<span class="chip sm ${(e?e.nats.includes(c):c==='GH')?'on':''}" data-v="${c}" onclick="this.classList.toggle('on')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
+   <div class="fl">国籍偏好（可多选）</div><div class="chips wrap" id="pNat">${(typeof natKeys==='function'?natKeys():Object.keys(NATS)).map(c=>`<span class="chip sm ${(e?e.nats.includes(c):c==='GH')?'on':''}" data-v="${c}" onclick="this.classList.toggle('on')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
    <div class="fl">待遇与要求</div><div class="chips wrap" id="pOpt"><span class="chip sm ${e&&e.stay?'on':''}" data-v="stay" onclick="this.classList.toggle('on')">包住宿</span><span class="chip sm" onclick="this.classList.toggle('on')">包午餐</span><span class="chip sm ${e&&e.zh?'on':''}" data-v="zh" onclick="this.classList.toggle('on')">需会中文</span><span class="chip sm" onclick="this.classList.toggle('on')">有交通车</span><span class="chip sm" onclick="this.classList.toggle('on')">可夜班</span><span class="chip sm" onclick="this.classList.toggle('on')">需工作许可</span></div>
    <div class="fl">岗位描述</div><textarea class="fi" id="pDesc" placeholder="工作内容、上班时间、试用期等…">${e?e.desc:''}</textarea>
   </div>
@@ -773,7 +773,7 @@ V.welcome=()=>`<div class="pad" style="padding-top:18px">
   <div class="sc last" style="background:#161616;color:#fff" onclick="startEmployer()"><div class="row between"><div class="row gap"><div class="ic">${ic('brief')}</div><div><div class="t">我要招人 <span style="font-size:13px;opacity:.6">I'm hiring</span></div><div class="roles">中国企业 · 个人雇主</div></div></div><div class="go">${ic('arrow',18)}</div></div></div>
  </div>
  <div class="box row gap" style="margin-top:16px"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center;flex:none">${ic('shield')}</span><span class="sm">${t('safety')}</span></div>
- <div class="row gap6 wrap" style="margin-top:16px;justify-content:center">${Object.keys(NATS).map(c=>`<span class="chip sm" style="cursor:default">${flag(c)}${natT(c)}</span>`).join('')}</div>
+ <div class="row gap6 wrap" style="margin-top:16px;justify-content:center">${(typeof natKeys==='function'?natKeys():Object.keys(NATS)).map(c=>`<span class="chip sm" style="cursor:default">${flag(c)}${natT(c)}</span>`).join('')}</div>
 </div>`;
 
 V.w_reg=()=>{
@@ -787,7 +787,7 @@ V.w_reg=()=>{
    <div class="fl">${t('full_name')} *</div><input class="fi" value="${r.name.replace(/"/g,'&quot;')}" oninput="S.reg.name=this.value" autocomplete="name">
    <div class="fl">${t('phone')} *</div><div class="row gap6"><span class="fi" style="width:auto;flex:none">+233</span><input class="fi" inputmode="tel" value="${r.phone}" oninput="S.reg.phone=this.value" placeholder="24 123 4567"></div>
    <div class="xs muted" style="margin-top:6px">${ic('shield',12)} ${t('phone_note')}</div>
-   <div class="fl">${t('nationality')}</div><div class="chips wrap">${Object.keys(NATS).map(c=>`<span class="chip sm ${r.nat===c?'on':''}" onclick="rs('nat','${c}')">${flag(c)}${natT(c)}</span>`).join('')}</div>
+   <div class="fl">${t('nationality')}</div><div class="chips wrap">${(typeof natKeys==='function'?natKeys():Object.keys(NATS)).map(c=>`<span class="chip sm ${r.nat===c?'on':''}" onclick="rs('nat','${c}')">${flag(c)}${natT(c)}</span>`).join('')}</div>
    <div class="two"><div><div class="fl">${t('gender')}</div><div class="chips wrap">${ch('gender','m',t('male'))}${ch('gender','f',t('female'))}</div></div>
     <div><div class="fl">${t('age')}</div><input class="fi" inputmode="numeric" value="${r.age}" oninput="S.reg.age=this.value.replace(/\\D/g,'')"></div></div>
    <div class="fl">${t('city')}</div><div class="chips wrap">${CITIES.map((c,k)=>ch('city',k,S.lang==='zh'?c[0]:c[1])).join('')}</div>`;
@@ -838,7 +838,7 @@ function wJobCard(j){
 }
 V.w_home=()=>{
   const me=S.me;const q=S.wq.trim().toLowerCase();
-  const open=S.jobs.filter(j=>j.status==='open'&&(!q||(roleT(j.title)+j.title+j.company+cityT(j.city)+j.city).toLowerCase().includes(q)));
+  const open=S.jobs.filter(j=>j.status==='open'&&(typeof inC!=='function'||inC(j))&&(!q||(roleT(j.title)+j.title+j.company+cityT(j.city)+j.city).toLowerCase().includes(q)));
   const mine=open.filter(j=>me&&(j.title===me.role||j.ind===me.ind));const rest=open.filter(j=>!mine.includes(j));
   return `<div class="pad"><div class="row between"><div class="row gap">${me?avatar(me):''}<div><div class="muted sm">${t('hello')},</div><div class="b">${me?me.name:''}</div></div></div>
    <button class="icbtn" onclick="langPick()">${ic('globe')}</button></div>
@@ -1118,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.11.0',APP_BUILD=23;
+const APP_VER='2.0.0',APP_BUILD=24;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1568,7 +1568,7 @@ V.me=()=>{let h=_vme10();const k='<button class="icbtn" onclick="langSheet()">';
 S.f.showRoles=S.f.showRoles!==false;
 V.browse=()=>{
   const f=S.f;const ind=IND.find(i=>i.id===f.ind);const list=filtered();
-  const VW=WORKERS.filter(visW);const cntInd=id=>VW.filter(w=>w.ind===id).length;const cntRole=r=>VW.filter(w=>w.role===r).length;
+  const VW=WORKERS.filter(w=>visW(w)&&(typeof inC!=='function'||inC(w)));const cntInd=id=>VW.filter(w=>w.ind===id).length;const cntRole=r=>VW.filter(w=>w.role===r).length;
   const roleChip=(r,i)=>{const n=cntRole(r[0]);const on=f.role===r[0];
     return `<span class="chip sm ${on?'on':''}" style="${n?'':'opacity:.55'}" onclick="S.f.ind='${i.id}';setF('role','${r[0]}')">${r[0]} <b style="font-weight:700;opacity:.6;margin-left:2px">${n}</b></span>`};
   const allRoles=`<div class="row between" style="margin-top:12px"><b class="sm">按工种找人 <span class="muted" style="font-weight:500">· ${IND.reduce((a,i)=>a+i.roles.length,0)} 个工种</span></b><a class="sm" style="text-decoration:underline;cursor:pointer" onclick="S.f.showRoles=!S.f.showRoles;render(false)">${f.showRoles?'收起':'展开'}</a></div>
@@ -1581,7 +1581,7 @@ V.browse=()=>{
    <div class="chips wrap"><span class="chip sm ${f.ind==='all'?'on':''}" onclick="setF('ind','all')">全部行业 <b style="opacity:.6">${VW.length}</b></span>
     ${IND.map(i=>`<span class="chip sm" style="${f.ind===i.id?`background:${i.color};color:${i.ink};border-color:transparent`:''}" onclick="setF('ind','${i.id}')">${i.zh} <b style="opacity:.6">${cntInd(i.id)}</b></span>`).join('')}</div>
    ${ind?`<div class="chips wrap" style="margin-top:10px"><span class="chip sm ${f.role==='all'?'on':''}" onclick="setF('role','all')">全部工种</span>${ind.roles.map(r=>roleChip(r,ind)).join('')}</div>`:allRoles}
-   <div class="chips" style="margin-top:12px"><span class="chip sm ${f.nat==='all'?'on':''}" onclick="setF('nat','all')">全部国籍</span>${Object.keys(NATS).map(c=>`<span class="chip sm ${f.nat===c?'on':''}" onclick="setF('nat','${c}')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
+   <div class="chips" style="margin-top:12px"><span class="chip sm ${f.nat==='all'?'on':''}" onclick="setF('nat','all')">全部国籍</span>${(typeof natKeys==='function'?natKeys():Object.keys(NATS)).map(c=>`<span class="chip sm ${f.nat===c?'on':''}" onclick="setF('nat','${c}')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
    <div class="row between" style="margin-top:6px;gap:8px"><div class="toggles">
      <span class="tg ${f.zh?'on':''}" onclick="setF('zh',${!f.zh})">会中文</span><span class="tg ${f.ver?'on':''}" onclick="setF('ver',${!f.ver})">证件齐全</span><span class="tg ${f.now?'on':''}" onclick="setF('now',${!f.now})">可立即上岗</span></div>
      <select class="select" style="margin-top:10px" onchange="setF('sort',this.value)">${[['rec','综合'],['rate','评分'],['exp','经验'],['sal','薪资低→高']].map(o=>`<option value="${o[0]}" ${f.sort===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
@@ -1710,6 +1710,205 @@ setTimeout(syncCo,1800);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncCo()});
 setInterval(()=>{if(document.visibilityState==='visible')syncCo()},30000);
 
+</script>
+<script>
+/* ================= v1.12 · 全非洲通用：国家自动识别 / 切换、官方语言、货币、城市 ================= */
+/* 国家资料：代码|中文|英文|区号|货币|官方语言|地区|城市（中文:英文:纬度:经度，第一个为主要城市） */
+const AF_RAW=`DZ|阿尔及利亚|Algeria|213|DA|ar,fr|N|阿尔及尔:Algiers:36.75:3.06;奥兰:Oran:35.70:-0.63;君士坦丁:Constantine:36.37:6.61
+AO|安哥拉|Angola|244|Kz|pt|S|罗安达:Luanda:-8.84:13.23;本格拉:Benguela:-12.58:13.41;万博:Huambo:-12.78:15.74
+BJ|贝宁|Benin|229|CFA|fr|W|科托努:Cotonou:6.37:2.39;波多诺伏:Porto-Novo:6.50:2.60;帕拉库:Parakou:9.34:2.63
+BW|博茨瓦纳|Botswana|267|P|en|S|哈博罗内:Gaborone:-24.65:25.91;弗朗西斯敦:Francistown:-21.17:27.51
+BF|布基纳法索|Burkina Faso|226|CFA|fr|W|瓦加杜古:Ouagadougou:12.37:-1.52;博博迪乌拉索:Bobo-Dioulasso:11.18:-4.30
+BI|布隆迪|Burundi|257|FBu|fr|E|布琼布拉:Bujumbura:-3.38:29.36;基特加:Gitega:-3.43:29.92
+CV|佛得角|Cabo Verde|238|Esc|pt|W|普拉亚:Praia:14.93:-23.51;明德卢:Mindelo:16.89:-24.98
+CM|喀麦隆|Cameroon|237|FCFA|fr,en|C|杜阿拉:Douala:4.05:9.77;雅温得:Yaoundé:3.85:11.50;克里比:Kribi:2.94:9.91
+CF|中非|Central African Republic|236|FCFA|fr|C|班吉:Bangui:4.39:18.56
+TD|乍得|Chad|235|FCFA|fr,ar|C|恩贾梅纳:N'Djamena:12.13:15.06;蒙杜:Moundou:8.57:16.08
+KM|科摩罗|Comoros|269|CF|fr,ar|E|莫罗尼:Moroni:-11.70:43.26
+CG|刚果（布）|Congo|242|FCFA|fr,ln|C|布拉柴维尔:Brazzaville:-4.26:15.24;黑角:Pointe-Noire:-4.78:11.86
+CD|刚果（金）|DR Congo|243|FC|fr,sw,ln|C|金沙萨:Kinshasa:-4.32:15.31;卢本巴希:Lubumbashi:-11.66:27.48;科卢韦齐:Kolwezi:-10.71:25.47
+CI|科特迪瓦|Côte d'Ivoire|225|CFA|fr|W|阿比让:Abidjan:5.36:-4.01;亚穆苏克罗:Yamoussoukro:6.83:-5.29;圣佩德罗:San-Pédro:4.75:-6.64
+DJ|吉布提|Djibouti|253|Fdj|fr,ar|E|吉布提市:Djibouti:11.59:43.15
+EG|埃及|Egypt|20|E£|ar|N|开罗:Cairo:30.04:31.24;亚历山大:Alexandria:31.20:29.92;苏伊士:Suez:29.97:32.53
+GQ|赤道几内亚|Equatorial Guinea|240|FCFA|es,fr,pt|C|马拉博:Malabo:3.75:8.78;巴塔:Bata:1.86:9.77
+ER|厄立特里亚|Eritrea|291|Nfk|ti,ar,en|E|阿斯马拉:Asmara:15.32:38.93;马萨瓦:Massawa:15.61:39.45
+SZ|埃斯瓦蒂尼|Eswatini|268|E|en|S|姆巴巴内:Mbabane:-26.31:31.14;曼齐尼:Manzini:-26.49:31.38
+ET|埃塞俄比亚|Ethiopia|251|Br|am,en|E|亚的斯亚贝巴:Addis Ababa:9.03:38.74;德雷达瓦:Dire Dawa:9.59:41.87;阿瓦萨:Hawassa:7.06:38.48
+GA|加蓬|Gabon|241|FCFA|fr|C|利伯维尔:Libreville:0.42:9.47;让蒂尔港:Port-Gentil:-0.72:8.78
+GM|冈比亚|Gambia|220|D|en|W|班珠尔:Banjul:13.45:-16.58;塞雷昆达:Serekunda:13.44:-16.68
+GH|加纳|Ghana|233|GH₵|en|W|
+GN|几内亚|Guinea|224|FG|fr|W|科纳克里:Conakry:9.64:-13.58;博凯:Boké:10.94:-14.30;康康:Kankan:10.39:-9.31
+GW|几内亚比绍|Guinea-Bissau|245|CFA|pt|W|比绍:Bissau:11.86:-15.60
+KE|肯尼亚|Kenya|254|KSh|sw,en|E|内罗毕:Nairobi:-1.29:36.82;蒙巴萨:Mombasa:-4.04:39.67;基苏木:Kisumu:-0.09:34.77;纳库鲁:Nakuru:-0.30:36.07
+LS|莱索托|Lesotho|266|M|en,st|S|马塞卢:Maseru:-29.31:27.48
+LR|利比里亚|Liberia|231|L$|en|W|蒙罗维亚:Monrovia:6.30:-10.80;布坎南:Buchanan:5.88:-10.05
+LY|利比亚|Libya|218|LD|ar|N|的黎波里:Tripoli:32.89:13.19;班加西:Benghazi:32.12:20.09
+MG|马达加斯加|Madagascar|261|Ar|mg,fr|E|塔那那利佛:Antananarivo:-18.88:47.51;图阿马西纳:Toamasina:-18.15:49.40
+MW|马拉维|Malawi|265|MK|en,ny|S|利隆圭:Lilongwe:-13.96:33.79;布兰太尔:Blantyre:-15.79:35.01
+ML|马里|Mali|223|CFA|fr,bm|W|巴马科:Bamako:12.64:-8.00;锡卡索:Sikasso:11.32:-5.67
+MR|毛里塔尼亚|Mauritania|222|UM|ar,fr|W|努瓦克肖特:Nouakchott:18.08:-15.98;努瓦迪布:Nouadhibou:20.94:-17.04
+MU|毛里求斯|Mauritius|230|Rs|en,fr|E|路易港:Port Louis:-20.16:57.50
+MA|摩洛哥|Morocco|212|DH|ar,fr|N|卡萨布兰卡:Casablanca:33.57:-7.59;拉巴特:Rabat:34.02:-6.84;丹吉尔:Tangier:35.76:-5.83;马拉喀什:Marrakesh:31.63:-7.99
+MZ|莫桑比克|Mozambique|258|MT|pt|S|马普托:Maputo:-25.97:32.57;贝拉:Beira:-19.84:34.84;楠普拉:Nampula:-15.12:39.27
+NA|纳米比亚|Namibia|264|N$|en,af|S|温得和克:Windhoek:-22.56:17.08;鲸湾港:Walvis Bay:-22.96:14.51
+NE|尼日尔|Niger|227|CFA|fr,ha|W|尼亚美:Niamey:13.51:2.11;津德尔:Zinder:13.81:8.99
+NG|尼日利亚|Nigeria|234|₦|en,ha,yo,ig|W|拉各斯:Lagos:6.52:3.38;阿布贾:Abuja:9.08:7.40;卡诺:Kano:12.00:8.52;哈科特港:Port Harcourt:4.82:7.03;伊巴丹:Ibadan:7.38:3.95
+RW|卢旺达|Rwanda|250|FRw|rw,fr,en,sw|E|基加利:Kigali:-1.95:30.06
+ST|圣多美和普林西比|São Tomé and Príncipe|239|Db|pt|C|圣多美:São Tomé:0.34:6.73
+SN|塞内加尔|Senegal|221|CFA|fr|W|达喀尔:Dakar:14.72:-17.47;捷斯:Thiès:14.79:-16.93
+SC|塞舌尔|Seychelles|248|SR|en,fr|E|维多利亚:Victoria:-4.62:55.45
+SL|塞拉利昂|Sierra Leone|232|Le|en|W|弗里敦:Freetown:8.48:-13.23;博城:Bo:7.96:-11.74
+SO|索马里|Somalia|252|Sh|so,ar|E|摩加迪沙:Mogadishu:2.05:45.32;哈尔格萨:Hargeisa:9.56:44.06
+ZA|南非|South Africa|27|R|en,zu,af,xh,st|S|约翰内斯堡:Johannesburg:-26.20:28.05;开普敦:Cape Town:-33.92:18.42;德班:Durban:-29.86:31.02;比勒陀利亚:Pretoria:-25.75:28.19
+SS|南苏丹|South Sudan|211|SSP|en,ar|E|朱巴:Juba:4.85:31.58
+SD|苏丹|Sudan|249|SDG|ar,en|N|喀土穆:Khartoum:15.50:32.56;苏丹港:Port Sudan:19.62:37.22
+TZ|坦桑尼亚|Tanzania|255|TSh|sw,en|E|达累斯萨拉姆:Dar es Salaam:-6.79:39.21;多多马:Dodoma:-6.16:35.75;阿鲁沙:Arusha:-3.39:36.68;姆万扎:Mwanza:-2.52:32.90
+TG|多哥|Togo|228|CFA|fr|W|洛美:Lomé:6.13:1.22;卡拉:Kara:9.55:1.19
+TN|突尼斯|Tunisia|216|DT|ar,fr|N|突尼斯市:Tunis:36.81:10.18;斯法克斯:Sfax:34.74:10.76
+UG|乌干达|Uganda|256|USh|en,sw,lg|E|坎帕拉:Kampala:0.35:32.58;恩德培:Entebbe:0.05:32.46;金贾:Jinja:0.42:33.20
+ZM|赞比亚|Zambia|260|K|en,ny|S|卢萨卡:Lusaka:-15.39:28.32;恩多拉:Ndola:-12.97:28.64;基特韦:Kitwe:-12.80:28.21
+ZW|津巴布韦|Zimbabwe|263|US$|en,sn|S|哈拉雷:Harare:-17.83:31.05;布拉瓦约:Bulawayo:-20.15:28.58`;
+const AF={};AF_RAW.split('\n').forEach(l=>{const [code,zh,en,dial,cur,langs,reg,cs]=l.split('|');
+  AF[code]={code,zh,en,dial,cur,langs:langs.split(','),reg,cities:(cs||'').split(';').filter(Boolean).map(x=>{const p=x.split(':');return [p[0],p[1],+p[2],+p[3]]})}});
+const REGIONS=[['W','西非','West Africa'],['E','东非','East Africa'],['S','南部非洲','Southern Africa'],['C','中部非洲','Central Africa'],['N','北非','North Africa']];
+const LN={en:'English',zh:'中文',fr:'Français',pt:'Português',ar:'العربية',sw:'Kiswahili',am:'አማርኛ',ha:'Hausa',yo:'Yorùbá',ig:'Igbo',zu:'isiZulu',xh:'isiXhosa',af:'Afrikaans',st:'Sesotho',so:'Soomaali',rw:'Kinyarwanda',mg:'Malagasy',ny:'Chichewa',sn:'chiShona',ti:'ትግርኛ',es:'Español',ln:'Lingála',bm:'Bamanankan',lg:'Luganda'};
+const flagE=c=>c&&c.length===2?String.fromCodePoint(...[...c.toUpperCase()].map(x=>0x1F1E6+x.charCodeAt(0)-65)):'';
+const TZ2C={Algiers:'DZ',Luanda:'AO','Porto-Novo':'BJ',Gaborone:'BW',Ouagadougou:'BF',Bujumbura:'BI',Cape_Verde:'CV',Douala:'CM',Bangui:'CF',Ndjamena:'TD',Comoro:'KM',Brazzaville:'CG',Kinshasa:'CD',Lubumbashi:'CD',Abidjan:'CI',Djibouti:'DJ',Cairo:'EG',Malabo:'GQ',Asmara:'ER',Mbabane:'SZ',Addis_Ababa:'ET',Libreville:'GA',Banjul:'GM',Accra:'GH',Conakry:'GN',Bissau:'GW',Nairobi:'KE',Maseru:'LS',Monrovia:'LR',Tripoli:'LY',Antananarivo:'MG',Blantyre:'MW',Bamako:'ML',Nouakchott:'MR',Mauritius:'MU',Casablanca:'MA',El_Aaiun:'MA',Maputo:'MZ',Windhoek:'NA',Niamey:'NE',Lagos:'NG',Kigali:'RW',Sao_Tome:'ST',Dakar:'SN',Mahe:'SC',Freetown:'SL',Mogadishu:'SO',Johannesburg:'ZA',Juba:'SS',Khartoum:'SD',Dar_es_Salaam:'TZ',Lome:'TG',Tunis:'TN',Kampala:'UG',Lusaka:'ZM',Harare:'ZW'};
+function detectCountry(){try{const k=(Intl.DateTimeFormat().resolvedOptions().timeZone||'').split('/').pop();if(TZ2C[k])return TZ2C[k]}catch(e){}
+  for(const l of (navigator.languages||[navigator.language||''])){const m=/[-_]([A-Za-z]{2})$/.exec(l||'');if(m&&AF[m[1].toUpperCase()])return m[1].toUpperCase()}return 'GH'}
+const C=()=>AF[S.country]||AF.GH;
+
+Object.assign(T,{
+ country:['Country','Country','国家/地区'],choose_country:['Choose your country','Choose your country','选择国家/地区'],
+ auto_detect:['Detected automatically','Detected automatically','自动识别'],search_country:['Search country','Search country','搜索国家'],
+ available_in:['Available in 54 African countries','Available in 54 African countries','非洲 54 国通用'],
+ f_free:['Free for workers','Free for workers','求职免费'],f_lang:['In your language','In your language','本地语言'],f_near:['Jobs near you','Jobs near you','附近工作'],
+ minwage_g:['Check the legal minimum wage in {c} before you agree on a salary.','Check the legal minimum wage in {c} before you agree on a salary.','约定工资前，请了解{c}法定最低工资。'],
+ consent_g:['I agree that HireGH shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','I agree that HireGH shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','我同意 HireGH 按{c}相关法律保护我的信息，并将档案提供给已认证雇主，可随时要求删除。'],
+ permit_g:['Do you have a work permit for {c}?','Do you have a work permit for {c}?','是否持有{c}工作许可？'],
+});
+const T_GH={minwage:T.minwage.slice(),consent:T.consent.slice(),permit:T.permit.slice()};
+
+/* 国旗：加纳、中国用原样式，其他国家用国旗表情 */
+const CITIES_GH=CITIES.map(c=>c.slice());const CITY_LL_GH={...CITY_LL};const NAT_GH={...NATS.GH};
+Object.keys(AF).forEach(c=>{if(!NT[c])NT[c]=[AF[c].en,AF[c].en,AF[c].zh];if(!NATS[c]&&c!=='GH')NATS[c]={zh:AF[c].zh,en:AF[c].en,emoji:flagE(c)};if(!LANGS[c])LANGS[c]=AF[c].langs.map(l=>LN[l]||l)});
+const natKeys=()=>[S.country,'CN'];
+function inC(x){const c=x.country||((x.owner==='me'||x.self||(S.me&&x.id===S.me.id))?S.country:'GH');return c===S.country}
+
+/* ---------- 语言：按国家官方语言自动切换，缺少的语言自动翻译并缓存 ---------- */
+const TR_KEYS=()=>[...Object.keys(T).map(k=>['T',k,T[k][0]]),...Object.keys(ROLE_MAP).filter(z=>ROLE_MAP[z].r[0]===z).map(z=>['R',z,ROLE_MAP[z].r[1]]),
+  ...Object.keys(IT).map(k=>['I',k,IT[k][0]]),...Object.keys(NT).map(k=>['N',k,NT[k][0]])];
+function langIdx(l){if(LI[l]===undefined)LI[l]=Math.max(...Object.values(LI))+1;return LI[l]}
+function fillLang(l,vals){const i=langIdx(l);TR_KEYS().forEach(([kind,k,en],n)=>{const v=(vals&&vals[n])||en;
+  if(kind==='T')T[k][i]=v;else if(kind==='R'){RT[k]=RT[k]||[];RT[k][i-1]=v}else if(kind==='I')IT[k][i]=v;else NT[k][i]=v})}
+async function gtx(lines,l){const out=[];let chunk=[],len=0;const send=async c=>{
+    try{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl='+l+'&dt=t&q='+encodeURIComponent(c.join('\n')));const j=await r.json();
+      const res=(j[0]||[]).map(x=>x[0]).join('').split('\n');out.push(...(res.length===c.length?res.map(s=>s.trim()):c))}catch(e){out.push(...c)}};
+  for(const s of lines){if(len+s.length>1400&&chunk.length){await send(chunk);chunk=[];len=0}chunk.push(s.replace(/\n/g,' '));len+=s.length+1}
+  if(chunk.length)await send(chunk);return out}
+const _trLoading={};
+async function ensureLang(l){if(['en','zh','vi'].includes(l))return;const keys=TR_KEYS();const sig=keys.length+':'+keys.map(x=>x[2]).join('').length;
+  const cache=LS.get('tr_'+l,null);if(cache&&cache.sig===sig){fillLang(l,cache.v);return}
+  fillLang(l,null);if(_trLoading[l])return;_trLoading[l]=1;
+  const v=await gtx(keys.map(x=>x[2]),l);LS.set('tr_'+l,{sig,v});fillLang(l,v);applyCountryText();_trLoading[l]=0;if(S.lang===l)render(false)}
+function pickLang(code){const off=AF[code].langs;const ph=(navigator.languages||[navigator.language||'en']).map(x=>(x||'').slice(0,2).toLowerCase());
+  for(const p of ph)if(off.includes(p))return p;if(ph[0]==='zh')return 'zh';return off[0]}
+function applyCountryText(){const c=C();Object.keys(T_GH).forEach(k=>{
+  if(S.country==='GH')T[k]=T_GH[k].slice();else T[k]=T[k+'_g'].map((s,i)=>String(s||T[k+'_g'][0]).replace('{c}',i===LI.zh?c.zh:c.en))})}
+
+/* ---------- 切换国家 ---------- */
+function applyCountry(code,opts={}){
+  S.country=AF[code]?code:'GH';const c=C();
+  // 城市
+  CITIES.splice(0,CITIES.length,...(S.country==='GH'?CITIES_GH.map(x=>x.slice()):c.cities.map(x=>[x[0],x[1]])));
+  Object.keys(CITY_LL).forEach(k=>delete CITY_LL[k]);Object.assign(CITY_LL,S.country==='GH'?CITY_LL_GH:Object.fromEntries(c.cities.map(x=>[x[0],[x[2],x[3]]])));
+  // 语言列表：英语、中文 + 该国官方语言
+  const ls=[...new Set(['en','zh',...c.langs])];LANG_LIST.splice(0,LANG_LIST.length,...ls.map(l=>[l,LN[l]||l]));
+  ls.forEach(l=>{if(!['en','zh','vi'].includes(l))langIdx(l)});
+  ls.filter(l=>!['en','zh','vi'].includes(l)).forEach(l=>fillLang(l,(LS.get('tr_'+l,null)||{}).v||null));
+  if(opts.lang!==false){const man=LS.get('langManual',null);const l=man&&ls.includes(man)?man:pickLang(S.country);S.lang=l;S.detected=pickLang(S.country);document.documentElement.lang=l;ensureLang(l)}
+  if(!ls.includes(S.detected))S.detected=ls[0];
+  applyCountryText();S.f.nat='all';
+}
+function setCountry(code){LS.set('country',{code,manual:true});LS.set('langManual',null);closeSheet();applyCountry(code);
+  if(S.mode==='emp'&&!S.company.registered)S.view='e_reg';render(true);toast(flagE(code)+' '+(S.mode==='emp'||S.lang==='zh'?AF[code].zh:AF[code].en))}
+const _setLang12=setLang;setLang=function(l){LS.set('langManual',l);ensureLang(l);return _setLang12(l)};
+function countrySheet(){const q=(S.cq||'').trim().toLowerCase();const zhUI=S.mode==='emp'||S.lang==='zh';const det=detectCountry();
+  const row=c=>`<div class="li" style="cursor:pointer" onclick="setCountry('${c.code}')"><span style="font-size:24px;line-height:1">${flagE(c.code)}</span><div style="flex:1;min-width:0"><b>${zhUI?c.zh:c.en}</b><div class="xs muted">${zhUI?c.en:c.zh} · ${c.langs.map(l=>LN[l]||l).join(' / ')} · ${c.cur}</div></div>${S.country===c.code?ic('check'):''}</div>`;
+  const list=Object.values(AF).filter(c=>!q||(c.zh+c.en+c.code).toLowerCase().includes(q));
+  return `<div data-noloc><div class="b" style="font-size:20px">${t('choose_country')}</div>
+   <div class="searchbar" style="margin:12px 0"><span>${ic('search')}</span><input id="cq" placeholder="${t('search_country')}" value="${esc(S.cq||'')}" oninput="S.cq=this.value;document.getElementById('cList').innerHTML=countryListHTML()"></div>
+   <div id="cList">${countryListHTML()}</div></div>`}
+function countryListHTML(){const q=(S.cq||'').trim().toLowerCase();const zhUI=S.mode==='emp'||S.lang==='zh';const det=detectCountry();
+  const row=c=>`<div class="li" style="cursor:pointer" onclick="setCountry('${c.code}')"><span style="font-size:24px;line-height:1">${flagE(c.code)}</span><div style="flex:1;min-width:0"><b>${zhUI?c.zh:c.en}</b><div class="xs muted">${zhUI?c.en:c.zh} · ${c.langs.map(l=>LN[l]||l).join(' / ')} · ${c.cur}</div></div>${S.country===c.code?ic('check'):''}</div>`;
+  const all=Object.values(AF).filter(c=>!q||(c.zh+c.en+c.code).toLowerCase().includes(q));
+  if(q)return all.map(row).join('')||'<div class="empty sm">—</div>';
+  return `<div class="xs muted b" style="margin:6px 0 2px">${t('auto_detect')}</div>${row(AF[det])}`+REGIONS.map(r=>`<div class="xs muted b" style="margin:14px 0 2px">${zhUI?r[1]:r[2]}</div>${all.filter(c=>c.reg===r[0]).sort((a,b)=>(zhUI?a.zh.localeCompare(b.zh,'zh'):a.en.localeCompare(b.en))).map(row).join('')}`).join('')}
+function openCountry(){S.cq='';openSheet(countrySheet())}
+const countryPill=(dark)=>`<button onclick="openCountry()" style="display:inline-flex;align-items:center;gap:6px;border:0;border-radius:20px;padding:7px 12px;font-weight:700;font-size:14px;cursor:pointer;background:${dark?'#161616':'var(--card)'};color:${dark?'#fff':'var(--ink)'}"><span style="font-size:17px;line-height:1">${flagE(S.country)}</span>${S.mode==='emp'||S.lang==='zh'?C().zh:C().en}<span style="opacity:.5">▾</span></button>`;
+
+/* ---------- 欢迎页重新设计 ---------- */
+V.welcome=()=>{const c=C();const zhUI=S.lang==='zh';const top=['GH','NG','KE','ZA','ET','TZ','EG','CI','CM','UG','SN','AO','ZM','MA'];
+ return `<div class="pad" style="padding-top:16px;min-height:100%;display:flex;flex-direction:column">
+ <div class="row between"><div class="row gap6"><div class="logo">H</div><b style="font-size:18px">HireGH</b></div>${countryPill()}</div>
+ <h1 class="hero" style="font-size:36px;margin:24px 0 12px">${t('welcome_title')}</h1>
+ <div class="sm muted row gap6" style="flex-wrap:wrap">${ic('pin',14)} ${zhUI?c.zh:c.en} · ${t('detected')}: <b style="color:var(--ink)">${(LANG_LIST.find(l=>l[0]===S.detected)||LANG_LIST[0])[1]}</b></div>
+ <div class="chips wrap" style="margin-top:12px">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div>
+ <div style="display:flex;flex-direction:column;gap:14px;margin-top:22px;flex:1">
+  <div class="sc" style="margin:0;background:var(--lime);padding:22px 20px;min-height:172px;display:flex;flex-direction:column;justify-content:space-between;border-radius:32px" onclick="startWorker()">
+   <div class="row between" style="align-items:flex-start"><div class="ic" style="width:52px;height:52px">${ic('user',24)}</div><div class="go" style="width:46px;height:46px">${ic('arrow',20)}</div></div>
+   <div><div class="t" style="font-size:26px;line-height:1.15">${t('find_job')}</div><div class="roles" style="font-size:14px;margin-top:4px">${t('find_job_sub')}</div>
+   <div class="row gap6 wrap" style="margin-top:12px">${['f_free','f_lang','f_near'].map(k=>`<span style="font-size:12px;font-weight:600;padding:5px 10px;border-radius:14px;background:rgba(255,255,255,.6)">${t(k)}</span>`).join('')}</div></div></div>
+  <div class="sc" style="margin:0;background:#161616;color:#fff;padding:22px 20px;min-height:172px;display:flex;flex-direction:column;justify-content:space-between;border-radius:32px" onclick="startEmployer()">
+   <div class="row between" style="align-items:flex-start"><div class="ic" style="width:52px;height:52px">${ic('brief',24)}</div><div class="go" style="width:46px;height:46px">${ic('arrow',20)}</div></div>
+   <div><div class="t" style="font-size:26px;line-height:1.15">我要招人 <span style="font-size:14px;opacity:.6;font-weight:600">I'm hiring</span></div><div class="roles" style="font-size:14px;margin-top:4px">${S.company.registered?'已注册：'+esc(S.company.name):'企业 / 个人雇主 · 先注册，再找人'}</div>
+   <div class="row gap6 wrap" style="margin-top:12px">${['企业 / 个人','平台认证',IND.reduce((a,i)=>a+i.roles.length,0)+' 个工种'].map(x=>`<span style="font-size:12px;font-weight:600;padding:5px 10px;border-radius:14px;background:rgba(255,255,255,.14)">${x}</span>`).join('')}</div></div></div>
+ </div>
+ <div class="box row gap" style="margin-top:14px"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center;flex:none">${ic('shield')}</span><span class="sm">${t('safety')}</span></div>
+ <div style="margin-top:14px;padding:14px 16px;border-radius:22px;background:var(--card);cursor:pointer" onclick="openCountry()" data-noloc>
+  <div class="row between"><b class="sm">${t('available_in')}</b><span class="sm" style="text-decoration:underline">${t('choose_country')} ›</span></div>
+  <div style="display:flex;gap:6px;margin-top:10px;font-size:22px;line-height:1;overflow:hidden">${top.map(x=>`<span style="${x===S.country?'outline:2px solid #161616;outline-offset:2px;border-radius:4px':''}">${flagE(x)}</span>`).join('')}</div></div>
+</div>`};
+
+/* ---------- 企业端 / 工人端加入切换国家入口 ---------- */
+const _vh12=V.home;V.home=()=>_vh12().replace('<div class="row gap6"><button class="icbtn" onclick="tab(\'browse\')',`<div class="row gap6"><button class="icbtn" onclick="openCountry()" title="切换国家" style="font-size:20px">${flagE(S.country)}</button><button class="icbtn" onclick="tab('browse')`);
+const _vwh12=V.w_home;V.w_home=()=>_vwh12().replace('<button class="icbtn" onclick="langPick()">',`<button class="icbtn" onclick="openCountry()" style="font-size:20px;margin-right:6px">${flagE(S.country)}</button><button class="icbtn" onclick="langPick()">`);
+const _vsset12=V.settings;V.settings=()=>_vsset12().replace('<div class="box" style="margin-top:0">',`<div class="box" style="margin-top:0"><div class="li" style="cursor:pointer" onclick="openCountry()"><div style="flex:1"><div class="b" style="font-size:15px">国家/地区</div><div class="xs muted" style="margin-top:2px">${C().zh} · ${C().en} · 货币 ${C().cur}</div></div><span style="font-size:22px">${flagE(S.country)}</span></div>`);
+const _vwme12=V.w_me;V.w_me=()=>_vwme12().replace(`<div class="li" style="cursor:pointer" onclick="toWelcome()">`,`<div class="li" style="cursor:pointer" onclick="openCountry()"><span style="font-size:20px">${flagE(S.country)}</span><span>${t('country')}: ${C().en}</span></div><div class="li" style="cursor:pointer" onclick="toWelcome()">`);
+
+/* ---------- 显示本地化：货币、区号、国家名（只替换界面文字，不改数据） ---------- */
+function locNode(root){if(!root||S.country==='GH')return;const c=C();
+  const R=[['Ghana Card','National ID'],['GH₵',c.cur],['+233','+'+c.dial],['加纳',c.zh],['Ghana',c.en],['SSNIT','社保'],['Twi','']];
+  const fix=s=>{let o=s;for(const [a,b] of R)if(o.includes(a))o=o.split(a).join(b);return o};
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&n.parentElement.closest('[data-noloc]')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  let n;while(n=w.nextNode()){const v=n.nodeValue;if(/Ghana|GH₵|\+233|加纳|SSNIT|Twi/.test(v))n.nodeValue=fix(v)}
+  root.querySelectorAll('[placeholder]').forEach(e=>{const p=e.getAttribute('placeholder');if(/Ghana|GH₵|\+233|加纳/.test(p))e.setAttribute('placeholder',fix(p))});
+  if(S.view==='permit')root.querySelectorAll('a[href*=".gov.gh"]').forEach(a=>{const p=a.parentElement;if(p)p.innerHTML=`请向${c.zh}移民局、劳动部门或投资促进机构咨询最新规定。`})}
+const _render12=render;render=function(top){_render12(top);['#screen','#fixed','#navwrap'].forEach(s=>locNode($(s)))};
+const _open12=openSheet;openSheet=function(h){_open12(h);locNode($('#sheet'))};
+
+/* ---------- 数据按国家区分：各国只看到本国的工人和岗位 ---------- */
+const _filtered12=filtered;filtered=function(){return _filtered12().filter(inC)};
+const _newReg12=newReg;newReg=function(){const r=_newReg12();r.nat=S.lang==='zh'?'CN':S.country;r.idType=r.nat==='GH'?'Ghana Card':r.nat==='CN'?'passport':'National ID';return r};
+const _q12=DB.q;DB.q=function(path,opt={}){
+  if(opt.body&&/rpc\/(register_worker|post_job|register_employer|update_worker|update_employer)/.test(path)){try{const b=JSON.parse(opt.body);
+    if(b.p_data&&!b.p_data.country)b.p_data.country=S.country;
+    if(b.p_docs&&b.p_docs.phone&&S.country!=='GH')b.p_docs.phone=b.p_docs.phone.replace(/^\+233 /,'+'+C().dial+' ');
+    opt={...opt,body:JSON.stringify(b)}}catch(e){}}
+  return _q12.call(DB,path,opt)};
+
+/* 启动：自动识别国家（用户手动选过则保留） */
+(function initCountry(){const saved=LS.get('country',null);const code=saved&&saved.manual&&AF[saved.code]?saved.code:detectCountry();
+  if(!saved||!saved.manual)LS.set('country',{code,manual:false});applyCountry(code);
+  if(S.mode==='emp'&&!S.company.registered)S.view='e_reg';render(false)})();
+
+const _ct12=contractText;contractText=function(w,j){let s=_ct12(w,j);if(S.country!=='GH'){const c=C();s=s.split('GH₵').join(c.cur).split('加纳').join(c.zh).split('Ghana').join(c.en).split('SSNIT').join('社保')}return s};
+
+
+const _vh12b=V.home;V.home=()=>{let h=_vh12b();const n=WORKERS.filter(w=>visW(w)&&inC(w)).length;if(n)return h;const c=C();
+  const banner=`<div style="margin-top:14px;padding:16px;border-radius:22px;background:#161616;color:#fff"><div class="row gap6 b"><span style="font-size:20px">${flagE(S.country)}</span>${c.zh}站点已开通</div><div class="sm" style="opacity:.8;line-height:1.6;margin-top:6px">当地工人注册并通过审核后会出现在人才库。现在可以先发布招工，工人会用${c.langs.map(l=>LN[l]||l).join(' / ')}看到你的岗位。</div><div class="row gap6" style="margin-top:12px"><button class="bigbtn" style="flex:1;padding:12px;font-size:14px;background:var(--lime);color:#161616" onclick="go('post')">发布招工</button><button class="bigbtn" style="flex:1;padding:12px;font-size:14px;background:#2a2a2a" onclick="openCountry()">切换国家</button></div></div>`;
+  const i=h.indexOf('<div class="sec-h">');return i>0?h.slice(0,i)+banner+h.slice(i):h+banner};
+render(false);
 </script>
 </body>
 </html>
