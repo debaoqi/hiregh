@@ -1118,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.0.3',APP_BUILD=27;
+const APP_VER='2.0.4',APP_BUILD=28;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1923,8 +1923,15 @@ function fitWelTitle(){if(S.view!=='welcome')return;const h=document.querySelect
   h.style.setProperty('white-space','nowrap','important');h.style.setProperty('letter-spacing','-1px','important');
   let fs=Math.min(32,innerWidth*0.074,h.parentElement.clientWidth*0.085);h.style.setProperty('font-size',fs+'px','important');let n=0;
   while(h.scrollWidth>h.clientWidth+1&&fs>16&&n++<40){fs-=1;h.style.setProperty('font-size',fs+'px','important')}}
-const _render14=render;render=function(top){_render14(top);fitWelTitle()};
-window.addEventListener('resize',fitWelTitle);document.fonts&&document.fonts.ready.then(fitWelTitle);
+/* 卡片小标签：一行放不下时自动缩小，仍放不下才换行 */
+function fitWelTags(){if(S.view!=='welcome')return;document.querySelectorAll('.sc .row.gap6.wrap').forEach(row=>{
+  const tags=[...row.children];if(!tags.length)return;row.style.setProperty('flex-wrap','nowrap','important');row.style.setProperty('overflow','hidden');
+  let fs=parseFloat(getComputedStyle(tags[0]).fontSize)||12;let n=0;
+  const over=()=>{const r=row.getBoundingClientRect();return tags.some(t=>t.getBoundingClientRect().right>r.right+0.5)};
+  while(over()&&fs>10&&n++<20){fs-=0.5;tags.forEach(t=>{t.style.setProperty('font-size',fs+'px','important');t.style.setProperty('padding','4px '+Math.max(5,Math.round(fs*0.6))+'px','important')})}
+  if(over()){tags.forEach(t=>{t.style.removeProperty('font-size');t.style.removeProperty('padding')});row.style.setProperty('flex-wrap','wrap','important');row.style.removeProperty('overflow')}})}
+const _render14=render;render=function(top){_render14(top);fitWelTitle();fitWelTags()};
+window.addEventListener('resize',()=>{fitWelTitle();fitWelTags()});document.fonts&&document.fonts.ready.then(()=>{fitWelTitle();fitWelTags()});
 render(false);
 </script>
 </body>

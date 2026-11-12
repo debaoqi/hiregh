@@ -1,6 +1,6 @@
 {
-  "version": "2.0.3",
-  "build": 27,
+  "version": "2.0.4",
+  "build": 28,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "英文标题“Finding work is easy”按屏幕宽度自动缩小，保持一行完整显示"
+      "英文卡片小标签不再超出卡片：自动缩小，放不下时自动换行"
     ],
     "en": [
-      "The title now always fits on one line"
+      "Labels on the welcome cards now always fit"
     ]
   }
 }
