@@ -1,1 +1,3 @@
-{"appId":"com.hiregh.app","appName":"HireGH","webDir":"www","android":{"backgroundColor":"#EDE8DC"}}
+{"appId":"com.hiregh.app","appName":"HireGH","webDir":"www",
+ "server":{"url":"https://hiregh.pages.dev/","errorPath":"offline.html","androidScheme":"https"},
+ "android":{"backgroundColor":"#EDE8DC"}}
