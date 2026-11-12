@@ -369,7 +369,7 @@ const nowT=()=>{const d=new Date();return d.getHours().toString().padStart(2,'0'
 (function seedChats(){
   const pairs=[
    [WORKERS.find(w=>w.role==='焊工'),'Good morning boss, I saw your welding job in Tema. I have 6 years experience with steel structure.','老板早上好，我看到您在特马的焊工岗位，我有6年钢结构经验。',2,'08:24'],
-   [WORKERS.find(w=>w.role==='中英翻译'),'王总您好，明天清关的文件我已经整理好了，需要我几点到港口？','Hello Mr. Wang, I have prepared the customs documents for tomorrow. What time should I be at the port?',0,'09:02'],
+   [WORKERS.find(w=>w.role==='中英翻译'),'老板您好，明天清关的文件我已经整理好了，需要我几点到港口？','Hello boss, I have prepared the customs documents for tomorrow. What time should I be at the port?',0,'09:02'],
    [WORKERS.find(w=>w.role==='电工'),'I can start work next Monday.','我下周一就可以开始上班。',1,'昨天'],
    [WORKERS.find(w=>w.role==='挖掘机司机'),'Please is the job still available? I can send my certificate.','请问岗位还在招吗？我可以发证书给您。',0,'昨天'],
    [WORKERS.find(w=>w.role==='中餐厨师'),'Thank you for the interview today, I will wait for your call.','谢谢您今天的面试，我等您的电话。',0,'周一'],
@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.7.0',APP_BUILD=19;
+const APP_VER='1.8.0',APP_BUILD=20;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1397,6 +1397,81 @@ V.w_job=()=>{const j=S.jobs.find(x=>x.id===S.params.id);let h=_vwj7();if(!j||!j.
 
 const _vset7=V.settings;V.settings=()=>_vset7().replace('<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">企业信息','<div class="li" style="cursor:pointer" onclick="go(\'company\')"><div style="flex:1"><div class="b" style="font-size:15px">企业信息');
 
+</script>
+<script>
+/* ================= v1.8 · 工种细化 + 首页称呼可编辑 ================= */
+/* 1) 名称更清楚：司机 → 小车司机，养殖工 → 畜禽养殖工（旧数据自动兼容） */
+const ROLE_RENAME={'司机':['小车司机','Car / Van Driver'],'养殖工':['畜禽养殖工','Poultry & Livestock Keeper']};
+IND.forEach(i=>i.roles.forEach(r=>{const n=ROLE_RENAME[r[0]];if(n){delete ROLE_MAP[r[0]];r[0]=n[0];r[1]=n[1];ROLE_MAP[r[0]]={ind:i,r}}}));
+WORKERS.forEach(w=>{const n=ROLE_RENAME[w.role];if(n){w.role=n[0];w.roleEn=n[1]}});
+S.jobs.forEach(j=>{const n=ROLE_RENAME[j.title];if(n){j.title=n[0];j.en=n[1]}});
+Object.keys(ROLE_RENAME).forEach(o=>{ROLE_MAP[o]=ROLE_MAP[ROLE_RENAME[o][0]]});   // 云端旧记录仍可识别
+
+/* 2) 各行业新增工种（名称、英文、参考月薪 GH₵、常见技能） */
+const NEW_ROLES={
+ ind:[['包装工','Packer',1400,['产品包装','贴标','装箱']],['注塑工','Injection Moulding Operator',2200,['注塑机操作','换模','产品修边']],
+      ['喷漆工','Spray Painter',2600,['喷涂','调漆','表面处理']],['钣金工','Sheet Metal Worker',3000,['折弯','剪板','铆接']],
+      ['缝纫工','Sewing Machinist',1600,['平车','包缝','服装车间']],['车间班组长','Line Supervisor',4200,['生产排班','5S管理','中文沟通']]],
+ agr:[['水产养殖工','Fish Farm Worker',1500,['罗非鱼养殖','网箱管理','投喂']],['农药喷洒工','Crop Sprayer',1500,['背负式喷雾','安全防护']],
+      ['农产品分拣包装工','Produce Packer',1200,['分级','称重','装箱']],['木薯加工工','Cassava Processing Worker',1300,['去皮','磨粉','晾晒']],
+      ['兽医助理','Vet Assistant',2600,['疫苗接种','禽病观察','消毒']]],
+ svc:[['餐厅服务员','Waiter / Waitress',1300,['点菜','上菜','餐台清理']],['厨房帮工','Kitchen Helper',1200,['洗菜切配','备料','厨房清洁']],
+      ['洗碗工','Dishwasher',1000,['餐具清洗','消毒']],['当地菜厨师','Local Cuisine Cook',2000,['加纳菜','员工餐']],
+      ['调酒师','Bartender',1800,['调酒','吧台管理','收银']],['前台接待','Receptionist',1800,['接待登记','电话接听','英语沟通']],
+      ['酒店客房服务员','Hotel Room Attendant',1300,['客房清扫','布草更换','补充用品']],['KTV/娱乐场所服务员','KTV & Lounge Attendant',1500,['包厢服务','酒水服务','夜班']],
+      ['收银员','Cashier',1500,['收银机','MoMo收款','对账']],['导购员','Sales Assistant',1400,['商品介绍','陈列','英语/中文沟通']],
+      ['超市理货员','Shelf Stocker',1200,['上货','盘点','价签']],['洗衣工','Laundry Worker',1100,['洗涤','熨烫','分拣']],
+      ['园丁','Gardener',1100,['草坪修剪','绿植养护']],['美发师','Hairdresser',1800,['剪发','编发','染烫']],
+      ['行政文员','Office Administrator',2500,['文件管理','考勤','Excel']]],
+ con:[['油漆工','Painter',2200,['墙面刷漆','腻子','防水涂料']],['瓷砖工','Tiler',2600,['地砖','墙砖','找平']],
+      ['架子工','Scaffolder',2400,['脚手架搭设','高空作业证']],['混凝土工','Concrete Worker',2000,['浇筑','振捣','养护']],
+      ['吊车司机','Crane Operator',5000,['汽车吊','塔吊','吊装指挥']],['工地安全员','Site Safety Officer',4000,['安全巡查','安全培训','事故预防']],
+      ['施工员','Site Foreman',4800,['现场管理','进度安排','中文沟通']],['工地小工','Construction Labourer',1300,['搬运','清理','配合技工']]],
+ min:[['钻机工','Drill Operator',4200,['凿岩钻机','钻孔布置']],['矿山安全员','Mine Safety Officer',4800,['井下安全','通风检查','应急演练']],
+      ['化验员','Lab Assayer',3600,['火试金','样品制备','数据记录']],['发电机操作工','Generator Operator',2600,['柴油发电机','日常保养']],
+      ['太阳能安装工','Solar Installer',2800,['光伏板安装','逆变器接线']]],
+ log:[['快递员','Courier',1500,['派件','收件','熟悉路线']],['配送骑手','Delivery Rider',1400,['摩托车驾照','送货上门']],
+      ['理货员','Tally Clerk',2000,['货物核对','单据','集装箱']],['调度员','Dispatcher',3000,['车辆调度','路线安排','中文沟通']],
+      ['冷库工','Cold Store Worker',1700,['冷藏货物','叉车','低温作业']]]};
+seed=20261201;const _w0=WORKERS.length;
+IND.forEach(ind=>(NEW_ROLES[ind.id]||[]).forEach(r=>{
+  if(ROLE_MAP[r[0]])return;ind.roles.push(r);ROLE_MAP[r[0]]={ind,r};
+  const n=ri(1,3);
+  for(let k=0;k<n;k++){
+    const nat=rnd()<.8?'GH':'CN';
+    const female=rnd()<(/服务员|收银|导购|理货|洗衣|美发|前台|文员|包装|缝纫|分拣|帮工/.test(r[0])?.65:.12);
+    const pool=NAMES[nat][female?'f':'m'];let name=pick(pool),tries=0;while(used.has(name)&&tries++<8)name=pick(pool);used.add(name);
+    const exp=ri(1,10);const city=pick(CITIES);const zh=nat==='CN'?'母语':rnd()<.2?'基础':'不会';
+    const sal=Math.round((r[2]*(0.85+exp*0.035)*(0.9+rnd()*.25))/50)*50;
+    WORKERS.push({id:wid++,name,nat,female,ind:ind.id,role:r[0],roleEn:r[1],exp,age:ri(20,45),sal,city,zh,
+      langs:[...LANGS[nat],...(zh!=='不会'&&nat!=='CN'?['中文']:[])],skills:r[3].slice(0,ri(2,r[3].length)),rating:(4+rnd()).toFixed(1),jobs:ri(1,8),
+      card:nat==='GH'||rnd()<.85,permit:nat==='GH'?null:rnd()<.75,health:rnd()<.8,police:rnd()<.6,
+      avail:pick(['可立即上岗','可立即上岗','1周内到岗','2周内到岗']),stay:rnd()<.5?'需要包住':'自行解决住宿',
+      shift:pick(['白班','可倒班','可夜班']),col:AV_COL[wid%AV_COL.length],isNew:rnd()<.18});
+  }}));
+const _hasDemo=WORKERS.length>_w0;
+
+/* 3) 首页称呼：问候语按当地时间，姓名/企业来自“企业信息”，可修改 */
+S.company=Object.assign({contact:'',phone:''},S.company);
+function greet(){const h=new Date().getHours();return h<5?['晚上好','Maadwo']:h<12?['早上好','Maakye']:h<18?['下午好','Maaha']:['晚上好','Maadwo']}
+function coHeader(){const g=greet();const c=(S.company.contact||'').trim();const nm=c?c+' · '+coShort():coShort();
+  const ini=(c||coShort()).replace(/[（(].*$/,'').trim().slice(0,1)||'企';
+  return `<div class="row gap" style="cursor:pointer;min-width:0" onclick="go('company')"><div class="av" style="background:var(--gold)">${esc(ini)}</div><div style="min-width:0"><div class="muted sm">${g[0]} · ${g[1]}</div><div class="b" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(nm)}${c?'':' <span class="xs muted" style="font-weight:500">· 设置联系人</span>'}</div></div></div>`}
+const _vhome8=V.home;
+V.home=()=>{const h=_vhome8();const a=h.indexOf('<div class="row gap"><div class="av" style="background:var(--gold)">');if(a<0)return h;
+  const b=h.indexOf('</div></div></div>',a)+18;return h.slice(0,a)+coHeader()+h.slice(b)};
+/* 我的：账号行改为企业联系人，版本号用真实版本 */
+const _vme8=V.me;
+V.me=()=>_vme8().replace(/<span class="muted sm" style="margin-left:auto">王经理 · \+233 \*\* \*\*\* 5821<\/span>/,`<span class="muted sm" style="margin-left:auto">${esc(S.company.contact||'未设置联系人')}${S.company.phone?' · '+esc(S.company.phone):''}</span>`)
+  .replace('<div class="li"><span>账号</span>',`<div class="li" style="cursor:pointer" onclick="go('company')"><span>联系人</span>`)
+  .replace(/1\.1\.0 测试版/,'v'+APP_VER);
+/* 企业信息页：增加联系人和电话 */
+const _vco8=V.company;
+V.company=()=>_vco8().replace('<div class="fl">企业位置',`<div class="two"><div><div class="fl">联系人称呼</div><input class="fi" id="coContact" value="${esc(S.company.contact||'')}" placeholder="例如：王经理"></div><div><div class="fl">联系电话</div><input class="fi" id="coPhone" inputmode="tel" value="${esc(S.company.phone||'')}" placeholder="+233 …"></div></div><div class="xs muted" style="margin-top:6px">联系人显示在首页问候和“我的”里；电话只有你自己能看到。</div><div class="fl">企业位置`);
+const _saveCo8=saveCo;
+saveCo=async function(){const c=$('#coContact'),p=$('#coPhone');S.company.contact=c?c.value.trim():S.company.contact;S.company.phone=p?p.value.trim():S.company.phone;return _saveCo8()};
+
+render(false);
 </script>
 </body>
 </html>
