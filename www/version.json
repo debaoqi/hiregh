@@ -1,6 +1,6 @@
 {
-  "version": "1.4.1",
-  "build": 15,
+  "version": "1.5.0",
+  "build": 16,
   "date": "2026-11-12",
   "force": false,
   "minNative": 0,
@@ -8,16 +8,14 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "测试更新：验证自动提示升级功能",
-      "如果你看到这个窗口，说明更新流程已跑通"
+      "只保留中文、英文两种语言",
+      "首页标题改为“找工作，很容易”",
+      "人才与岗位只面向加纳籍和中国籍"
     ],
     "en": [
-      "Test update: checking the update message",
-      "If you can see this, updates are working"
-    ],
-    "vi": [
-      "Bản cập nhật thử: kiểm tra thông báo cập nhật",
-      "Nếu bạn thấy thông báo này, cập nhật đã hoạt động"
+      "App now uses Chinese and English only",
+      "New home title: “Finding work is easy”",
+      "Workers and jobs: Ghana and China only"
     ]
   }
 }

@@ -285,7 +285,6 @@ const pick=a=>a[Math.floor(rnd()*a.length)];const ri=(a,b)=>a+Math.floor(rnd()*(
 
 const NATS={
  GH:{zh:'加纳',en:'Ghana',flag:'linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)',star:'#000'},
- VN:{zh:'越南',en:'Vietnam',flag:'#DA251D',star:'#FFCD00'},
  CN:{zh:'中国',en:'China',flag:'#DE2910',star:'#FFDE00'},
 };
 const flag=c=>{const n=NATS[c];return `<span class="flag" style="background:${n.flag}">${n.star?`<i style="color:${n.star}">★</i>`:''}</span>`};
@@ -322,18 +321,17 @@ const ROLE_MAP={};IND.forEach(i=>i.roles.forEach(r=>ROLE_MAP[r[0]]={ind:i,r}));
 const NAMES={
  GH:{m:['Kwame Mensah','Kofi Boateng','Yaw Darko','Kwabena Ofori','Kojo Asare','Kwesi Amoah','Fiifi Quaye','Nana Agyeman','Samuel Tetteh','Isaac Owusu','Emmanuel Addo','Joseph Ansah','Daniel Ofori','Michael Asante','Prince Adjei','Richard Ampofo'],
      f:['Ama Owusu','Akosua Asante','Efua Appiah','Abena Osei','Adwoa Badu','Esi Mensah','Akua Sarpong','Grace Nyarko','Gifty Agyei','Mercy Boadu']},
- VN:{m:['Nguyễn Văn An','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam','Vũ Quang Huy','Đặng Văn Hải','Bùi Thanh Sơn','Ngô Văn Phúc'],f:['Trần Thị Hoa','Đỗ Thị Lan','Nguyễn Thị Mai','Phạm Thị Thu']},
  CN:{m:['张伟','李强','陈明','赵磊','黄海','周杰','吴涛','孙建国'],f:['王芳','刘洋','杨丽','林静']},
 };
 const CITIES=[['阿克拉','Accra'],['特马','Tema'],['库马西','Kumasi'],['塔科拉迪','Takoradi'],['卡索阿','Kasoa'],['塔马利','Tamale'],['奥布阿西','Obuasi'],['科福里杜阿','Koforidua']];
 const AV_COL=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8','#C9F0D5'];
-const LANGS={GH:['English','Twi'],VN:['Tiếng Việt'],CN:['中文','English']};
+const LANGS={GH:['English','Twi'],CN:['中文','English']};
 
 const WORKERS=[];let wid=1;const used=new Set();
 IND.forEach(ind=>ind.roles.forEach(r=>{
   const n=ri(2,4);
   for(let k=0;k<n;k++){
-    let nat=rnd()<.62?'GH':(rnd()<.7?'VN':'CN');
+    let nat=rnd()<.7?'GH':'CN';
     if(['中英翻译','报关员'].includes(r[0])) nat=rnd()<.7?'GH':'CN';
     if(['中餐厨师','农场主管','测量员','设备维修','电工'].includes(r[0])&&rnd()<.3) nat='CN';
     const female=rnd()<(['保洁','家政保姆','会计文员','质检员','采摘工','种植工','中英翻译'].includes(r[0])?.6:.12);
@@ -360,7 +358,7 @@ const S={view:'home',params:{},hist:[],saved:new Set([3,8,15]),
   f:{ind:'all',role:'all',nat:'all',zh:false,ver:false,now:false,q:'',sort:'rec'},
   jobFilter:'all',translate:true,
   jobs:[
-   {id:1,title:'焊工',en:'Welder',ind:'ind',exp:'3+ 年',sal:'3,500–4,500',city:'特马',n:5,apps:42,status:'open',nats:['GH','VN'],zh:false,stay:true,desc:'钢结构厂房焊接，需会看图纸，包住宿和午餐。'},
+   {id:1,title:'焊工',en:'Welder',ind:'ind',exp:'3+ 年',sal:'3,500–4,500',city:'特马',n:5,apps:42,status:'open',nats:['GH'],zh:false,stay:true,desc:'钢结构厂房焊接，需会看图纸，包住宿和午餐。'},
    {id:2,title:'中餐厨师',en:'Chinese Cook',ind:'svc',exp:'5+ 年',sal:'4,000–6,000',city:'阿克拉',n:2,apps:18,status:'open',nats:['GH','CN'],zh:true,stay:true,desc:'公司食堂约60人，川菜、面点优先。'},
    {id:3,title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,800–2,200',city:'库马西',n:20,apps:126,status:'open',nats:['GH'],zh:false,stay:false,desc:'腰果季节性采收，计件+底薪。'},
    {id:4,title:'挖掘机司机',en:'Excavator Operator',ind:'con',exp:'4+ 年',sal:'4,500–5,800',city:'塔科拉迪',n:3,apps:33,status:'pause',nats:['GH','CN'],zh:false,stay:true,desc:'道路项目土方作业，熟悉卡特/三一机型。'},
@@ -372,7 +370,7 @@ const nowT=()=>{const d=new Date();return d.getHours().toString().padStart(2,'0'
   const pairs=[
    [WORKERS.find(w=>w.role==='焊工'),'Good morning boss, I saw your welding job in Tema. I have 6 years experience with steel structure.','老板早上好，我看到您在特马的焊工岗位，我有6年钢结构经验。',2,'08:24'],
    [WORKERS.find(w=>w.role==='中英翻译'),'王总您好，明天清关的文件我已经整理好了，需要我几点到港口？','Hello Mr. Wang, I have prepared the customs documents for tomorrow. What time should I be at the port?',0,'09:02'],
-   [WORKERS.find(w=>w.nat==='VN'),'Tôi có thể bắt đầu làm việc từ thứ Hai tuần sau.','我下周一就可以开始上班。',1,'昨天'],
+   [WORKERS.find(w=>w.role==='电工'),'I can start work next Monday.','我下周一就可以开始上班。',1,'昨天'],
    [WORKERS.find(w=>w.role==='挖掘机司机'),'Please is the job still available? I can send my certificate.','请问岗位还在招吗？我可以发证书给您。',0,'昨天'],
    [WORKERS.find(w=>w.role==='中餐厨师'),'Thank you for the interview today, I will wait for your call.','谢谢您今天的面试，我等您的电话。',0,'周一'],
   ];
@@ -566,7 +564,7 @@ function savePost(id){
 }
 
 V.chats=()=>`<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">消息</div><div class="row gap6"><span class="muted sm">${S.chats.length} 个对话</span><button class="icbtn" onclick="S.translate=!S.translate;toast(S.translate?'自动翻译已开启':'自动翻译已关闭');render(false)" style="${S.translate?'background:var(--lime)':''}">${ic('tr')}</button></div></div>
-  <div class="sm muted" style="margin:6px 0 18px">${S.translate?'自动翻译已开启：英语 / 越南语 ⇄ 中文':'自动翻译已关闭'}</div>
+  <div class="sm muted" style="margin:6px 0 18px">${S.translate?'自动翻译已开启：英语 ⇄ 中文':'自动翻译已关闭'}</div>
   ${S.chats.length?S.chats.map((c,k)=>{const w=W(c.wid);const m=c.msgs[c.msgs.length-1];const dark=['#5B8CFF'].includes(c.color);
    return `<div class="cb" style="background:${c.color};color:${dark?'#fff':'#161616'};z-index:${20-k}" onclick="openChat(${w.id})">${avatar(w)}<div style="flex:1;min-width:0;padding-right:26px"><div class="row gap6"><b>${w.name}</b>${flag(w.nat)}<span class="xs" style="opacity:.6">${m.tm}</span></div>
    <div class="xs" style="opacity:.7">${w.role}</div><div class="msg">${S.translate&&!m.me?m.t:m.o}</div></div>${c.unread?`<span class="un">${c.unread}</span>`:''}<span class="tail" style="background:${c.color};${k%2?'right':'left'}:46px"></span></div>`}).join(''):'<div class="empty">暂无消息</div>'}
@@ -630,16 +628,16 @@ V.me=()=>{
 const ivCard=iv=>{const w=W(iv.wid);return `<div class="ivc" onclick="go('worker',{id:${w.id}})"><div class="datebox"><span class="xs b">${iv.mo}</span><b>${iv.d}</b></div><div style="flex:1;min-width:0"><div class="b row gap6">${w.name} ${flag(w.nat)}</div><div class="sm muted">${iv.job} · ${iv.way}</div><div class="sm" style="margin-top:3px">${ic('clock',13)} ${iv.time} · ${iv.place}</div></div><button class="act" onclick="event.stopPropagation();openChat(${w.id})">${ic('chat')}</button></div>`};
 V.saved=()=>{const l=WORKERS.filter(w=>S.saved.has(w.id));return `<div class="hdr"><button class="icbtn" onclick="back()">${ic('back')}</button><b>收藏的人才</b><span style="width:44px"></span></div><div class="pad">${l.length?l.map(wCard).join(''):'<div class="empty">还没有收藏</div>'}</div>`};
 V.interviews=()=>`<div class="hdr"><button class="icbtn" onclick="back()">${ic('back')}</button><b>面试安排</b><span style="width:44px"></span></div><div class="pad">${S.interviews.map(ivCard).join('')||'<div class="empty">暂无面试</div>'}</div>`;
-function langSheet(){openSheet(`<div class="b" style="font-size:20px;margin-bottom:14px">界面语言 / Language</div>${['简体中文','English','Tiếng Việt'].map((l,k)=>`<div class="li" style="cursor:pointer" onclick="closeSheet();toast('${k?'多语言版本开发中':'已是简体中文'}')"><span>${l}</span>${k===0?`<span style="margin-left:auto">${ic('check')}</span>`:''}</div>`).join('')}`)}
-function openNotifs(){openSheet(`<div class="b" style="font-size:20px;margin-bottom:6px">通知</div>${[['新申请','3 位焊工申请了您的「焊工」岗位','10分钟前'],['面试提醒','明天 10:00 有一场到厂面试','1小时前'],['平台公告','新增「越南籍技工」专区','昨天']].map(n=>`<div class="li"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center">${ic('bell')}</span><div style="flex:1"><b class="sm">${n[0]}</b><div class="sm muted">${n[1]}</div></div><span class="xs muted">${n[2]}</span></div>`).join('')}`)}
+function langSheet(){openSheet(`<div class="b" style="font-size:20px;margin-bottom:14px">界面语言 / Language</div>${['简体中文','English'].map((l,k)=>`<div class="li" style="cursor:pointer" onclick="closeSheet();toast('${k?'多语言版本开发中':'已是简体中文'}')"><span>${l}</span>${k===0?`<span style="margin-left:auto">${ic('check')}</span>`:''}</div>`).join('')}`)}
+function openNotifs(){openSheet(`<div class="b" style="font-size:20px;margin-bottom:6px">通知</div>${[['新申请','3 位焊工申请了您的「焊工」岗位','10分钟前'],['面试提醒','明天 10:00 有一场到厂面试','1小时前'],['平台公告','新增「中国籍技术骨干」专区','昨天']].map(n=>`<div class="li"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center">${ic('bell')}</span><div style="flex:1"><b class="sm">${n[0]}</b><div class="sm muted">${n[1]}</div></div><span class="xs muted">${n[2]}</span></div>`).join('')}`)}
 
 </script>
 <script>
 /* ================= I18N (worker side) ================= */
-const LANG_LIST=[['en','English'],['vi','Tiếng Việt'],['zh','中文']];
+const LANG_LIST=[['en','English'],['zh','中文']];
 const LI={en:0,vi:1,zh:2};
-function detectLang(){const ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];for(const l of ls){const c=(l||'').slice(0,2).toLowerCase();if(c in LI)return c}return 'en'}
-const T={"welcome_title":["Find work with Chinese companies in Ghana","Việc làm tại các công ty Trung Quốc ở Ghana","在加纳中企找工作"],
+function detectLang(){const ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];for(const l of ls){const c=(l||'').slice(0,2).toLowerCase();if(LANG_LIST.some(x=>x[0]===c))return c}return 'en'}
+const T={"welcome_title":["Finding work is easy","Tìm việc thật dễ dàng","找工作，很容易"],
 "detected":["Phone language detected","Đã nhận diện ngôn ngữ điện thoại","已识别手机语言"],
 "find_job":["I'm looking for work","Tôi đang tìm việc","我要找工作"],
 "find_job_sub":["Create your profile in 3 steps","Tạo hồ sơ trong 3 bước","3 步创建求职档案"],
@@ -719,7 +717,7 @@ const T={"welcome_title":["Find work with Chinese companies in Ghana","Việc l�
 const t=k=>{const r=T[k];if(!r)return k;return r[LI[S.lang]]??r[0]};
 const RT={"焊工":["Thợ hàn"],"电工":["Thợ điện"],"机修工":["Thợ sửa máy"],"叉车司机":["Lái xe nâng"],"CNC操作工":["Thợ vận hành CNC"],"质检员":["Nhân viên QC"],"普工":["Lao động phổ thông"],"种植工":["Công nhân trồng trọt"],"农机手":["Lái máy cày"],"养殖工":["Công nhân chăn nuôi"],"采摘工":["Công nhân thu hoạch"],"灌溉技工":["Kỹ thuật viên tưới tiêu"],"农场主管":["Quản lý trang trại"],"中餐厨师":["Đầu bếp món Trung"],"司机":["Tài xế"],"保安":["Bảo vệ"],"保洁":["Nhân viên vệ sinh"],"中英翻译":["Phiên dịch Trung–Anh"],"家政保姆":["Giúp việc gia đình"],"会计文员":["Nhân viên kế toán"],"泥瓦工":["Thợ nề"],"钢筋工":["Thợ sắt"],"木工":["Thợ mộc"],"水电工":["Thợ điện nước"],"挖掘机司机":["Lái máy xúc"],"测量员":["Trắc địa viên"],"矿工":["Thợ mỏ"],"爆破员":["Thợ nổ mìn"],"重卡司机":["Lái xe ben"],"设备维修":["Thợ sửa thiết bị"],"选矿工":["Công nhân tuyển quặng"],"仓管员":["Thủ kho"],"装卸工":["Công nhân bốc xếp"],"货车司机":["Lái xe tải"],"报关员":["Nhân viên khai hải quan"]};
 const IT={"ind":["Manufacturing","Sản xuất"],"agr":["Agriculture","Nông nghiệp"],"svc":["Services","Dịch vụ"],"con":["Construction","Xây dựng"],"min":["Mining","Khai khoáng"],"log":["Logistics","Kho vận"]};
-const NT={"GH":["Ghana","Ghana"],"VN":["Vietnam","Việt Nam"],"CN":["China","Trung Quốc"]};
+const NT={"GH":["Ghana","Ghana"],"CN":["China","Trung Quốc"]};
 const roleT=zh=>{if(S.lang==='zh')return zh;const m=ROLE_MAP[zh];if(!m)return zh;return S.lang==='en'?m.r[1]:(RT[zh]||[])[LI[S.lang]-1]||m.r[1]};
 const indT=id=>{const i=IND.find(x=>x.id===id);return S.lang==='zh'?i.zh:IT[id][LI[S.lang]]};
 const natT=c=>S.lang==='zh'?NATS[c].zh:NT[c][LI[S.lang]];
@@ -734,7 +732,7 @@ const DB={on:!!(CFG.supabaseUrl&&CFG.supabaseAnonKey),
   async q(path,opt={}){const r=await fetch(CFG.supabaseUrl.replace(/\/$/,'')+'/rest/v1/'+path,{...opt,headers:{apikey:CFG.supabaseAnonKey,Authorization:'Bearer '+CFG.supabaseAnonKey,'Content-Type':'application/json',Prefer:'return=representation'}});
     if(!r.ok)throw new Error(await r.text());const tx=await r.text();return tx?JSON.parse(tx):null}};
 const jobRow=j=>{const {id,dbid,...d}=j;return {data:d}};
-async function dbSafe(fn,silent){if(!DB.on)return null;try{return await fn()}catch(e){console.error(e);if(!silent)toast(S.lang==='zh'||S.mode==='emp'?'网络不稳定，云端同步失败':S.lang==='vi'?'Lỗi mạng, chưa đồng bộ được':'Network error, not synced');return null}}
+async function dbSafe(fn,silent){if(!DB.on)return null;try{return await fn()}catch(e){console.error(e);if(!silent)toast(S.lang==='zh'||S.mode==='emp'?'网络不稳定，云端同步失败':'Network error, not synced');return null}}
 
 /* ================= EXTRA DATA ================= */
 S.lang=detectLang();S.detected=S.lang;document.documentElement.lang=S.lang;
@@ -744,17 +742,17 @@ const DESC_EN={1:'Welding for steel-structure factory buildings. Must read drawi
 S.jobs.forEach(j=>{j.owner='me';j.company=MYCO;j.descEn=DESC_EN[j.id]});
 S.jobs.find(j=>j.id===3).sal='1,300–1,800';
 S.jobs.push(
- {id:5,owner:'other',company:'中加农业发展',title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,200–1,600',city:'库马西',n:30,apps:61,status:'open',nats:['GH','VN'],zh:false,stay:true,desc:'腰果园采收与分拣，按时+计件，提供宿舍。',descEn:'Cashew harvesting and sorting. Hourly pay plus piece rate. Dormitory provided.'},
+ {id:5,owner:'other',company:'中加农业发展',title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,200–1,600',city:'库马西',n:30,apps:61,status:'open',nats:['GH'],zh:false,stay:true,desc:'腰果园采收与分拣，按时+计件，提供宿舍。',descEn:'Cashew harvesting and sorting. Hourly pay plus piece rate. Dormitory provided.'},
  {id:6,owner:'other',company:'华程路桥',title:'钢筋工',en:'Steel Fixer',ind:'con',exp:'2+ 年',sal:'2,600–3,400',city:'塔科拉迪',n:8,apps:24,status:'open',nats:['GH'],zh:false,stay:true,desc:'路桥项目钢筋绑扎，需能看懂基础图纸。',descEn:'Rebar fixing on a road and bridge project. Must read basic drawings.'},
  {id:7,owner:'other',company:'远航物流',title:'仓管员',en:'Storekeeper',ind:'log',exp:'2+ 年',sal:'2,800–3,500',city:'特马',n:2,apps:15,status:'open',nats:['GH','CN'],zh:false,stay:false,desc:'仓库出入库、盘点，会基础电脑操作。',descEn:'Warehouse goods in/out and stock counts. Basic computer skills needed.'},
  {id:8,owner:'other',company:'金泰矿业',title:'重卡司机',en:'Dump Truck Driver',ind:'min',exp:'3+ 年',sal:'4,000–5,200',city:'奥布阿西',n:5,apps:19,status:'open',nats:['GH'],zh:false,stay:true,desc:'矿区自卸车驾驶，白夜班轮换，需重型驾照。',descEn:'Mine dump truck driving, rotating day/night shifts. Valid heavy-vehicle licence required.'},
  {id:9,owner:'other',company:'鸿运餐饮',title:'保洁',en:'Cleaner',ind:'svc',exp:'不限',sal:'1,200–1,500',city:'阿克拉',n:3,apps:40,status:'open',nats:['GH'],zh:false,stay:false,desc:'餐厅及后厨清洁，每周六天，包工作餐。',descEn:'Restaurant and kitchen cleaning, 6 days a week. Meals provided.'},
- {id:10,owner:'other',company:'恒达机械',title:'CNC操作工',en:'CNC Operator',ind:'ind',exp:'2+ 年',sal:'2,800–3,800',city:'特马',n:4,apps:12,status:'open',nats:['GH','VN','CN'],zh:false,stay:true,desc:'操作数控车床，首件检验，熟练使用量具。',descEn:'Operate CNC lathes, first-piece inspection, confident with measuring tools.'}
+ {id:10,owner:'other',company:'恒达机械',title:'CNC操作工',en:'CNC Operator',ind:'ind',exp:'2+ 年',sal:'2,800–3,800',city:'特马',n:4,apps:12,status:'open',nats:['GH','CN'],zh:false,stay:true,desc:'操作数控车床，首件检验，熟练使用量具。',descEn:'Operate CNC lathes, first-piece inspection, confident with measuring tools.'}
 );
 if(CFG.showDemoData===false){WORKERS.length=0;S.jobs=[];S.chats=[];S.interviews=[]}
 
 /* ================= WORKER VIEWS ================= */
-const NAT_FROM_LANG={vi:'VN',zh:'CN',en:'GH'};
+const NAT_FROM_LANG={zh:'CN',en:'GH'};
 function newReg(){return {step:1,name:'',phone:'',nat:NAT_FROM_LANG[S.lang]||'GH',gender:'m',age:'',city:0,ind:'ind',role:'焊工',exp:2,sal:'',avail:'now',zh:'none',idType:(NAT_FROM_LANG[S.lang]||'GH')==='GH'?'Ghana Card':'passport',idPhoto:null,photo:null,permit:null,health:null,consent:false}}
 function startWorker(){S.mode='wk';S.hist=[];if(S.me){S.view='w_home'}else{S.reg=S.reg||newReg();S.view='w_reg'}render(true)}
 function startEmployer(){S.mode='emp';tab('home')}
@@ -933,7 +931,7 @@ S.settings=Object.assign({notify:true,ivRemind:true},LS.get('settings',{}));
   (st.applied||[]).forEach(x=>S.applied.add(x));
   if(st.saved)S.saved=new Set(st.saved);
   if(typeof st.translate==='boolean')S.translate=st.translate;
-  if(st.lang&&LI[st.lang]!==undefined){S.lang=st.lang;document.documentElement.lang=st.lang}
+  if(st.lang&&LANG_LIST.some(x=>x[0]===st.lang)){S.lang=st.lang;document.documentElement.lang=st.lang}
   if(st.jobsMine){S.jobs=[...st.jobsMine,...S.jobs.filter(j=>j.owner!=='me')]}
   if(st.interviews)S.interviews=st.interviews;
   if(st.chats)S.chats=st.chats.filter(c=>W(c.wid));
@@ -1040,7 +1038,7 @@ V.permit=()=>{const foreign=WORKERS.filter(w=>w.nat!=='GH');const mine=new Set([
  let l=foreign.filter(w=>S.pf==='all'?mine.has(w.id):S.pf==='ok'?w.permit===true:w.permit!==true);if(S.pf==='all'&&!l.length)l=foreign.slice(0,6);
  const step=(n,tt,d)=>`<div class="row gap" style="align-items:flex-start;margin:12px 0"><span style="width:28px;height:28px;border-radius:50%;background:#161616;color:var(--lime);display:grid;place-items:center;font-weight:800;flex:none">${n}</span><div><b>${tt}</b><div class="sm muted" style="line-height:1.6;margin-top:2px">${d}</div></div></div>`;
  return pageHdr('工作许可')+`<div class="pad">
-  <div class="box" style="margin-top:0"><h4>谁需要办理？</h4><div class="sm" style="line-height:1.7">在加纳受雇工作的<b>外籍员工</b>（如中国、越南籍）须持有效的工作许可；加纳籍员工无需办理，但需登记 SSNIT。</div></div>
+  <div class="box" style="margin-top:0"><h4>谁需要办理？</h4><div class="sm" style="line-height:1.7">在加纳受雇工作的<b>外籍员工</b>（如中国籍）须持有效的工作许可；加纳籍员工无需办理，但需登记 SSNIT。</div></div>
   <div class="box"><h4>一般流程（以官方最新规定为准）</h4>
    ${step(1,'确认途径','通常向加纳移民局（Ghana Immigration Service）申请工作许可；符合条件的投资企业可通过加纳投资促进中心（GIPC）申请移民配额。')}
    ${step(2,'准备材料','常见包括：护照、照片、劳动合同或聘用信、学历/技能证明、公司注册与税务文件、体检证明等，具体清单以受理机构要求为准。')}
@@ -1061,7 +1059,7 @@ S.pc='面试';S.pl='en';
 V.translate=()=>{const ints=WORKERS.filter(w=>w.role==='中英翻译').sort((a,b)=>(+b.rating||0)-(+a.rating||0)).slice(0,4);
  return pageHdr('翻译服务')+`<div class="pad">
   <div class="row between"><div class="tabsx" style="margin:0;padding:0">${Object.keys(PHRASES).map(k=>`<div class="tabx" style="${S.pc===k?'background:#161616;color:#fff':''}" onclick="S.pc='${k}';render(false)">${k}</div>`).join('')}</div></div>
-  <div class="seg" style="margin-top:12px">${[['en','中文 → English'],['vi','中文 → Tiếng Việt']].map(x=>`<button class="${S.pl===x[0]?'on':''}" onclick="S.pl='${x[0]}';render(false)">${x[1]}</button>`).join('')}</div>
+  
   ${PHRASES[S.pc].map((p,k)=>`<div class="box" style="margin-top:10px;padding:14px 16px"><div class="b">${p[0]}</div><div style="margin-top:6px;font-size:15px">${S.pl==='en'?p[1]:p[2]}</div>
    <div class="row gap6" style="margin-top:10px"><span class="chip sm" onclick="copyText(PHRASES[S.pc][${k}][${S.pl==='en'?1:2}])">${ic('doc',14)}复制</span><span class="chip sm" onclick="phraseTo(${k})">${ic('send',14)}发给工人</span></div></div>`).join('')}
   <div class="sec-h">预约人工翻译 <a onclick="S.f={...S.f,ind:'svc',role:'中英翻译',nat:'all',q:''};tab('browse')">更多 ›</a></div>
@@ -1069,7 +1067,7 @@ V.translate=()=>{const ints=WORKERS.filter(w=>w.role==='中英翻译').sort((a,b
  </div>`};
 function phraseTo(k){const p=PHRASES[S.pc][k];const list=S.chats.map(c=>W(c.wid)).filter(Boolean);
  if(!list.length){toast('还没有聊天对象，先在人才库联系工人');return}
- openSheet(`<div class="b" style="font-size:18px;margin-bottom:8px">发给谁？</div>${list.map(w=>`<div class="li" style="cursor:pointer" onclick="closeSheet();sendToWorker(${w.id},PHRASES[S.pc][${k}][0],PHRASES[S.pc][${k}][${w.nat==='VN'?2:1}]);openChat(${w.id})">${avatar(w,'sm')}<span>${esc(w.name)} ${flag(w.nat)}</span><span class="xs muted" style="margin-left:auto">${w.nat==='VN'?'越南语':'英语'}</span></div>`).join('')}`)}
+ openSheet(`<div class="b" style="font-size:18px;margin-bottom:8px">发给谁？</div>${list.map(w=>`<div class="li" style="cursor:pointer" onclick="closeSheet();sendToWorker(${w.id},PHRASES[S.pc][${k}][0],PHRASES[S.pc][${k}][1]);openChat(${w.id})">${avatar(w,'sm')}<span>${esc(w.name)} ${flag(w.nat)}</span><span class="xs muted" style="margin-left:auto">英语</span></div>`).join('')}`)}
 
 /* ---------- 帮助中心 ---------- */
 const FAQ=[['怎么找到合适的工人？','在“人才库”按行业、工种、国籍筛选，或在首页点行业卡片。看中后可收藏、发消息或直接发起面试邀请。'],
@@ -1091,7 +1089,7 @@ async function sendFeedback(){const c=$('#fbC').value.trim();if(!c){toast('请�
 /* ---------- 设置 ---------- */
 V.settings=()=>{const row=(label,sub,ctl)=>`<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">${label}</div>${sub?`<div class="xs muted" style="margin-top:2px">${sub}</div>`:''}</div>${ctl}</div>`;
  return pageHdr('设置')+`<div class="pad">
-  <div class="box" style="margin-top:0">${row('聊天自动翻译','中文 ⇄ 英语 / 越南语',sw(S.translate,"S.translate=!S.translate;render(false)"))}${row('新消息提醒','',sw(S.settings.notify,"S.settings.notify=!S.settings.notify;render(false)"))}${row('面试提醒','面试前一天提醒',sw(S.settings.ivRemind,"S.settings.ivRemind=!S.settings.ivRemind;render(false)"))}</div>
+  <div class="box" style="margin-top:0">${row('聊天自动翻译','中文 ⇄ 英语',sw(S.translate,"S.translate=!S.translate;render(false)"))}${row('新消息提醒','',sw(S.settings.notify,"S.settings.notify=!S.settings.notify;render(false)"))}${row('面试提醒','面试前一天提醒',sw(S.settings.ivRemind,"S.settings.ivRemind=!S.settings.ivRemind;render(false)"))}</div>
   <div class="box">${row('企业信息','鑫源建材（加纳）有限公司 · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','HireGH 1.3.0','')}</div>
   <div class="box"><div class="li" style="cursor:pointer" onclick="openSheet('<div class=&quot;b&quot; style=&quot;font-size:18px&quot;>清除本机数据？</div><p class=&quot;sm muted&quot; style=&quot;margin:8px 0 16px&quot;>会清除本机保存的聊天、收藏、面试和岗位草稿，不影响云端数据。</p><button class=&quot;bigbtn&quot; style=&quot;width:100%;background:var(--red)&quot; onclick=&quot;LS.clear();location.reload()&quot;>确认清除</button>')">${ic('trash')}<span>清除本机数据</span></div>
    <div class="li" style="cursor:pointer" onclick="toWelcome()">${ic('users')}<span>切换身份 / 返回欢迎页</span></div></div></div>`};
@@ -1123,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.4.1',APP_BUILD=15;
+const APP_VER='1.5.0',APP_BUILD=16;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
