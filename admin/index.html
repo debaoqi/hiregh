@@ -139,7 +139,7 @@ const fmt=d=>{if(!d)return '—';const x=new Date(d);return `${x.getUTCMonth()+1
 const money=n=>'GH₵'+(+n||0).toLocaleString('en-US');
 
 /* ---------- reference data (same as App) ---------- */
-const NATS={GH:['加纳','linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)','#000'],VN:['越南','#DA251D','#FFCD00'],CN:['中国','#DE2910','#FFDE00']};
+const NATS={GH:['加纳','linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)','#000'],CN:['中国','#DE2910','#FFDE00']};
 const flag=c=>{const n=NATS[c];if(!n)return '';return `<span class="flag" style="background:${n[1]}">${n[2]?`<i style="color:${n[2]}">★</i>`:''}</span>`};
 const natName=c=>NATS[c]?NATS[c][0]:esc(c||'—');
 const IND={ind:['工业制造',['焊工','电工','机修工','叉车司机','CNC操作工','质检员','普工']],agr:['农业种植',['种植工','农机手','养殖工','采摘工','灌溉技工','农场主管']],svc:['服务业',['中餐厨师','司机','保安','保洁','中英翻译','家政保姆','会计文员']],con:['建筑工程',['泥瓦工','钢筋工','木工','水电工','挖掘机司机','测量员']],min:['矿业能源',['矿工','爆破员','重卡司机','设备维修','选矿工']],log:['物流仓储',['仓管员','装卸工','货车司机','报关员']]};
@@ -185,12 +185,12 @@ async function run(fn,ok){try{await fn();if(ok)toast(ok);render()}catch(e){conso
 /* ---------- demo data ---------- */
 function demo(){
   let sd=7;const rnd=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};const pick=a=>a[Math.floor(rnd()*a.length)];
-  const NM={GH:['Kwame Mensah','Ama Owusu','Kofi Boateng','Akosua Asante','Yaw Darko','Efua Appiah','Kwabena Ofori','Abena Osei','Kojo Asare','Esi Mensah','Samuel Tetteh','Grace Nyarko','Isaac Owusu','Joseph Ansah'],VN:['Nguyễn Văn An','Trần Thị Hoa','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam','Đỗ Thị Lan'],CN:['张伟','李强','陈明','王芳','赵磊','刘洋']};
-  const LG={GH:'en',VN:'vi',CN:'zh'};const cols=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8'];
+  const NM={GH:['Kwame Mensah','Ama Owusu','Kofi Boateng','Akosua Asante','Yaw Darko','Efua Appiah','Kwabena Ofori','Abena Osei','Kojo Asare','Esi Mensah','Samuel Tetteh','Grace Nyarko','Isaac Owusu','Joseph Ansah'],CN:['张伟','李强','陈明','王芳','赵磊','刘洋']};
+  const LG={GH:'en',CN:'zh'};const cols=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8'];
   const now=Date.now();let id=1000;S.W=[];
   for(let k=0;k<168;k++){
     const ago=Math.floor(Math.pow(rnd(),1.6)*60);const t=now-ago*864e5-Math.floor(rnd()*864e5*.9);
-    const nat=rnd()<.62?'GH':(rnd()<.65?'VN':'CN');const ind=pick(Object.keys(IND));const role=pick(IND[ind][1]);
+    const nat=rnd()<.7?'GH':'CN';const ind=pick(Object.keys(IND));const role=pick(IND[ind][1]);
     let status=ago<=2?(rnd()<.8?'pending':'approved'):ago<=6?(rnd()<.35?'pending':'approved'):'approved';
     if(status==='approved'&&rnd()<.09)status='rejected';if(status==='approved'&&rnd()<.04)status='disabled';
     const w={id:++id,created_at:new Date(t).toISOString(),status,review:status==='pending'?null:{by:'admin@hiregh.com',at:new Date(t+36e5*5).toISOString(),reason:status==='rejected'?pick(['证件照片不清晰','信息与证件不一致','重复注册']):''},
@@ -204,7 +204,7 @@ function demo(){
    .map((x,k)=>({id:200+k,created_at:new Date(now-k*2.3*864e5).toISOString(),status:k>=8?'pending':k===10?'offline':'approved',d:{title:x[0],company:co[x[1]],ind:Object.keys(IND).find(i=>IND[i][1].includes(x[0])),sal:x[2],city:x[3],n:x[4],apps:x[5],exp:'3+ 年',desc:'岗位描述示例：工作内容、上班时间、待遇说明。',descEn:k<8?'Sample job description in English.':''}}));
   S.J[10].status='offline';
   S.E=co.map((c,k)=>({id:300+k,created_at:new Date(now-(k*6+1)*864e5).toISOString(),status:k===7?'pending':k===6?'pending':'approved',d:{name:c,license:'CS'+(1e8+k*7319),contact:['王经理','李总','张主管','陈经理','刘总','赵经理','孙总','周经理'][k],phone:'+233 24 '+(1000000+k*13579),city:CITIES[k%8],industry:['建材','农业','路桥','物流','矿业','餐饮','机械','建材'][k],jobs:S.J.filter(j=>j.d.company===c).length}}));
-  S.R=[['收费','有人以“介绍工作”为由向我收取 200 塞地押金','中介 0244xxxxxx','open'],['虚假岗位','岗位写包住宿，面试时说不包','鸿运餐饮 · 保洁','doing'],['骚扰','面试后多次深夜打电话','用户 #1032','open'],['信息错误','工资单位写错了','华程路桥 · 钢筋工','done'],['其他','App 越南语有一处翻译不准确','系统','done']]
+  S.R=[['收费','有人以“介绍工作”为由向我收取 200 塞地押金','中介 0244xxxxxx','open'],['虚假岗位','岗位写包住宿，面试时说不包','鸿运餐饮 · 保洁','doing'],['骚扰','面试后多次深夜打电话','用户 #1032','open'],['信息错误','工资单位写错了','华程路桥 · 钢筋工','done'],['其他','App 英文有一处翻译不准确','系统','done']]
    .map((x,k)=>({id:400+k,created_at:new Date(now-k*1.7*864e5).toISOString(),status:x[3],d:{type:x[0],content:x[1],target:x[2],reporter:pick(S.W).d.name,note:x[3]==='done'?'已联系双方处理':''}}));
   S.L=S.W.filter(w=>w.review).slice(0,14).map((w,k)=>({id:k,created_at:w.review.at,admin:w.review.by,action:w.status==='rejected'?'驳回工人':'审核通过',target:'worker:'+w.id,detail:{name:w.d.name,reason:w.review.reason||undefined}}));
   S.A=[{email:'admin@hiregh.com',role:'超级管理员'},{email:'reviewer@hiregh.com',role:'审核员'}];
@@ -389,7 +389,7 @@ V.jobs=()=>{const l=S.J.filter(j=>S.jf==='all'||j.status===S.jf);
    <td class="hide-sm">${j.d.descEn?'<span class="chip st-approved">已有</span>':'<span class="chip st-pending">缺少</span>'}</td><td>${fmt(j.created_at)}</td><td>${stChip(j.status)}</td>
    <td style="white-space:nowrap">${j.status==='pending'||j.status==='offline'||j.status==='rejected'?`<button class="btn sm lime" onclick="jobStatus(${j.id},'approved')">上架</button>`:`<button class="btn sm" onclick="jobStatus(${j.id},'offline')">下架</button>`}
    ${j.status==='pending'?`<button class="btn sm" onclick="jobStatus(${j.id},'rejected')">驳回</button>`:''}<button class="btn sm" onclick="editJob(${j.id})">${ic('edit',14)}</button><button class="btn sm" onclick="delJob(${j.id})">${ic('trash',14)}</button></td></tr>`).join('')||'<tr><td colspan="11" class="empty">暂无岗位</td></tr>'}</table></div>
-  <div class="note" style="margin-top:12px">工人端看到的岗位描述来自“英文描述”。企业发布的中文岗位如果缺少英文描述，可以点编辑补上，越南语、法语、印地语工人都会看到这段英文。</div>`};
+  <div class="note" style="margin-top:12px">工人端看到的岗位描述来自“英文描述”。企业发布的中文岗位如果缺少英文描述，可以点编辑补上，加纳工人看到的就是这段英文。</div>`};
 function jobStatus(id,s){const j=S.J.find(x=>x.id===id);run(async()=>{await API.patch('jobs',id,{status:s});j.status=s;await API.log({approved:'岗位上架',offline:'岗位下架',rejected:'驳回岗位'}[s],'job:'+id,{title:j.d.title,company:j.d.company})},'已更新')}
 function editJob(id){const j=S.J.find(x=>x.id===id);const f=(k,l,t='text')=>`<div class="fld"><label>${l}</label><input class="inp" id="j_${k}" type="${t}" value="${esc(j.d[k]??'')}"></div>`;
   openModal(`<div class="ch">编辑岗位<div class="r"><button class="btn sm" onclick="closeModal()">${ic('x')}</button></div></div><div class="f2">${f('title','岗位名称')}${f('company','企业')}${f('sal','月薪范围 GH₵')}<div class="fld"><label>地点</label><select class="inp" id="j_city">${CITIES.map(c=>`<option ${c===j.d.city?'selected':''}>${c}</option>`).join('')}</select></div>${f('n','招聘人数','number')}${f('exp','经验要求')}</div>
