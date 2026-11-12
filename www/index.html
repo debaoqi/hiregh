@@ -445,7 +445,7 @@ function mCard(w){
 const V={};
 V.home=()=>{
   const natCount=c=>WORKERS.filter(w=>w.nat===c).length;
-  const recs=[...WORKERS.filter(w=>w.isNew&&w.self),...[...WORKERS].sort((a,b)=>(+b.rating||0)-(+a.rating||0))].filter((w,i,a)=>a.indexOf(w)===i).slice(0,8);
+  const recs=[...WORKERS.filter(w=>w.isNew&&w.self),...[...WORKERS].sort((a,b)=>(!!b.photo-!!a.photo)||((+b.rating||0)-(+a.rating||0)))].filter((w,i,a)=>a.indexOf(w)===i).slice(0,8);
   return `<div class="pad">
   <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · 鑫源建材</div></div></div>
    <div class="row gap6"><button class="icbtn" onclick="tab('browse');setTimeout(()=>$('#q')&&$('#q').focus(),50)">${ic('search')}</button><button class="icbtn" onclick="openNotifs()">${ic('bell')}<span class="dot"></span></button></div></div>
@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.5.1',APP_BUILD=17;
+const APP_VER='1.6.0',APP_BUILD=18;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1196,6 +1196,79 @@ const updRow=()=>`<div class="li" style="cursor:pointer" onclick="${hasUpd()?"sh
 P.download='<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>';
 const _vset=V.settings;V.settings=()=>_vset().replace(/<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">版本<\/div>.*?<\/div><\/div><\/div>/,'').replace('<div class="box"><div class="li" style="cursor:pointer" onclick="openSheet(','<div class="box">'+updRow()+'<div class="li" style="cursor:pointer" onclick="openSheet(');
 const _vme2=V.w_me;V.w_me=()=>_vme2().replace(`<div class="li" style="cursor:pointer" onclick="toWelcome()">`,updRow()+`<div class="li" style="cursor:pointer" onclick="toWelcome()">`);
+
+</script>
+<script>
+/* ================= v1.6 · 资料永久保存 + 云端同步 + 有照片优先 ================= */
+Object.assign(T,{
+ st_ok:['Profile approved','Hồ sơ đã được duyệt','档案已通过审核'],
+ st_rej:['Please update your profile','Vui lòng cập nhật hồ sơ','资料需修改'],
+ st_rej_tip:['Reason','Lý do','原因'],
+ draft_back:['Your unfinished form was restored','Đã khôi phục biểu mẫu chưa xong','已恢复你上次未填完的资料'],
+});
+/* 1) 尽量让系统不清理本机数据 */
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+
+/* 2) 本机保存：除了已保存的档案，还记住身份（工人/企业）和没填完的表单 */
+function regWorth(r){return r&&!r.editing&&(r.name||r.phone||r.photo||r.idPhoto||r.step>1)}
+const _persist1=persist;
+persist=function(){_persist1();
+  const st2={mode:S.mode,reg:regWorth(S.reg)?S.reg:null,me:S.me||null,myToken:S.myToken||null};
+  try{localStorage.setItem('hiregh_state2',JSON.stringify(st2))}catch(e){
+    // 空间不够时，先去掉表单里的大图再存，保证文字资料不丢
+    try{const r=st2.reg?{...st2.reg,idPhoto:null,permit:null,health:null}:null;localStorage.setItem('hiregh_state2',JSON.stringify({...st2,reg:r}))}catch(e2){}
+  }};
+(function restore2(){
+  const st2=LS.get('state2',null);if(!st2)return;
+  // 主存档丢失时，用备份恢复工人档案
+  if(!S.me&&st2.me){S.me=st2.me;if(!WORKERS.some(w=>w.id===S.me.id))WORKERS.unshift(S.me)}
+  if(!S.myToken&&st2.myToken)S.myToken=st2.myToken;
+  if(st2.mode==='wk'){S.mode='wk';S.hist=[];
+    if(S.me){S.view='w_home'}else if(st2.reg){S.reg={...newReg(),...st2.reg};S.view='w_reg';setTimeout(()=>toast(t('draft_back')),800)}
+    else{S.reg=newReg();S.view='w_reg'}
+    render(true)}
+  else if(st2.mode==='emp'){S.mode='emp';tab('home')}
+})();
+
+/* 3) 云端同步：用注册时保存的凭证，把云端的最新档案和审核结果拉回手机 */
+async function syncMe(){
+  if(!DB.on||!S.me||!S.me.dbid||!S.myToken)return;
+  try{
+    const r=await DB.q('rpc/get_my_worker',{method:'POST',body:JSON.stringify({p_id:S.me.dbid,p_token:S.myToken})});
+    if(!r||!r.data)return;
+    const keep={id:S.me.id,dbid:S.me.dbid};
+    const me={...S.me,...r.data,...keep,status:r.status,review:r.review||null,pending:r.status!=='approved'};
+    if(!me.photo&&S.me.photo)me.photo=S.me.photo;
+    S.me=me;const i=WORKERS.findIndex(w=>w.id===me.id);if(i>=0)WORKERS[i]=me;else WORKERS.unshift(me);
+    persist();if(S.mode==='wk')render(false);
+  }catch(e){}
+}
+setTimeout(syncMe,1500);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncMe()});
+
+/* 审核状态显示：审核中 / 已通过 / 需修改 */
+function statusFix(h){const m=S.me;if(!m||!m.status||m.status==='pending')return h;
+  const pend=t('verify_pending');
+  if(m.status==='approved')return h.split(pend).join(t('st_ok')).replace(/#161616;color:var\(--lime\)/,'var(--lime);color:#161616');
+  if(m.status==='rejected')return h.split(pend).join(t('st_rej')+(m.review&&(m.review.reason||m.review.note)?' · '+esc(m.review.reason||m.review.note):''));
+  return h}
+const _vwh=V.w_home;V.w_home=()=>statusFix(_vwh());
+const _vwm=V.w_me;V.w_me=()=>statusFix(_vwm());
+
+/* 4) 填表时不打断：更新提示等表单提交后再弹出 */
+const FORM_VIEWS=['w_reg','post','contract'];
+const _showUpd1=showUpd;
+showUpd=function(v,kind){
+  if(kind==='web'&&!v.force&&FORM_VIEWS.includes(S.view)){UPD.deferred=[v,kind];return}
+  UPD.deferred=null;return _showUpd1(v,kind)};
+const _render6=render;
+render=function(top){_render6(top);
+  if(UPD.deferred&&!FORM_VIEWS.includes(S.view)){const d=UPD.deferred;UPD.deferred=null;setTimeout(()=>showUpd(d[0],d[1]),400)}};
+
+/* 5) 人才库：有照片的排在前面（其余顺序不变） */
+const hasPhoto=w=>!!(w&&w.photo&&/^(data:image\/|https:\/\/)/.test(w.photo));
+const _filtered6=filtered;
+filtered=function(){return _filtered6().sort((a,b)=>hasPhoto(b)-hasPhoto(a))};
 
 </script>
 </body>

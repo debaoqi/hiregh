@@ -1,6 +1,6 @@
 {
-  "version": "1.5.1",
-  "build": 17,
+  "version": "1.6.0",
+  "build": 18,
   "date": "2026-11-12",
   "force": false,
   "minNative": 0,
@@ -8,10 +8,19 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "首页标题改为“在加纳找靠谱的人”"
+      "手机上填写和上传的资料会一直保存，系统更新后不会丢失",
+      "没填完的注册表单也会自动保存，下次打开继续填",
+      "重新打开 App 直接回到上次的身份（工人/企业）",
+      "工人可以看到自己的审核结果（审核中 / 已通过 / 需修改）",
+      "填表时不会被更新提示打断",
+      "人才库中有照片的工人优先显示"
     ],
     "en": [
-      "Updated home page title"
+      "Your saved profile and photos stay after every update",
+      "Unfinished forms are saved automatically",
+      "The app opens where you left off",
+      "See your review result: under review / approved / needs changes",
+      "Update messages wait until you finish a form"
     ]
   }
 }
