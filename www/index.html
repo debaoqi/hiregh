@@ -41,10 +41,10 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stro
 .av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#111;flex:none;font-size:15px;position:relative}
 .av.lg{width:92px;height:92px;font-size:30px;border:4px solid #fff}
 .av.sm{width:36px;height:36px;font-size:13px}
-.icbtn{width:44px;height:44px;border-radius:50%;background:var(--card);display:grid;place-items:center;position:relative}
+.icbtn{width:44px;height:44px;border-radius:50%;background:var(--card);color:var(--ink);display:grid;place-items:center;position:relative;flex:none;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .icbtn.dark{background:#161616;color:#fff}
 .dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--card)}
-.hero{font-size:38px;line-height:1.08;font-weight:800;letter-spacing:-1px;margin:22px 0 18px}
+.hero{font-size:36px;line-height:1.18;font-weight:800;letter-spacing:-1px;margin:26px 0 20px}
 .hero .hl{background:var(--gold);padding:0 8px;border-radius:14px;display:inline-block;transform:rotate(-2deg)}
 .searchbar{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:30px;padding:8px 8px 8px 18px;color:var(--muted)}
 .searchbar input{flex:1;border:0;background:none;outline:none;font-size:15px;color:var(--ink);min-width:0}
@@ -215,6 +215,7 @@ textarea.fi{border-radius:24px;min-height:90px;resize:none}
 .consent input{width:20px;height:20px;flex:none;accent-color:#161616;margin-top:2px}
 @media (max-width:519px){.screen{padding-top:env(safe-area-inset-top)}.nav{bottom:calc(14px + env(safe-area-inset-bottom))}.bbar,.inputbar{padding-bottom:calc(20px + env(safe-area-inset-bottom))}}
 .select{appearance:none;background:var(--card);border:0;border-radius:30px;padding:9px 14px;font-size:13px;font-weight:600;outline:none}
+.note-y{background:var(--gold);border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.6;margin-bottom:6px}details>summary::-webkit-details-marker{display:none}
 </style>
 </head>
 <body>
@@ -350,7 +351,7 @@ IND.forEach(ind=>ind.roles.forEach(r=>{
   }
 }));
 const W=id=>WORKERS.find(w=>w.id===+id);
-const initials=n=>/[一-龥]/.test(n)?n.slice(-1):n.split(' ').filter(Boolean).slice(0,2).map(s=>s[0]).join('');
+const initials=n=>{const w=String(n||'').replace(/[^\p{L}\s]/gu,' ').trim().split(/\s+/).filter(Boolean);if(!w.length)return '?';if(/[\u4e00-\u9fa5]/.test(w[0])){const z=w[0].match(/[\u4e00-\u9fa5]/g);return z[z.length-1]}return w.filter(x=>!/[\u4e00-\u9fa5]/.test(x)).slice(0,2).map(x=>x[0].toUpperCase()).join('')||'?'};
 const avatar=(w,cls='')=>w.photo?`<div class="av ${cls}" style="background:#ddd url('${w.photo}') center/cover"></div>`:`<div class="av ${cls}" style="background:${w.col}">${initials(w.name)}</div>`;
 const money=n=>'GH₵'+n.toLocaleString('en-US');
 
@@ -450,7 +451,7 @@ V.home=()=>{
   return `<div class="pad">
   <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · 鑫源建材</div></div></div>
    <div class="row gap6"><button class="icbtn" onclick="tab('browse');setTimeout(()=>$('#q')&&$('#q').focus(),50)">${ic('search')}</button><button class="icbtn" onclick="openNotifs()">${ic('bell')}<span class="dot"></span></button></div></div>
-  <h1 class="hero">在加纳<br>找到<span class="hl">靠谱</span>的<br>工友</h1>
+  <h1 class="hero">在加纳<br>找到<span class="hl">靠谱</span>的工友</h1>
   <div class="searchbar" onclick="tab('browse')">${ic('search')}<span style="flex:1">搜索工种、技能、城市…</span><span class="pill dark">${ic('filter',16)}筛选</span></div>
   <div class="stats"><div class="stat"><div class="n">${WORKERS.length}</div><div class="xs muted">在册工人</div></div>
    <div class="stat"><div class="n">${WORKERS.length?Math.round(WORKERS.filter(w=>w.card).length/WORKERS.length*100):0}%</div><div class="xs muted">证件已核验</div></div>
@@ -463,7 +464,7 @@ V.home=()=>{
   <div class="hscroll">${Object.keys(NATS).map(c=>`<div class="natc" onclick="S.f.nat='${c}';S.f.ind='all';S.f.role='all';tab('browse')"><div class="row gap6">${flag(c)}<span class="sm b">${NATS[c].zh}</span></div><div class="n">${natCount(c)}</div><div class="xs muted">${NATS[c].en}</div></div>`).join('')}</div>
   <div class="sec-h">今日推荐 <a onclick="S.f.sort='rate';tab('browse')">更多 ›</a></div>
   <div class="hscroll">${recs.map(mCard).join('')}</div>
-  <div class="box" style="background:#161616;color:#fff;margin-top:22px"><div class="row between"><div><div class="b" style="font-size:17px">用工合规小贴士</div><div class="sm" style="opacity:.7;margin-top:4px;line-height:1.5">2026年加纳全国最低日薪 GH₵21.77。外籍员工需持有效工作许可；加纳员工需登记 SSNIT。薪资参考 WageIndicator / Paylab 公开数据，具体以官方最新规定为准。</div></div><div class="go" style="width:40px;height:40px;border-radius:50%;background:var(--lime);color:#111;display:grid;place-items:center;flex:none;margin-left:10px">${ic('arrow')}</div></div></div>
+  <div class="box" style="background:#161616;color:#fff;margin-top:22px;cursor:pointer" onclick="go('permit')"><div class="row between"><div><div class="b" style="font-size:17px">用工合规小贴士</div><div class="sm" style="opacity:.7;margin-top:4px;line-height:1.5">2026年加纳全国最低日薪 GH₵21.77。外籍员工需持有效工作许可；加纳员工需登记 SSNIT。薪资参考 WageIndicator / Paylab 公开数据，具体以官方最新规定为准。</div></div><div class="go" style="width:40px;height:40px;border-radius:50%;background:var(--lime);color:#111;display:grid;place-items:center;flex:none;margin-left:10px">${ic('arrow')}</div></div></div>
   </div>`;
 };
 
@@ -507,7 +508,7 @@ V.worker=()=>{
    <div class="sec-h">录用流程</div>
    <div>${[['Stage 1','简历筛选','#9D7DFF','#fff','查看证件与工作经历，确认技能与岗位匹配。'],['Stage 2','面试 / 试工','#EE5A47','#161616','到厂面试或视频面试，技术岗建议安排半天试工。'],['Stage 3','签约入职','#F8C94A','#161616','签订劳动合同，登记 SSNIT，外籍员工办理工作许可。']].map(s=>`<div class="stage" style="background:${s[2]};color:${s[3]}"><span class="s">${s[0]}</span><div class="st" style="color:#161616">${ic('arrow',16)}</div><div class="t">${s[1]}</div><p>${s[4]}</p></div>`).join('')}</div>
   </div>
-  <div class="bbar"><button class="sqbtn" onclick="openChat(${w.id})">${ic('chat')}</button><button class="sqbtn" onclick="toast('已拨打平台中转电话')">${ic('phone')}</button><button class="bigbtn" onclick="inviteSheet(${w.id})">发起面试邀请 ${ic('right',18)}</button></div>`;
+  <div class="bbar"><button class="sqbtn" onclick="openChat(${w.id})">${ic('chat')}</button><button class="sqbtn" onclick="callSheet(${w.id})">${ic('phone')}</button><button class="bigbtn" onclick="inviteSheet(${w.id})">发起面试邀请 ${ic('right',18)}</button></div>`;
 };
 
 V.jobs=()=>{
@@ -576,7 +577,7 @@ const QUICK=[['您好，请问什么时候可以来面试？','Hello, when can y
 V.chat=()=>{
   const w=W(S.params.id);const c=S.chats.find(c=>c.wid===w.id);
   return `<div class="chead"><button class="icbtn" onclick="back()">${ic('back')}</button><div style="cursor:pointer" onclick="go('worker',{id:${w.id}})">${avatar(w,'sm')}</div><div style="flex:1;min-width:0"><div class="b row gap6" style="white-space:nowrap;overflow:hidden">${w.name} ${flag(w.nat)}</div><div class="xs muted">${w.role} · ${w.langs.join('/')}</div></div>
-   <button class="icbtn" style="${S.translate?'background:var(--lime)':''}" onclick="S.translate=!S.translate;render(false)">${ic('tr')}</button><button class="icbtn" onclick="toast('正在呼叫…')">${ic('phone')}</button></div>
+   <button class="icbtn" style="${S.translate?'background:var(--lime)':''}" onclick="S.translate=!S.translate;render(false)">${ic('tr')}</button><button class="icbtn" onclick="callSheet(${w.id})">${ic('phone')}</button></div>
   <div class="msgs"><div class="xs muted" style="text-align:center;margin:6px 0 10px">${S.translate?'已开启自动翻译 · 对方看到的是英文':'翻译已关闭'}</div>
    ${c.msgs.length?'':`<div class="empty sm">打个招呼吧，系统会自动把中文翻译成 ${w.langs[0]}</div>`}
    ${c.msgs.map(m=>`<div class="m ${m.me?'me':'them'}">${m.o}${S.translate&&m.t?`<div class="tr">${m.t}</div>`:''}<div class="tm">${m.tm}</div></div>`).join('')}</div>
@@ -614,8 +615,8 @@ function sendInvite(id){
 }
 
 V.me=()=>{
-  const qa=[['heart','收藏人才','#FFD9D2',"go('saved')"],['cal','面试安排','#FCEBB0',"go('interviews')"],['doc','用工合同','#E9DDFF',"toast('合同模板即将上线')"],['shield','工作许可','#DDF0A8',"toast('签证/工作许可服务即将上线')"],
-    ['tr','翻译服务','#CFE0FF',"toast('可预约中英翻译陪同')"],['brief','我的岗位','#F1ECDF',"tab('jobs')"],['help','帮助中心','#F1ECDF',"toast('客服：工作日 8:00–18:00')"],['gear','设置','#F1ECDF',"langSheet()"]];
+  const qa=[['heart','收藏人才','#FFD9D2',"go('saved')"],['cal','面试安排','#FCEBB0',"go('interviews')"],['doc','用工合同','#E9DDFF',"go('contract')"],['shield','工作许可','#DDF0A8',"go('permit')"],
+    ['tr','翻译服务','#CFE0FF',"go('translate')"],['brief','我的岗位','#F1ECDF',"tab('jobs')"],['help','帮助中心','#F1ECDF',"go('help')"],['gear','设置','#F1ECDF',"go('settings')"]];
   return `<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">我的</div><button class="icbtn" onclick="langSheet()">${ic('globe')}</button></div>
   <div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('shield',14)} 企业已认证</span><span class="b">HireGH</span></div>
    <div class="cn">鑫源建材（加纳）有限公司</div><div class="sm" style="opacity:.7;margin-top:4px">Xinyuan Building Materials Ghana Ltd. · 特马工业区</div>
@@ -892,7 +893,7 @@ async function boot(){
   S.view='welcome';render(true);
   if(!DB.on)return;
   const ws=await dbSafe(()=>DB.q('workers?select=id,data&order=id.asc&limit=2000'),true);
-  (ws||[]).forEach(r=>WORKERS.unshift({...r.data,id:100000+r.id,dbid:r.id}));
+  (ws||[]).forEach(r=>{if(!WORKERS.some(w=>w.id===100000+r.id))WORKERS.unshift({...r.data,id:100000+r.id,dbid:r.id})});
   const js=await dbSafe(()=>DB.q('jobs?select=id,data&order=id.asc&limit=1000'),true);
   (js||[]).forEach(r=>S.jobs.unshift({...r.data,id:100000+r.id,dbid:r.id}));
   render(false);
@@ -904,6 +905,220 @@ boot();
   if(S.mode==='wk'&&S.view!=='w_home'&&S.me){S.view='w_home';return render(true)}if(S.mode==='emp'&&S.view!=='home')return tab('home');
   if(S.view!=='welcome')return toWelcome();A.exitApp()})})();
 if(!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+</script>
+<script>
+/* ================= v1.3 · 本地记忆 + 常用功能 + 举报/反馈 ================= */
+Object.assign(T,{
+ report:['Report a problem','Báo cáo vấn đề','举报'],
+ report_title:['What is wrong?','Có vấn đề gì?','举报原因'],
+ rp_fee:['Asked me to pay money','Đòi tôi trả tiền','向我收费'],
+ rp_fake:['Fake or wrong job','Việc làm giả hoặc sai','虚假岗位'],
+ rp_harass:['Harassment','Quấy rối','骚扰'],
+ rp_other:['Other','Khác','其他'],
+ report_ph:['Tell us what happened (optional)','Mô tả sự việc (không bắt buộc)','补充说明（选填）'],
+ send:['Send','Gửi','提交'],
+ report_ok:['Thank you. Our team will check it.','Cảm ơn. Chúng tôi sẽ kiểm tra.','已提交，平台会尽快处理'],
+ profile_updated:['Profile updated. It will be reviewed again.','Đã cập nhật hồ sơ, sẽ được xét duyệt lại.','档案已更新，将重新审核'],
+ feedback:['Help & feedback','Trợ giúp & góp ý','帮助与反馈'],
+ save_changes:['Save changes','Lưu thay đổi','保存修改'],
+});
+/* ---------- 本机记忆（App 重新打开后保留） ---------- */
+const LS={get(k,d){try{const v=localStorage.getItem('hiregh_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('hiregh_'+k,JSON.stringify(v))}catch(e){}},clear(){try{Object.keys(localStorage).filter(k=>k.startsWith('hiregh_')).forEach(k=>localStorage.removeItem(k))}catch(e){}}};
+S.settings=Object.assign({notify:true,ivRemind:true},LS.get('settings',{}));
+(function restore(){
+  const st=LS.get('state',null);if(!st)return;
+  if(st.me){S.me=st.me;if(!WORKERS.some(w=>w.id===S.me.id))WORKERS.unshift(S.me)}
+  S.myToken=st.myToken||null;S.myPhone=st.myPhone||'';
+  (st.applied||[]).forEach(x=>S.applied.add(x));
+  if(st.saved)S.saved=new Set(st.saved);
+  if(typeof st.translate==='boolean')S.translate=st.translate;
+  if(st.lang&&LI[st.lang]!==undefined){S.lang=st.lang;document.documentElement.lang=st.lang}
+  if(st.jobsMine){S.jobs=[...st.jobsMine,...S.jobs.filter(j=>j.owner!=='me')]}
+  if(st.interviews)S.interviews=st.interviews;
+  if(st.chats)S.chats=st.chats.filter(c=>W(c.wid));
+})();
+function persist(){LS.set('state',{me:S.me,myToken:S.myToken,myPhone:S.myPhone,applied:[...S.applied],saved:[...S.saved],translate:S.translate,lang:S.lang,
+  jobsMine:S.jobs.filter(j=>j.owner==='me'),interviews:S.interviews,chats:S.chats});LS.set('settings',S.settings)}
+const _render0=render;render=function(top){_render0(top);persist()};
+render(false);
+
+/* ---------- 通用：开关、分组标题 ---------- */
+const sw=(on,fn)=>`<span onclick="${fn}" style="width:46px;height:28px;border-radius:20px;background:${on?'#161616':'#D8D2C5'};position:relative;flex:none;cursor:pointer;transition:.2s"><i style="position:absolute;top:3px;left:${on?21:3}px;width:22px;height:22px;border-radius:50%;background:${on?'var(--lime)':'#fff'};transition:.2s"></i></span>`;
+const pageHdr=title=>`<div class="hdr"><button class="icbtn" onclick="back()">${ic('back')}</button><b style="font-size:17px">${title}</b><span style="width:44px"></span></div>`;
+function copyText(txt){const done=()=>toast('已复制');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>fallback())}else fallback();
+  function fallback(){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){toast('复制失败，请长按文字复制')}ta.remove()}}
+function sendToWorker(wid,zh,en){let c=S.chats.find(c=>c.wid===wid);if(!c){c={wid,unread:0,color:'#E2B2FA',msgs:[]};S.chats.unshift(c)}c.msgs.push({me:true,o:zh,t:en,tm:nowT()});persist()}
+
+/* ---------- 电话：保护隐私 ---------- */
+function callSheet(id){const w=W(id);const iv=S.interviews.find(x=>x.wid===id&&x.status!=='cancel');
+  openSheet(`<div class="b" style="font-size:20px">联系 ${esc(w.name)}</div>
+  <p class="sm muted" style="margin:8px 0 16px;line-height:1.6">为保护工人隐私，电话号码在工人<b>接受面试邀请</b>后由平台提供。${iv?'你已向他发出面试邀请（'+iv.date+' '+iv.time+'），请等待对方确认。':'建议先发消息或发起面试邀请。'}</p>
+  <div class="row gap"><button class="bigbtn" style="background:var(--card);color:#161616" onclick="closeSheet();openChat(${id})">${ic('chat')} 发消息</button><button class="bigbtn" onclick="closeSheet();inviteSheet(${id})">发起面试邀请</button></div>`)}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ---------- 举报 / 反馈（进入管理后台“举报与反馈”） ---------- */
+async function submitReport(data){
+  data={...data,reporter:S.mode==='wk'&&S.me?S.me.name:(S.mode==='emp'?'企业：鑫源建材':'访客'),lang:S.lang,at:new Date().toISOString()};
+  if(DB.on){const r=await dbSafe(()=>DB.q('rpc/submit_report',{method:'POST',body:JSON.stringify({p_data:data})}));if(r===null)return false}
+  return true}
+function reportSheet(target){
+  const wk=S.mode==='wk';const types=wk?[['收费',t('rp_fee')],['虚假岗位',t('rp_fake')],['骚扰',t('rp_harass')],['其他',t('rp_other')]]:[['虚假信息','虚假信息'],['收费','收取费用'],['骚扰','骚扰/不当行为'],['其他','其他']];
+  openSheet(`<div class="b" style="font-size:20px">${wk?t('report_title'):'举报原因'}</div>
+   <div class="chips wrap" id="rpT" style="margin-top:12px">${types.map((x,k)=>`<span class="chip sm ${k===0?'on':''}" data-v="${x[0]}" onclick="pickOne(this)">${x[1]}</span>`).join('')}</div>
+   <textarea class="fi" id="rpC" style="margin-top:12px;background:var(--card);border-color:transparent" placeholder="${wk?t('report_ph'):'补充说明（选填）'}"></textarea>
+   <button class="bigbtn" style="width:100%;margin-top:14px" onclick="doReport('${esc(target)}')">${wk?t('send'):'提交举报'}</button>`)}
+async function doReport(target){const type=$('#rpT .chip.on').dataset.v;const content=$('#rpC').value.trim()||type;
+  const ok=await submitReport({type,content,target});closeSheet();if(ok)toast(S.mode==='wk'?t('report_ok'):'已提交，平台会尽快处理')}
+
+/* ---------- 通知：根据真实状态生成 ---------- */
+function openNotifs(){const items=[];
+  S.chats.filter(c=>c.unread).forEach(c=>{const w=W(c.wid);items.push(['chat',`${w.name} 发来 ${c.unread} 条新消息`,c.msgs[c.msgs.length-1].tm,`closeSheet();openChat(${w.id})`])});
+  S.interviews.filter(i=>!i.status).slice(0,3).forEach(i=>{const w=W(i.wid);items.push(['cal',`面试：${w.name} · ${i.job}`,`${i.date} ${i.time}`,`closeSheet();go('interviews')`])});
+  const nw=WORKERS.filter(w=>w.isNew).length;if(nw)items.push(['users',`人才库本周新增 ${nw} 位工人`,'本周',`closeSheet();tab('browse')`]);
+  S.jobs.filter(j=>j.owner==='me'&&j.dbid&&j.status==='open').length&&items.push(['brief','已发布的岗位需平台审核后对工人可见','提示',`closeSheet();tab('jobs')`]);
+  openSheet(`<div class="b" style="font-size:20px;margin-bottom:6px">通知</div>${items.length?items.map(n=>`<div class="li" style="cursor:pointer" onclick="${n[3]}"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center;flex:none">${ic(n[0])}</span><div style="flex:1;min-width:0"><b class="sm">${esc(n[1])}</b></div><span class="xs muted">${esc(n[2])}</span></div>`).join(''):'<div class="empty sm">暂无新通知</div>'}`)}
+
+/* ---------- 面试安排：可标记状态、发合同 ---------- */
+V.interviews=()=>{const l=S.interviews;const st={done:['已完成','var(--lime)'],noshow:['未到场','#FAD2CB'],cancel:['已取消','#E3E0DA']};
+ return pageHdr('面试安排')+`<div class="pad">${l.length?l.map((iv,k)=>{const w=W(iv.wid);if(!w)return '';return `<div class="box" style="margin-top:0;margin-bottom:12px">
+  <div class="row gap"><div class="datebox"><span class="xs b">${iv.mo}</span><b>${iv.d}</b></div><div style="flex:1;min-width:0" onclick="go('worker',{id:${w.id}})"><div class="b row gap6">${esc(w.name)} ${flag(w.nat)}</div><div class="sm muted">${esc(iv.job)} · ${iv.way}</div><div class="sm">${ic('clock',13)} ${iv.time} · ${esc(iv.place)}</div></div>
+  ${iv.status?`<span class="badge" style="background:${st[iv.status][1]}">${st[iv.status][0]}</span>`:'<span class="badge gold">待面试</span>'}</div>
+  <div class="row gap6 wrap" style="margin-top:12px">${iv.status?`<span class="chip sm" onclick="ivSet(${k},null)">恢复待面试</span>`:`<span class="chip sm" onclick="ivSet(${k},'done')">${ic('check',14)}已完成</span><span class="chip sm" onclick="ivSet(${k},'noshow')">未到场</span><span class="chip sm" onclick="ivSet(${k},'cancel')">取消</span>`}
+   <span class="chip sm" onclick="openChat(${w.id})">${ic('chat',14)}消息</span>${iv.status==='done'?`<span class="chip sm on" onclick="go('contract',{wid:${w.id}})">${ic('doc',14)}生成合同</span>`:''}</div></div>`}).join(''):'<div class="empty">暂无面试安排<br><span class="sm">在人才详情页点“发起面试邀请”</span></div>'}</div>`};
+function ivSet(k,s){const iv=S.interviews[k];iv.status=s;const w=W(iv.wid);
+  if(s==='cancel')sendToWorker(w.id,`抱歉，${iv.date} ${iv.time} 的面试取消了，我们会再联系你。`,`Sorry, the interview on ${iv.mo} ${iv.d} at ${iv.time} is cancelled. We will contact you again.`);
+  toast({done:'已标记完成，可以生成合同了',noshow:'已标记未到场',cancel:'已取消，并已通知工人'}[s]||'已恢复');render(false)}
+
+/* ---------- 用工合同（中英双语草稿） ---------- */
+S.ct={wid:null,jobId:null,start:'',prob:'1',days:'6',hours:'8',sal:'',stay:true};
+V.contract=()=>{const c=S.ct;if(S.params.wid&&c.wid!==S.params.wid){c.wid=S.params.wid;c.sal=''}
+ const pool=[...new Set([...S.interviews.map(i=>i.wid),...S.saved,...S.chats.map(x=>x.wid)])].map(W).filter(Boolean).slice(0,12);
+ if(!c.wid&&pool[0])c.wid=pool[0].id;const w=W(c.wid);const jobs=S.jobs.filter(j=>j.owner==='me');if(!c.jobId&&jobs[0])c.jobId=jobs[0].id;const j=S.jobs.find(x=>x.id===c.jobId);
+ if(!c.sal&&w)c.sal=String(w.sal);if(!c.start){const d=new Date();d.setDate(d.getDate()+7);c.start=d.toISOString().slice(0,10)}
+ const txt=w?contractText(w,j):'';
+ return pageHdr('用工合同')+`<div class="pad">
+  <div class="note-y">根据所填信息自动生成中英双语劳动合同草稿，可复制后打印签署。<b>仅供参考</b>，正式签署前建议请加纳当地律师或人力资源顾问审阅。</div>
+  <div class="fl">员工</div>${pool.length?`<div class="chips">${pool.map(x=>`<span class="chip sm ${x.id===c.wid?'on':''}" onclick="S.ct.wid=${x.id};S.ct.sal='';render(false)">${flag(x.nat)}${esc(x.name)}</span>`).join('')}</div>`:'<div class="sm muted">先收藏工人或发起面试，这里会出现候选人。</div>'}
+  <div class="fl">岗位</div><div class="chips">${jobs.map(x=>`<span class="chip sm ${x.id===c.jobId?'on':''}" onclick="S.ct.jobId=${x.id};render(false)">${esc(x.title)}</span>`).join('')||'<span class="sm muted">暂无岗位</span>'}</div>
+  <div class="two"><div><div class="fl">入职日期</div><input class="fi ct" type="date" value="${c.start}" onchange="S.ct.start=this.value;render(false)"></div><div><div class="fl">月薪 (GH₵)</div><input class="fi ct" inputmode="numeric" value="${c.sal}" onchange="S.ct.sal=this.value.replace(/\\D/g,'');render(false)"></div></div>
+  <div class="two"><div><div class="fl">每天工时</div><input class="fi ct" inputmode="numeric" value="${c.hours}" onchange="S.ct.hours=this.value;render(false)"></div><div><div class="fl">每周工作天数</div><input class="fi ct" inputmode="numeric" value="${c.days}" onchange="S.ct.days=this.value;render(false)"></div></div>
+  <div class="fl">试用期</div><div class="chips wrap">${[['0','无'],['1','1个月'],['3','3个月']].map(o=>`<span class="chip sm ${c.prob===o[0]?'on':''}" onclick="S.ct.prob='${o[0]}';render(false)">${o[1]}</span>`).join('')}</div>
+  <div class="row between" style="margin-top:16px"><b>公司提供住宿</b>${sw(c.stay,"S.ct.stay=!S.ct.stay;render(false)")}</div>
+  ${w?`<div class="box"><h4>合同预览</h4><pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.7;margin:0">${esc(txt)}</pre></div>`:''}
+ </div>${w?`<div class="bbar"><button class="sqbtn" onclick="copyText(contractText(W(S.ct.wid),S.jobs.find(x=>x.id===S.ct.jobId)))">${ic('doc')}</button><button class="bigbtn" onclick="sendContract()">发送给工人确认 ${ic('send',18)}</button></div>`:''}`};
+function contractText(w,j){const c=S.ct;const title=j?j.title:w.role;const en=j?(j.en||ROLE_MAP[j.title]?.r[1]||title):w.roleEn;const sal=(+c.sal||w.sal).toLocaleString('en-US');const city=j?j.city:w.city;const cityEn=(CITIES.find(x=>x[0]===city)||[,city])[1];
+ const prob=c.prob==='0'?['无试用期','No probation period']:[`试用期 ${c.prob} 个月`,`Probation period: ${c.prob} month(s)`];
+ return `劳动合同（草稿） / EMPLOYMENT CONTRACT (DRAFT)
+
+甲方（雇主） Employer：鑫源建材（加纳）有限公司 Xinyuan Building Materials Ghana Ltd.
+乙方（员工） Employee：${w.name}（${NATS[w.nat].zh} / ${NATS[w.nat].en}）
+
+1. 岗位 Position：${title} / ${en}
+2. 工作地点 Place of work：${city}, Ghana / ${cityEn}, Ghana
+3. 入职日期 Start date：${c.start}
+4. ${prob[0]} / ${prob[1]}
+5. 工作时间 Working hours：每天 ${c.hours} 小时，每周 ${c.days} 天 / ${c.hours} hours per day, ${c.days} days per week
+6. 工资 Salary：每月 GH₵${sal}，于每月月底前发放 / GH₵${sal} per month, paid before the end of each month
+7. 加班 Overtime：经双方同意，按加纳劳动法规定支付加班费 / Paid according to the Ghana Labour Act when agreed by both parties
+8. 住宿 Accommodation：${c.stay?'公司提供 / Provided by the company':'员工自行解决 / Arranged by the employee'}
+9. 社会保险 Social security：雇主依法为员工办理 SSNIT 登记并缴费 / Employer registers the employee with SSNIT and pays contributions as required by law
+10. 安全 Safety：员工须遵守安全规定并佩戴劳保用品，公司免费提供 / Employee follows safety rules and wears PPE provided free by the company
+${w.nat!=='GH'?'11. 工作许可 Work permit：外籍员工须持有效的加纳工作许可方可上岗 / The employee must hold a valid Ghana work permit before starting work\n':''}${w.nat!=='GH'?'12':'11'}. 解除合同 Termination：任一方须提前一个月书面通知 / Either party gives one month written notice
+
+甲方签字 Employer signature：____________  日期 Date：________
+乙方签字 Employee signature：____________  日期 Date：________
+
+（本草稿仅供参考，以加纳《劳动法》及双方最终签署文本为准 / This draft is for reference only.）`}
+function sendContract(){const w=W(S.ct.wid);const j=S.jobs.find(x=>x.id===S.ct.jobId);
+ sendToWorker(w.id,`您好 ${w.name}，这是「${j?j.title:w.role}」岗位的劳动合同草稿：月薪 GH₵${(+S.ct.sal||w.sal).toLocaleString('en-US')}，${S.ct.start} 入职。请查看，有问题随时问我。`,`Hello ${w.name}, here is the draft employment contract for the ${j?(j.en||j.title):w.roleEn} position: GH₵${(+S.ct.sal||w.sal).toLocaleString('en-US')} per month, starting ${S.ct.start}. Please check it and ask me if you have questions.`);
+ toast('已发送到聊天');openChat(w.id)}
+
+/* ---------- 工作许可指引 ---------- */
+S.pf='all';
+V.permit=()=>{const foreign=WORKERS.filter(w=>w.nat!=='GH');const mine=new Set([...S.interviews.map(i=>i.wid),...S.saved,...S.chats.map(c=>c.wid)]);
+ let l=foreign.filter(w=>S.pf==='all'?mine.has(w.id):S.pf==='ok'?w.permit===true:w.permit!==true);if(S.pf==='all'&&!l.length)l=foreign.slice(0,6);
+ const step=(n,tt,d)=>`<div class="row gap" style="align-items:flex-start;margin:12px 0"><span style="width:28px;height:28px;border-radius:50%;background:#161616;color:var(--lime);display:grid;place-items:center;font-weight:800;flex:none">${n}</span><div><b>${tt}</b><div class="sm muted" style="line-height:1.6;margin-top:2px">${d}</div></div></div>`;
+ return pageHdr('工作许可')+`<div class="pad">
+  <div class="box" style="margin-top:0"><h4>谁需要办理？</h4><div class="sm" style="line-height:1.7">在加纳受雇工作的<b>外籍员工</b>（如中国、越南籍）须持有效的工作许可；加纳籍员工无需办理，但需登记 SSNIT。</div></div>
+  <div class="box"><h4>一般流程（以官方最新规定为准）</h4>
+   ${step(1,'确认途径','通常向加纳移民局（Ghana Immigration Service）申请工作许可；符合条件的投资企业可通过加纳投资促进中心（GIPC）申请移民配额。')}
+   ${step(2,'准备材料','常见包括：护照、照片、劳动合同或聘用信、学历/技能证明、公司注册与税务文件、体检证明等，具体清单以受理机构要求为准。')}
+   ${step(3,'递交与等待','办理通常需要数周，建议在员工到岗前提前申请；获批前不要安排外籍员工上岗。')}
+   ${step(4,'到期续办','留意许可有效期，到期前提前续办，并保存好副本。')}
+   <div class="sm" style="margin-top:8px">官方网站：<a href="https://www.gis.gov.gh" style="color:var(--ink)">gis.gov.gh</a> · <a href="https://www.gipc.gov.gh" style="color:var(--ink)">gipc.gov.gh</a></div></div>
+  <div class="sec-h">外籍员工许可状态</div>
+  <div class="seg">${[['all','我的候选人'],['ok','已有许可'],['no','暂无许可']].map(x=>`<button class="${S.pf===x[0]?'on':''}" onclick="S.pf='${x[0]}';render(false)">${x[1]}</button>`).join('')}</div>
+  ${l.map(w=>`<div class="ivc" onclick="go('worker',{id:${w.id}})">${avatar(w)}<div style="flex:1;min-width:0"><div class="b row gap6">${esc(w.name)} ${flag(w.nat)}</div><div class="sm muted">${w.role} · ${w.city}</div></div><span class="badge ${w.permit===true?'lime':'gold'}">${w.permit===true?'已有许可':'暂无许可'}</span></div>`).join('')||'<div class="empty sm">暂无</div>'}
+ </div>`};
+
+/* ---------- 翻译服务：常用语 + 人工翻译 ---------- */
+const PHRASES={'面试':[['请明天早上8点来面试。','Please come for the interview at 8 a.m. tomorrow.','Vui lòng đến phỏng vấn lúc 8 giờ sáng mai.'],['请带上你的身份证件。','Please bring your ID.','Vui lòng mang theo giấy tờ tùy thân.'],['你做这个工作多少年了？','How many years have you done this job?','Bạn đã làm công việc này bao nhiêu năm?'],['你什么时候可以开始上班？','When can you start work?','Khi nào bạn có thể bắt đầu làm việc?'],['我们先试工一天。',"Let's do a one-day trial first.",'Chúng ta làm thử một ngày trước.']],
+ '上班':[['上班时间是早上7点到下午5点。','Working hours are 7 a.m. to 5 p.m.','Giờ làm việc từ 7 giờ sáng đến 5 giờ chiều.'],['午饭休息一小时。','Lunch break is one hour.','Nghỉ trưa một tiếng.'],['今天需要加班两小时。','We need two hours of overtime today.','Hôm nay cần tăng ca hai tiếng.'],['有问题请问组长。','If you have questions, ask the team leader.','Nếu có thắc mắc, hãy hỏi tổ trưởng.'],['明天休息。','Tomorrow is a day off.','Ngày mai được nghỉ.']],
+ '安全':[['请戴好安全帽。','Please wear your safety helmet.','Vui lòng đội mũ bảo hộ.'],['进入车间必须穿安全鞋。','Safety shoes are required in the workshop.','Phải mang giày bảo hộ khi vào xưởng.'],['这台机器很危险，不要碰。',"This machine is dangerous, don't touch it.",'Máy này nguy hiểm, đừng chạm vào.'],['受伤了请马上报告。','Report any injury immediately.','Nếu bị thương hãy báo ngay.'],['禁止吸烟。','No smoking.','Cấm hút thuốc.']],
+ '工资住宿':[['工资每月月底发放。','Salary is paid at the end of each month.','Lương được trả vào cuối mỗi tháng.'],['工资通过手机钱包（MoMo）发放。','Salary is paid via mobile money (MoMo).','Lương được trả qua ví điện thoại (MoMo).'],['公司提供宿舍和午餐。','The company provides a dormitory and lunch.','Công ty cung cấp ký túc xá và bữa trưa.'],['试用期一个月。','The probation period is one month.','Thời gian thử việc là một tháng.'],['加班有加班费。','Overtime is paid.','Tăng ca có trả tiền tăng ca.']]};
+S.pc='面试';S.pl='en';
+V.translate=()=>{const ints=WORKERS.filter(w=>w.role==='中英翻译').sort((a,b)=>(+b.rating||0)-(+a.rating||0)).slice(0,4);
+ return pageHdr('翻译服务')+`<div class="pad">
+  <div class="row between"><div class="tabsx" style="margin:0;padding:0">${Object.keys(PHRASES).map(k=>`<div class="tabx" style="${S.pc===k?'background:#161616;color:#fff':''}" onclick="S.pc='${k}';render(false)">${k}</div>`).join('')}</div></div>
+  <div class="seg" style="margin-top:12px">${[['en','中文 → English'],['vi','中文 → Tiếng Việt']].map(x=>`<button class="${S.pl===x[0]?'on':''}" onclick="S.pl='${x[0]}';render(false)">${x[1]}</button>`).join('')}</div>
+  ${PHRASES[S.pc].map((p,k)=>`<div class="box" style="margin-top:10px;padding:14px 16px"><div class="b">${p[0]}</div><div style="margin-top:6px;font-size:15px">${S.pl==='en'?p[1]:p[2]}</div>
+   <div class="row gap6" style="margin-top:10px"><span class="chip sm" onclick="copyText(PHRASES[S.pc][${k}][${S.pl==='en'?1:2}])">${ic('doc',14)}复制</span><span class="chip sm" onclick="phraseTo(${k})">${ic('send',14)}发给工人</span></div></div>`).join('')}
+  <div class="sec-h">预约人工翻译 <a onclick="S.f={...S.f,ind:'svc',role:'中英翻译',nat:'all',q:''};tab('browse')">更多 ›</a></div>
+  ${ints.map(w=>`<div class="ivc" onclick="go('worker',{id:${w.id}})">${avatar(w)}<div style="flex:1;min-width:0"><div class="b row gap6">${esc(w.name)} ${flag(w.nat)}</div><div class="sm muted">中英翻译 · ${w.city} · ${rate(w)}</div></div><b>${money(w.sal)}<span class="xs muted">/月</span></b></div>`).join('')}
+ </div>`};
+function phraseTo(k){const p=PHRASES[S.pc][k];const list=S.chats.map(c=>W(c.wid)).filter(Boolean);
+ if(!list.length){toast('还没有聊天对象，先在人才库联系工人');return}
+ openSheet(`<div class="b" style="font-size:18px;margin-bottom:8px">发给谁？</div>${list.map(w=>`<div class="li" style="cursor:pointer" onclick="closeSheet();sendToWorker(${w.id},PHRASES[S.pc][${k}][0],PHRASES[S.pc][${k}][${w.nat==='VN'?2:1}]);openChat(${w.id})">${avatar(w,'sm')}<span>${esc(w.name)} ${flag(w.nat)}</span><span class="xs muted" style="margin-left:auto">${w.nat==='VN'?'越南语':'英语'}</span></div>`).join('')}`)}
+
+/* ---------- 帮助中心 ---------- */
+const FAQ=[['怎么找到合适的工人？','在“人才库”按行业、工种、国籍筛选，或在首页点行业卡片。看中后可收藏、发消息或直接发起面试邀请。'],
+ ['工人信息可靠吗？','工人注册后需上传证件，由平台人工审核，审核通过才会出现在人才库。详情页“证件核验”会显示审核结果。'],
+ ['怎么拿到工人的电话？','为保护隐私，先通过平台消息沟通；工人接受面试邀请后，平台再提供电话。'],
+ ['发布岗位后多久能被看到？','新岗位需平台审核，通常在工作日内完成，审核通过后工人才能看到并申请。'],
+ ['招工收费吗？','测试期间对企业免费。平台严禁任何人向工人收取介绍费，如遇到请立即举报。'],
+ ['外籍员工需要办什么手续？','需办理加纳工作许可，详见“我的 → 工作许可”。'],
+ ['聊天时语言不通怎么办？','聊天默认开启中英自动翻译；也可以用“翻译服务”里的常用语，或预约人工翻译。']];
+V.help=()=>pageHdr('帮助中心')+`<div class="pad">
+ ${FAQ.map(f=>`<details class="box" style="margin-top:10px;padding:14px 16px"><summary style="font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between">${f[0]}<span class="muted">＋</span></summary><div class="sm" style="line-height:1.7;margin-top:8px;color:var(--ink2,#55524B)">${f[1]}</div></details>`).join('')}
+ <div class="sec-h">意见反馈</div>
+ <div class="box" style="margin-top:0"><div class="chips wrap" id="fbT">${['功能建议','问题反馈','其他'].map((x,k)=>`<span class="chip sm ${k===0?'on':''}" onclick="pickOne(this)">${x}</span>`).join('')}</div>
+  <textarea class="fi" id="fbC" style="margin-top:12px;background:#fff;border-color:transparent" placeholder="请描述你的建议或遇到的问题"></textarea>
+  <button class="bigbtn" style="width:100%;margin-top:12px" onclick="sendFeedback()">提交反馈</button>
+  <div class="xs muted" style="margin-top:8px">反馈会直接进入平台管理后台。</div></div></div>`;
+async function sendFeedback(){const c=$('#fbC').value.trim();if(!c){toast('请先填写内容');return}const ok=await submitReport({type:$('#fbT .chip.on').textContent,content:c,target:'平台'});if(ok){$('#fbC').value='';toast('感谢反馈，我们会尽快处理')}}
+
+/* ---------- 设置 ---------- */
+V.settings=()=>{const row=(label,sub,ctl)=>`<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">${label}</div>${sub?`<div class="xs muted" style="margin-top:2px">${sub}</div>`:''}</div>${ctl}</div>`;
+ return pageHdr('设置')+`<div class="pad">
+  <div class="box" style="margin-top:0">${row('聊天自动翻译','中文 ⇄ 英语 / 越南语',sw(S.translate,"S.translate=!S.translate;render(false)"))}${row('新消息提醒','',sw(S.settings.notify,"S.settings.notify=!S.settings.notify;render(false)"))}${row('面试提醒','面试前一天提醒',sw(S.settings.ivRemind,"S.settings.ivRemind=!S.settings.ivRemind;render(false)"))}</div>
+  <div class="box">${row('企业信息','鑫源建材（加纳）有限公司 · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','HireGH 1.3.0','')}</div>
+  <div class="box"><div class="li" style="cursor:pointer" onclick="openSheet('<div class=&quot;b&quot; style=&quot;font-size:18px&quot;>清除本机数据？</div><p class=&quot;sm muted&quot; style=&quot;margin:8px 0 16px&quot;>会清除本机保存的聊天、收藏、面试和岗位草稿，不影响云端数据。</p><button class=&quot;bigbtn&quot; style=&quot;width:100%;background:var(--red)&quot; onclick=&quot;LS.clear();location.reload()&quot;>确认清除</button>')">${ic('trash')}<span>清除本机数据</span></div>
+   <div class="li" style="cursor:pointer" onclick="toWelcome()">${ic('users')}<span>切换身份 / 返回欢迎页</span></div></div></div>`};
+
+/* ---------- 人才详情 / 岗位详情：加“举报”入口 ---------- */
+const _vw=V.worker;V.worker=()=>_vw()+`<div style="text-align:center;padding:0 20px 120px"><span class="sm muted" style="text-decoration:underline;cursor:pointer" onclick="reportSheet('工人 #${S.params.id} ${esc(W(S.params.id).name)}')">${ic('alert',13)} 举报此人</span></div>`;
+const _vj=V.w_job;V.w_job=()=>{const j=S.jobs.find(x=>x.id===S.params.id);return _vj()+`<div style="text-align:center;padding:0 20px 120px"><span class="sm muted" style="text-decoration:underline;cursor:pointer" onclick="reportSheet('岗位 ${esc(j.title)} · ${esc(j.company)}')">${t('report')}</span></div>`};
+P.alert='<path d="M12 3 2 21h20zM12 10v5M12 18v.01"/>';
+
+/* ---------- 工人端：修改档案不再重复注册 ---------- */
+function editProfile(){const m=S.me;if(!m)return;const ci=Math.max(0,CITIES.findIndex(c=>c[0]===m.city));
+ S.reg={...newReg(),step:1,editing:true,name:m.name,phone:S.myPhone||'',nat:m.nat,gender:m.female?'f':'m',age:m.age?String(m.age):'',city:ci,ind:m.ind,role:m.role,exp:m.exp,sal:String(m.sal),
+  avail:{可立即上岗:'now','1周内到岗':'w1','2周内到岗':'w2'}[m.avail]||'now',zh:{不会:'none',基础:'basic',流利:'fluent',母语:'fluent'}[m.zh]||'none',idType:m.nat==='GH'?'Ghana Card':'passport',photo:m.photo||null,consent:true};
+ S.view='w_reg';render(true)}
+const _submitReg0=submitReg;
+submitReg=async function(){const r=S.reg;
+ if(!r.editing){S.myPhone=r.phone;S.myToken=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2))+Math.random().toString(36).slice(2);
+   const _q=DB.q;DB.q=function(path,opt){if(path==='rpc/register_worker'&&opt&&opt.body){const b=JSON.parse(opt.body);b.p_docs.token=S.myToken;opt={...opt,body:JSON.stringify(b)}}return _q.call(DB,path,opt)};
+   try{await _submitReg0()}finally{DB.q=_q}persist();return}
+ if(!r.consent){toast(t('need_consent'));return}
+ const m=S.me,role=ROLE_MAP[r.role];Object.assign(m,{name:r.name.trim(),nat:r.nat,female:r.gender==='f',age:+r.age||null,city:CITIES[r.city][0],ind:r.ind,role:r.role,roleEn:role.r[1],exp:r.exp,sal:+r.sal,
+   zh:{none:'不会',basic:'基础',fluent:'流利'}[r.zh],avail:{now:'可立即上岗',w1:'1周内到岗',w2:'2周内到岗'}[r.avail],langs:[...LANGS[r.nat],...(r.zh!=='none'&&r.nat!=='CN'?['中文']:[])],photo:r.photo,pending:true});
+ S.myPhone=r.phone;
+ if(m.dbid&&S.myToken){const {id,dbid,...d}=m;await dbSafe(()=>DB.q('rpc/update_worker',{method:'POST',body:JSON.stringify({p_id:dbid,p_token:S.myToken,p_data:d})}))}
+ toast(t('profile_updated'));S.reg=newReg();S.view='w_me';S.hist=[];render(true)};
+const _vr=V.w_reg;V.w_reg=()=>{let h=_vr();if(S.reg.editing&&S.reg.step===3)h=h.replace(t('submit'),t('save_changes'));return h};
+const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_reg';render(true)`,'editProfile()').replace(`<div class="li" style="cursor:pointer" onclick="toWelcome()">`,`<div class="li" style="cursor:pointer" onclick="reportSheet('${t('feedback')}')">${ic('help')}<span>${t('feedback')}</span></div><div class="li" style="cursor:pointer" onclick="toWelcome()">`);
 
 </script>
 </body>
