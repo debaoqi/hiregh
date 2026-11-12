@@ -444,20 +444,21 @@ function mCard(w){
 /* ============ VIEWS ============ */
 const V={};
 V.home=()=>{
-  const natCount=c=>WORKERS.filter(w=>w.nat===c).length;
-  const recs=[...WORKERS.filter(w=>w.isNew&&w.self),...[...WORKERS].sort((a,b)=>(!!b.photo-!!a.photo)||((+b.rating||0)-(+a.rating||0)))].filter((w,i,a)=>a.indexOf(w)===i).slice(0,8);
+  const VW=typeof visW==='function'?WORKERS.filter(visW):WORKERS;
+  const natCount=c=>VW.filter(w=>w.nat===c).length;
+  const recs=[...VW.filter(w=>w.isNew&&w.self),...[...VW].sort((a,b)=>(!!b.photo-!!a.photo)||((+b.rating||0)-(+a.rating||0)))].filter((w,i,a)=>a.indexOf(w)===i).slice(0,8);
   return `<div class="pad">
   <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · ${typeof coShort==='function'?coShort():'鑫源建材'}</div></div></div>
    <div class="row gap6"><button class="icbtn" onclick="tab('browse');setTimeout(()=>$('#q')&&$('#q').focus(),50)">${ic('search')}</button><button class="icbtn" onclick="openNotifs()">${ic('bell')}<span class="dot"></span></button></div></div>
   <h1 class="hero">在加纳<br>找<span class="hl">靠谱</span>的人</h1>
   <div class="searchbar" onclick="tab('browse')">${ic('search')}<span style="flex:1">搜索工种、技能、城市…</span><span class="pill dark">${ic('filter',16)}筛选</span></div>
-  <div class="stats"><div class="stat"><div class="n">${WORKERS.length}</div><div class="xs muted">在册工人</div></div>
-   <div class="stat"><div class="n">${WORKERS.length?Math.round(WORKERS.filter(w=>w.card).length/WORKERS.length*100):0}%</div><div class="xs muted">证件已核验</div></div>
-   <div class="stat" style="background:var(--lime)"><div class="n">+${WORKERS.filter(w=>w.isNew).length}</div><div class="xs">本周新增</div></div></div>
+  <div class="stats"><div class="stat"><div class="n">${VW.length}</div><div class="xs muted">在册工人</div></div>
+   <div class="stat"><div class="n">${VW.length?Math.round(VW.filter(w=>w.card).length/VW.length*100):0}%</div><div class="xs muted">证件已核验</div></div>
+   <div class="stat" style="background:var(--lime)"><div class="n">+${VW.filter(w=>w.isNew).length}</div><div class="xs">本周新增</div></div></div>
   <div class="sec-h">按行业找人 <a onclick="setF('ind','all');tab('browse')">全部 ›</a></div>
   <div class="stack">${IND.map((i,k)=>`<div class="sc ${k===IND.length-1?'last':''}" style="background:${i.color};color:${i.ink}" onclick="S.f.ind='${i.id}';S.f.role='all';tab('browse')">
     <div class="row between"><div class="row gap"><div class="ic">${ic(i.icon)}</div><div><div class="t">${i.zh}</div><div class="roles">${i.roles.slice(0,4).map(r=>r[0]).join(' · ')}…</div></div></div>
-    <div class="row gap"><span class="sm" style="opacity:.8">${WORKERS.filter(w=>w.ind===i.id).length}人</span><div class="go">${ic('arrow',18)}</div></div></div></div>`).join('')}</div>
+    <div class="row gap"><span class="sm" style="opacity:.8">${VW.filter(w=>w.ind===i.id).length}人</span><div class="go">${ic('arrow',18)}</div></div></div></div>`).join('')}</div>
   <div class="sec-h">按国籍 <a>Nationality</a></div>
   <div class="hscroll">${Object.keys(NATS).map(c=>`<div class="natc" onclick="S.f.nat='${c}';S.f.ind='all';S.f.role='all';tab('browse')"><div class="row gap6">${flag(c)}<span class="sm b">${NATS[c].zh}</span></div><div class="n">${natCount(c)}</div><div class="xs muted">${NATS[c].en}</div></div>`).join('')}</div>
   <div class="sec-h">今日推荐 <a onclick="S.f.sort='rate';tab('browse')">更多 ›</a></div>
@@ -890,11 +891,7 @@ function wnav(){const b=(v,i)=>`<button class="${S.view===v?'on':''}" onclick="S
 async function boot(){
   S.view='welcome';render(true);
   if(!DB.on)return;
-  const ws=await dbSafe(()=>DB.q('workers?select=id,data&order=id.asc&limit=2000'),true);
-  (ws||[]).forEach(r=>{if(!WORKERS.some(w=>w.id===100000+r.id))WORKERS.unshift({...r.data,id:100000+r.id,dbid:r.id})});
-  const js=await dbSafe(()=>DB.q('jobs?select=id,data&order=id.asc&limit=1000'),true);
-  (js||[]).forEach(r=>S.jobs.unshift({...r.data,id:100000+r.id,dbid:r.id}));
-  render(false);
+  /* 云端数据由 syncDB() 统一加载和同步 */
 }
 boot();
 /* Android 返回键（App 内） */
@@ -1121,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.8.0',APP_BUILD=20;
+const APP_VER='1.9.0',APP_BUILD=21;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1472,6 +1469,75 @@ const _saveCo8=saveCo;
 saveCo=async function(){const c=$('#coContact'),p=$('#coPhone');S.company.contact=c?c.value.trim():S.company.contact;S.company.phone=p?p.value.trim():S.company.phone;return _saveCo8()};
 
 render(false);
+</script>
+<script>
+/* ================= v1.9 · 与后台实时同步（删除/停用/修改立即生效） ================= */
+Object.assign(T,{
+ me_gone:['Your profile was removed by the platform. Please create it again if you still want to find work.','Your profile was removed by the platform.','你的档案已被平台删除。如需继续找工作，请重新注册。'],
+ me_off:['Your profile has been disabled by the platform. Contact support if you think this is a mistake.','Your profile has been disabled.','你的档案已被平台停用，如有疑问请联系客服。'],
+ re_reg:['Create profile again','Create profile again','重新注册'],
+});
+/* 1) 读取云端数据时不使用缓存，保证拿到的是最新数据 */
+const _q9=DB.q;DB.q=function(path,opt={}){return _q9.call(DB,path,{cache:'no-store',...opt})};
+
+/* 2) 企业端只显示审核通过的工人：自己手机上未通过/被删除的档案不进入人才库 */
+const visW=w=>!(w.self&&w.status!=='approved');
+const _filtered9=filtered;filtered=function(){return _filtered9().filter(visW)};
+
+/* 3) 同步：把云端“已审核通过”的工人和岗位与手机对齐（删除、停用、修改都会生效） */
+const isRemoteJob=j=>j.id>=100000&&j.id<1e9;
+let _syncAt=0,_syncing=false;
+async function syncDB(force){
+  if(!DB.on||_syncing)return;if(!force&&Date.now()-_syncAt<8000)return;_syncing=true;
+  try{
+    const [ws,js]=await Promise.all([DB.q('workers?select=id,data&order=id.asc&limit=2000'),DB.q('jobs?select=id,data&order=id.asc&limit=1000')]);
+    if(!Array.isArray(ws)||!Array.isArray(js))return;
+    let changed=false;const meId=S.me&&S.me.id;
+    // 工人：云端没有了（被删除/停用/驳回）就从手机上移除
+    const wIds=new Set(ws.map(r=>100000+r.id));
+    for(let i=WORKERS.length-1;i>=0;i--){const w=WORKERS[i];if(w.id>=100000&&w.id!==meId&&!wIds.has(w.id)){WORKERS.splice(i,1);S.saved.delete(w.id);changed=true}}
+    ws.forEach(r=>{const id=100000+r.id;if(id===meId)return;const nw={...r.data,id,dbid:r.id,self:false};delete nw.pending;
+      const i=WORKERS.findIndex(w=>w.id===id);if(i<0){WORKERS.unshift(nw);changed=true}else if(JSON.stringify(WORKERS[i])!==JSON.stringify(nw)){WORKERS[i]=nw;changed=true}});
+    // 已删除工人的聊天/面试也一并移除，避免点进去出错
+    const nC=S.chats.filter(c=>W(c.wid));if(nC.length!==S.chats.length){S.chats=nC;changed=true}
+    const nI=S.interviews.filter(x=>W(x.wid));if(nI.length!==S.interviews.length){S.interviews=nI;changed=true}
+    // 岗位：云端岗位重新对齐；自己发布的岗位不重复显示
+    const mineDb=new Set(S.jobs.filter(j=>j.owner==='me'&&j.dbid&&!isRemoteJob(j)).map(j=>j.dbid));
+    const remote=js.filter(r=>!mineDb.has(r.id)).map(r=>({...r.data,id:100000+r.id,dbid:r.id,owner:'other'}));
+    const before=JSON.stringify(S.jobs.filter(isRemoteJob));
+    if(before!==JSON.stringify(remote)){S.jobs=[...remote.reverse(),...S.jobs.filter(j=>!isRemoteJob(j))];changed=true}
+    _syncAt=Date.now();
+    if(changed){persist();if(!FORM_VIEWS.includes(S.view)){
+      // 正在看的人/岗位已被删除时，返回上一页
+      if(S.view==='worker'&&!W(S.params.id))S.hist.length?back():tab('browse');
+      else if(S.view==='w_job'&&!S.jobs.find(j=>j.id===S.params.id)){S.view='w_home';S.hist=[];render(true)}
+      else render(false)}}
+  }catch(e){}finally{_syncing=false}
+}
+/* 4) 工人自己的档案：被后台删除/停用时，手机上同步处理 */
+async function syncMe(){
+  if(!DB.on||!S.me||!S.me.dbid||!S.myToken)return;
+  let r;try{r=await DB.q('rpc/get_my_worker',{method:'POST',body:JSON.stringify({p_id:S.me.dbid,p_token:S.myToken})})}catch(e){return}
+  if(r===null||(r&&!r.data)){ // 云端已没有这份档案
+    const id=S.me.id;const i=WORKERS.findIndex(w=>w.id===id);if(i>=0)WORKERS.splice(i,1);
+    S.me=null;S.myToken=null;S.applied=new Set();persist();try{localStorage.removeItem('hiregh_state2')}catch(e){}
+    if(S.mode==='wk'){S.reg=newReg();S.view='w_reg';S.hist=[];render(true);
+      openSheet(`<div class="b" style="font-size:20px">${t('me_gone')}</div><button class="bigbtn" style="width:100%;margin-top:18px" onclick="closeSheet()">${t('re_reg')}</button>`)}
+    return}
+  const keep={id:S.me.id,dbid:S.me.dbid};
+  const me={...S.me,...r.data,...keep,self:true,status:r.status,review:r.review||null,pending:r.status!=='approved'};
+  if(!me.photo&&S.me.photo)me.photo=S.me.photo;
+  const was=S.me.status;S.me=me;const i=WORKERS.findIndex(w=>w.id===me.id);if(i>=0)WORKERS[i]=me;else WORKERS.unshift(me);
+  persist();if(S.mode==='wk')render(false);
+  if(r.status==='disabled'&&was!=='disabled'&&S.mode==='wk')openSheet(`<div class="b" style="font-size:18px;line-height:1.5">${t('me_off')}</div><button class="bigbtn" style="width:100%;margin-top:18px" onclick="closeSheet()">${t('ok')}</button>`);
+}
+/* 何时同步：打开 App、回到前台、切换到首页/人才库/岗位、使用中每 30 秒 */
+const _tab9=tab;tab=function(v){const r=_tab9(v);if(['home','browse','jobs'].includes(v))syncDB();return r};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){syncDB(true);syncMe()}});
+setInterval(()=>{if(document.visibilityState==='visible'){syncDB();syncMe()}},30000);
+try{window.Capacitor&&window.Capacitor.Plugins.App&&window.Capacitor.Plugins.App.addListener('resume',()=>{syncDB(true);syncMe()})}catch(e){}
+syncDB(true);
+
 </script>
 </body>
 </html>

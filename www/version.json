@@ -1,6 +1,6 @@
 {
-  "version": "1.8.0",
-  "build": 20,
+  "version": "1.9.0",
+  "build": 21,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,15 +8,14 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "服务业新增：餐厅服务员、KTV/娱乐场所服务员、酒店客房服务员、前台接待、收银员、导购员等 15 个工种",
-      "工业、农业、建筑、矿业、物流也补充了常见工种",
-      "“司机”改名“小车司机”，“养殖工”改名“畜禽养殖工”，与货车/重卡司机、水产养殖区分清楚",
-      "首页问候按手机时间显示（早上好/下午好/晚上好）",
-      "首页称呼来自“企业信息”，点一下就能修改联系人和电话"
+      "后台删除、停用、驳回或修改工人后，手机上会自动同步：打开App、切回前台、切换页面时立即更新，使用中每30秒自动检查",
+      "工人档案被后台删除后，工人手机上会提示重新注册",
+      "人才库只显示审核通过的工人（自己手机上未通过的档案不再混入）",
+      "修复：自己发布并审核通过的岗位重复显示的问题"
     ],
     "en": [
-      "More job types in every industry, including waiters, KTV & lounge attendants and hotel room attendants",
-      "Clearer job names"
+      "Changes made by the platform now appear on your phone right away",
+      "If your profile is removed, you will be asked to create it again"
     ]
   }
 }
