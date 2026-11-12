@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#EDE8DC">
+<title>加纳用工 HireGH</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#EDE8DC;--card:#FBF9F4;--ink:#161616;--muted:#9C978B;--line:#ECE6DA;--soft:#F1EDE3;
+  --purple:#9D7DFF;--lilac:#E2B2FA;--gold:#F8C94A;--red:#EE5A47;--lime:#CFE36B;--orange:#FF9F43;--blue:#5B8CFF;--green:#1E7A4C;
+  --r:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;color:var(--ink);
+  background:#D9D2C1;background-image:linear-gradient(#cfc7b5 1px,transparent 1px),linear-gradient(90deg,#cfc7b5 1px,transparent 1px);background-size:32px 32px;
+  display:flex;align-items:center;justify-content:center;min-height:100vh}
+button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.phone{position:relative;width:100%;height:100vh;height:100dvh;background:var(--bg);overflow:hidden}
+.sbar{display:none}
+@media (min-width:520px){
+  .phone{width:390px;height:min(844px,calc(100vh - 32px));min-height:600px;border-radius:54px;border:11px solid #111;box-shadow:0 40px 80px rgba(0,0,0,.25)}
+  .sbar{display:flex;position:absolute;top:0;left:0;right:0;height:46px;z-index:30;justify-content:space-between;align-items:center;padding:6px 30px 0;font-weight:600;font-size:15px;pointer-events:none}
+  .sbar .island{width:110px;height:30px;background:#111;border-radius:20px}
+  .phone .screen{top:46px}
+  .sbar{background:var(--bg)}
+}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-bottom:120px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.nonav{padding-bottom:120px}
+.screen.chatpad{padding-bottom:150px}
+.pad{padding:12px 20px}
+.row{display:flex;align-items:center}.between{justify-content:space-between}.gap{gap:10px}.gap6{gap:6px}.wrap{flex-wrap:wrap}
+.muted{color:var(--muted)}.sm{font-size:12px}.xs{font-size:11px}.b{font-weight:700}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#111;flex:none;font-size:15px;position:relative}
+.av.lg{width:92px;height:92px;font-size:30px;border:4px solid #fff}
+.av.sm{width:36px;height:36px;font-size:13px}
+.icbtn{width:44px;height:44px;border-radius:50%;background:var(--card);display:grid;place-items:center;position:relative}
+.icbtn.dark{background:#161616;color:#fff}
+.dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--card)}
+.hero{font-size:38px;line-height:1.08;font-weight:800;letter-spacing:-1px;margin:22px 0 18px}
+.hero .hl{background:var(--gold);padding:0 8px;border-radius:14px;display:inline-block;transform:rotate(-2deg)}
+.searchbar{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:30px;padding:8px 8px 8px 18px;color:var(--muted)}
+.searchbar input{flex:1;border:0;background:none;outline:none;font-size:15px;color:var(--ink);min-width:0}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:30px;padding:8px 14px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill.dark{background:#161616;color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{background:var(--card);border-radius:20px;padding:12px}
+.stat .n{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.sec-h{display:flex;justify-content:space-between;align-items:center;margin:26px 0 12px;font-size:19px;font-weight:800}
+.sec-h a{font-size:13px;font-weight:500;color:var(--muted);cursor:pointer}
+/* stacked industry cards */
+.stack .sc{border-radius:30px;padding:18px 18px 40px;margin-top:-26px;position:relative;cursor:pointer;transition:transform .15s}
+.stack .sc:first-child{margin-top:0}
+.stack .sc:active{transform:scale(.98)}
+.sc .ic{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;color:#111}
+.sc .go{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#111}
+.sc .t{font-size:19px;font-weight:800}
+.sc .roles{font-size:12px;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc .row.gap:first-child{min-width:0;flex:1}.sc .row.gap>div:last-child{min-width:0}
+.sc span.sm{white-space:nowrap}
+.sc.last{padding-bottom:22px}
+.hscroll{display:flex;gap:10px;overflow-x:auto;margin:0 -20px;padding:2px 20px 6px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.natc{background:var(--card);border-radius:22px;padding:12px 14px;min-width:112px;cursor:pointer;flex:none}
+.natc .n{font-weight:800;font-size:20px;margin-top:8px}
+.flag{width:22px;height:15px;border-radius:3px;display:inline-block;position:relative;overflow:hidden;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.flag i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:9px;line-height:1}
+.mc{background:var(--card);border-radius:26px;padding:14px;width:168px;flex:none;cursor:pointer}
+.mc .tag{font-size:11px;padding:4px 9px;border-radius:20px;display:inline-block;font-weight:600}
+/* worker list cards (ref 1) */
+.wc{background:var(--card);border-radius:var(--r);margin-bottom:12px;overflow:hidden;cursor:pointer}
+.wc .top{padding:18px 18px 14px}
+.wc h3{font-size:26px;font-weight:800;letter-spacing:-.6px;line-height:1.1}
+.wc h3 small{display:block;font-size:13px;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:2px}
+.badge{border-radius:30px;padding:7px 12px;font-size:12.5px;white-space:nowrap;font-weight:500}
+.badge.cream{background:#F1ECDF}.badge.lilac{background:var(--lilac)}.badge.grey{background:#D6D3CC}.badge.lime{background:var(--lime)}.badge.gold{background:var(--gold)}
+.cols{display:flex;margin-top:14px}
+.cols>div{flex:1;padding-right:10px;border-right:1px solid var(--line);margin-right:12px;min-width:0}
+.cols>div:nth-child(2){flex:1.5}.cols>div:last-child{border:0;margin:0;flex:1.2}
+.cols .l{font-size:12px;color:#B9B4A8}
+.cols .v{font-size:17px;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc .bot{border-top:1px solid var(--line);padding:12px 18px 14px;display:flex;align-items:center;gap:10px}
+.wc .bot .nm{font-size:14px;font-weight:600}
+.wc .bot .em{font-size:12px;color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+.act{width:34px;height:34px;display:grid;place-items:center;border-radius:50%}
+.act.on{color:var(--red)}
+.act.on svg{fill:var(--red)}
+.act.del{color:var(--red)}
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:2px 20px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips.wrap{flex-wrap:wrap;overflow:visible;margin:0;padding:0}
+.chip{border-radius:30px;padding:9px 15px;font-size:13px;background:var(--card);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:1.5px solid transparent;font-weight:500}
+.chip.on{background:#161616;color:#fff}
+.chip.sm{padding:6px 11px;font-size:12px}
+.tabsx{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:2px 20px;scrollbar-width:none}
+.tabsx::-webkit-scrollbar{display:none}
+.tabx{padding:10px 16px;border-radius:30px;font-weight:700;font-size:14px;background:var(--card);white-space:nowrap;cursor:pointer}
+.toggles{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tg{font-size:12px;padding:7px 12px;border-radius:30px;border:1.5px dashed #C9C3B6;cursor:pointer}
+.tg.on{border-style:solid;border-color:#161616;background:#161616;color:#fff}
+.title{font-size:32px;font-weight:800;letter-spacing:-.8px}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+/* detail */
+.dhead{border-radius:0 0 40px 40px;padding:10px 20px 26px;text-align:center}
+.dhead .name{font-size:28px;font-weight:800;margin-top:10px;letter-spacing:-.5px}
+.rpill{display:inline-block;background:rgba(255,255,255,.75);border-radius:30px;padding:7px 16px;font-weight:600;margin-top:8px;font-size:14px}
+.kv{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.kv span{background:#fff;border-radius:30px;padding:8px 13px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.box{background:var(--card);border-radius:26px;padding:18px;margin-top:14px}
+.box h4{font-size:15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.box ul{padding-left:18px;font-size:14px;line-height:1.75}
+.inf{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px}
+.inf .l{font-size:12px;color:var(--muted)}.inf .v{font-size:14px;font-weight:600;margin-top:2px}
+.vf{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.vf:last-child{border:0}
+.vf .ok{width:24px;height:24px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
+.vf .no{background:#EEE9DE;color:var(--muted)}
+.vf svg{width:14px;height:14px}
+.stage{border-radius:26px;padding:16px 18px;margin-top:-18px;position:relative}
+.stage:first-child{margin-top:0}
+.stage .s{font-size:11px;background:#161616;color:#fff;border-radius:20px;padding:4px 10px;display:inline-block}
+.stage .t{font-size:22px;font-weight:800;margin-top:8px;letter-spacing:-.4px}
+.stage p{font-size:12px;opacity:.85;margin:4px 0 14px;line-height:1.5}
+.stage .st{position:absolute;right:16px;top:16px;width:32px;height:32px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.review{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.55}
+.review:last-child{border:0}
+.bbar{position:absolute;left:0;right:0;bottom:0;padding:14px 20px 26px;background:var(--bg);box-shadow:0 -10px 20px -12px rgba(0,0,0,.18);display:flex;gap:10px;z-index:20}
+.bigbtn{flex:1;background:#161616;color:#fff;border-radius:40px;height:58px;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
+.bigbtn.lime{background:var(--lime);color:#161616}
+.sqbtn{width:58px;height:58px;border-radius:50%;background:var(--card);display:grid;place-items:center;flex:none}
+/* nav */
+.nav{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#161616;border-radius:46px;padding:7px;display:flex;gap:6px;z-index:25;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.nav button{width:52px;height:52px;border-radius:50%;background:#2A2A2A;color:#bbb;display:grid;place-items:center;position:relative}
+.nav button.on{background:var(--gold);color:#161616}
+.nav button.add{background:var(--lime);color:#161616}
+.nav .cnt{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;font-size:10px;min-width:16px;height:16px;border-radius:10px;display:grid;place-items:center;padding:0 4px;font-weight:700}
+/* post form (ref 2) */
+.formwrap{background:var(--red);border-radius:36px 36px 0 0;padding:24px 20px 140px;min-height:100%;color:#161616;margin-top:8px}
+.formwrap h2{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.fl{font-weight:700;font-size:15px;margin:18px 0 8px}
+.fi{width:100%;border:1.5px solid rgba(0,0,0,.18);background:rgba(255,255,255,.12);border-radius:40px;padding:15px 20px;outline:none;font-size:15px}
+.fi::placeholder{color:rgba(0,0,0,.45)}
+textarea.fi{border-radius:24px;min-height:90px;resize:none}
+.fi:focus{border-color:#161616;background:rgba(255,255,255,.25)}
+.formwrap .chip{background:#161616;color:#ddd}
+.formwrap .chip.on{background:#fff;color:#161616}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stepper{display:flex;align-items:center;justify-content:space-between;border:1.5px solid rgba(0,0,0,.18);border-radius:40px;padding:6px}
+.stepper button{width:40px;height:40px;border-radius:50%;background:#161616;color:#fff;font-size:20px}
+.stepper b{font-size:18px}
+/* chats (ref 4) */
+.cb{border-radius:34px;padding:14px 16px;display:flex;gap:12px;margin-top:-6px;position:relative;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.06)}
+.cb:first-child{margin-top:0}
+.cb .msg{font-size:12.5px;line-height:1.4;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cb .un{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#161616;color:#fff;font-size:11px;display:grid;place-items:center}
+.cb .tail{position:absolute;bottom:-9px;width:18px;height:18px;transform:rotate(45deg);border-radius:3px}
+/* conversation */
+.chead{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bg);position:sticky;top:0;z-index:5}
+.msgs{padding:10px 16px}
+.m{max-width:78%;padding:12px 15px;border-radius:22px;font-size:14px;line-height:1.45;margin:8px 0}
+.m.them{background:var(--card);border-bottom-left-radius:6px}
+.m.me{background:#161616;color:#fff;margin-left:auto;border-bottom-right-radius:6px}
+.m .tr{font-size:12px;opacity:.6;border-top:1px dashed currentColor;margin-top:8px;padding-top:6px}
+.m .tm{font-size:10px;opacity:.5;margin-top:4px;text-align:right}
+.inputbar{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 24px;background:var(--bg);display:flex;gap:8px;align-items:center;z-index:20}
+.inputbar input{flex:1;background:var(--card);border:0;border-radius:30px;padding:15px 18px;outline:none;font-size:15px}
+.quick{display:flex;gap:6px;overflow-x:auto;padding:8px 14px;background:var(--bg);position:absolute;left:0;right:0;bottom:86px;z-index:20;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+/* jobs (ref 1) */
+.seg{display:flex;background:var(--card);border-radius:30px;padding:4px;margin:6px 0 14px}
+.seg button{flex:1;padding:10px;border-radius:26px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button.on{background:#161616;color:#fff}
+/* me (ref 6) */
+.ccard{border-radius:30px;padding:20px;background:linear-gradient(135deg,#D9EE7A,#9CC437);position:relative;overflow:hidden}
+.ccard:after{content:"HireGH";position:absolute;right:-6px;bottom:-14px;font-size:64px;font-weight:900;opacity:.08;letter-spacing:-2px}
+.ccard .cn{font-size:22px;font-weight:800;line-height:1.2;margin-top:10px}
+.ccard .row3{display:flex;margin-top:18px;gap:8px}
+.ccard .row3 div{flex:1;background:rgba(255,255,255,.4);border-radius:18px;padding:10px}
+.ccard .row3 b{font-size:20px;display:block}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.qa button{background:var(--card);border-radius:20px;padding:14px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:11.5px;font-weight:500}
+.qa .qi{width:40px;height:40px;border-radius:14px;display:grid;place-items:center}
+.li{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border:0}
+/* sheet/toast */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:40;opacity:0;pointer-events:none;transition:.25s}
+.mask.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-radius:34px 34px 0 0;padding:10px 20px 30px;z-index:41;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);max-height:85%;overflow-y:auto}
+.sheet.on{transform:none}
+.sheet .grab{width:44px;height:5px;border-radius:5px;background:#CFC8BA;margin:0 auto 14px}
+.toast{position:absolute;left:50%;bottom:112px;transform:translate(-50%,20px);max-width:88%;white-space:normal!important;text-align:center;background:#161616;color:#fff;padding:12px 18px;border-radius:30px;font-size:13px;z-index:60;opacity:0;transition:.3s;pointer-events:none;display:flex;gap:8px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.fade{animation:fd .28s ease}
+@keyframes fd{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ivc{background:var(--card);border-radius:22px;padding:14px;display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.datebox{width:54px;height:58px;border-radius:16px;background:var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
+.datebox b{font-size:20px;line-height:1}
+.logo{width:36px;height:36px;border-radius:12px;background:var(--lime);display:grid;place-items:center;font-weight:900;font-size:18px}
+.up{height:150px;border-radius:24px;border:2px dashed #C9C3B6;background:var(--card) center/cover no-repeat;display:grid;place-items:center;color:var(--muted);cursor:pointer}
+.up.round{width:84px;height:84px;border-radius:50%;flex:none}
+.steps{display:flex;gap:6px;flex:1;margin:0 14px}.steps i{flex:1;height:6px;border-radius:6px;background:rgba(0,0,0,.15)}.steps i.on{background:#161616}
+.regwrap{background:var(--bg);padding:16px 20px 130px}
+.regwrap .fi{background:var(--card);border-color:transparent}.regwrap .fi:focus{border-color:#161616;background:#fff}
+.regwrap .stepper{background:var(--card);border-color:transparent}
+.consent{display:flex;gap:10px;align-items:flex-start;background:var(--card);border-radius:20px;padding:14px;margin-top:18px;font-size:12.5px;line-height:1.5}
+.consent input{width:20px;height:20px;flex:none;accent-color:#161616;margin-top:2px}
+@media (max-width:519px){.screen{padding-top:env(safe-area-inset-top)}.nav{bottom:calc(14px + env(safe-area-inset-bottom))}.bbar,.inputbar{padding-bottom:calc(20px + env(safe-area-inset-bottom))}}
+.select{appearance:none;background:var(--card);border:0;border-radius:30px;padding:9px 14px;font-size:13px;font-weight:600;outline:none}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div class="sbar"><span>9:41</span><span class="island"></span><span>●●● ▮</span></div>
+  <div class="screen" id="screen"></div>
+  <div id="fixed"></div>
+  <div id="navwrap"></div>
+  <div class="mask" id="mask" onclick="closeSheet()"></div>
+  <div class="sheet" id="sheet"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ==== 云端配置：填入 Supabase 项目信息即可让数据真实保存（留空=本地演示模式） ==== */
+window.HIREGH_CONFIG = window.HIREGH_CONFIG || {
+  supabaseUrl: '',        // 例如 https://xxxx.supabase.co
+  supabaseAnonKey: '',    // Project Settings → API → anon public key
+  showDemoData: true      // 正式测试时改为 false，只显示真实注册的数据
+};
+</script>
+<script>
+/* ============ ICONS ============ */
+const P={
+home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+users:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.8-5.6-4.5-6.6"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+arrow:'<path d="M7 17 17 7M8 7h9v9"/>',
+right:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+back:'<path d="M15 18l-6-6 6-6"/>',
+heart:'<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',
+trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+pin:'<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
+check:'<path d="m5 12 5 5 9-10"/>',
+x:'<path d="M6 6l12 12M18 6 6 18"/>',
+filter:'<path d="M4 6h16M7 12h10M10 18h4"/>',
+globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+send:'<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+doc:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
+tr:'<path d="M4 5h8M8 3v2M6 5c0 4 2.5 7 6 8M10 5c-.5 3-2.5 6-6 8"/><path d="m13 21 4-9 4 9M14.5 18h5"/>',
+gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
+help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01"/>',
+factory:'<path d="M3 21V10l6 4V10l6 4V5h6v16z"/><path d="M7 17h2M12 17h2"/>',
+leaf:'<path d="M5 21c0-9 6-15 15-16-1 9-7 15-15 16z"/><path d="M5 21 14 12"/>',
+cup:'<path d="M5 8h12v5a6 6 0 0 1-12 0zM17 9h1.5a2.5 2.5 0 0 1 0 5H17M8 3v2M12 3v2"/>',
+helmet:'<path d="M3 18h18M5 18v-3a7 7 0 0 1 14 0v3M10 8V5h4v3"/>',
+pick:'<path d="M3 21 13 11M8 4c4-1 9 1 12 5M15 3l6 6"/>',
+truck:'<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+};
+const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" ${s?`style="width:${s}px;height:${s}px"`:''}>${P[n]||''}</svg>`;
+
+/* ============ DATA ============ */
+let seed=20261112;const rnd=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const pick=a=>a[Math.floor(rnd()*a.length)];const ri=(a,b)=>a+Math.floor(rnd()*(b-a+1));
+
+const NATS={
+ GH:{zh:'加纳',en:'Ghana',flag:'linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)',star:'#000'},
+ VN:{zh:'越南',en:'Vietnam',flag:'#DA251D',star:'#FFCD00'},
+ IN:{zh:'印度',en:'India',flag:'linear-gradient(#FF9933 0 33%,#fff 33% 66%,#138808 66%)'},
+ NG:{zh:'尼日利亚',en:'Nigeria',flag:'linear-gradient(90deg,#008751 0 33%,#fff 33% 66%,#008751 66%)'},
+ TG:{zh:'多哥',en:'Togo',flag:'repeating-linear-gradient(#006A4E 0 3px,#FFCE00 3px 6px)'},
+ BF:{zh:'布基纳法索',en:'Burkina Faso',flag:'linear-gradient(#EF2B2D 0 50%,#009E49 50%)',star:'#FCD116'},
+ CN:{zh:'中国',en:'China',flag:'#DE2910',star:'#FFDE00'},
+};
+const flag=c=>{const n=NATS[c];return `<span class="flag" style="background:${n.flag}">${n.star?`<i style="color:${n.star}">★</i>`:''}</span>`};
+
+const IND=[
+ {id:'ind',zh:'工业制造',en:'Manufacturing',color:'#9D7DFF',ink:'#fff',icon:'factory',roles:[
+  ['焊工','Welder',3600,['氩弧焊','CO₂保护焊','看懂图纸','钢结构']],['电工','Electrician',3800,['低压配电','PLC基础','设备接线','故障排查']],
+  ['机修工','Mechanic',3500,['液压系统','设备保养','轴承更换']],['叉车司机','Forklift Operator',2800,['叉车证','仓库装卸','安全操作']],
+  ['CNC操作工','CNC Operator',3400,['数控车床','量具使用','首件检验']],['质检员','QC Inspector',3200,['来料检验','数据记录','ISO流程']],
+  ['普工','General Worker',1500,['流水线','搬运','包装']]]},
+ {id:'agr',zh:'农业种植',en:'Agriculture',color:'#F8C94A',ink:'#161616',icon:'leaf',roles:[
+  ['种植工','Farm Hand',1200,['育苗','除草施肥','可可种植']],['农机手','Tractor Operator',3000,['拖拉机驾驶','旋耕播种','农机保养']],
+  ['养殖工','Livestock Keeper',1400,['养鸡','罗非鱼养殖','防疫消毒']],['采摘工','Harvester',1100,['腰果采收','菠萝采摘','分拣']],
+  ['灌溉技工','Irrigation Tech',2900,['滴灌安装','水泵维修']],['农场主管','Farm Supervisor',4500,['排班管理','产量统计','中文沟通']]]},
+ {id:'svc',zh:'服务业',en:'Services',color:'#EE5A47',ink:'#161616',icon:'cup',roles:[
+  ['中餐厨师','Chinese Cook',4200,['川菜','面点','食堂大锅菜']],['司机','Driver',2800,['B/C驾照','熟悉阿克拉路线','车辆保养']],
+  ['保安','Security Guard',1500,['夜班值守','门岗登记','巡逻']],['保洁','Cleaner',1200,['办公室保洁','宿舍清洁']],
+  ['中英翻译','Interpreter',6500,['HSK4+','商务翻译','清关陪同']],['家政保姆','Housekeeper',1600,['做中餐','照顾小孩','洗熨']],
+  ['会计文员','Accounts Clerk',3800,['GRA报税','Excel','SSNIT申报']]]},
+ {id:'con',zh:'建筑工程',en:'Construction',color:'#CFE36B',ink:'#161616',icon:'helmet',roles:[
+  ['泥瓦工','Mason',2600,['砌砖','抹灰','贴瓷砖']],['钢筋工','Steel Fixer',2800,['钢筋绑扎','看图下料']],
+  ['木工','Carpenter',2700,['模板支护','门窗安装']],['水电工','Plumber',3000,['给排水','电路预埋']],
+  ['挖掘机司机','Excavator Operator',4800,['卡特/三一','土方开挖','设备保养']],['测量员','Surveyor',4200,['全站仪','放线','CAD']]]},
+ {id:'min',zh:'矿业能源',en:'Mining',color:'#2B2B2B',ink:'#fff',icon:'pick',roles:[
+  ['矿工','Miner',3200,['井下作业','安全规程']],['爆破员','Blaster',5200,['爆破证','炸药管理']],
+  ['重卡司机','Dump Truck Driver',4000,['矿用自卸车','夜班']],['设备维修','Plant Mechanic',4600,['柴油机','液压挖机维修']],
+  ['选矿工','Ore Processor',3000,['破碎','浮选','化验取样']]]},
+ {id:'log',zh:'物流仓储',en:'Logistics',color:'#5B8CFF',ink:'#fff',icon:'truck',roles:[
+  ['仓管员','Storekeeper',2900,['出入库','盘点','ERP系统']],['装卸工','Loader',1400,['集装箱装卸','码垛']],
+  ['货车司机','Truck Driver',3500,['重型驾照','特马港路线']],['报关员','Customs Clerk',5000,['ICUMS系统','清关文件','中文沟通']]]},
+];
+const ROLE_MAP={};IND.forEach(i=>i.roles.forEach(r=>ROLE_MAP[r[0]]={ind:i,r}));
+
+const NAMES={
+ GH:{m:['Kwame Mensah','Kofi Boateng','Yaw Darko','Kwabena Ofori','Kojo Asare','Kwesi Amoah','Fiifi Quaye','Nana Agyeman','Samuel Tetteh','Isaac Owusu','Emmanuel Addo','Joseph Ansah'],
+     f:['Ama Owusu','Akosua Asante','Efua Appiah','Abena Osei','Adwoa Badu','Esi Mensah','Akua Sarpong','Grace Nyarko']},
+ VN:{m:['Nguyễn Văn An','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam','Vũ Quang Huy'],f:['Trần Thị Hoa','Đỗ Thị Lan']},
+ IN:{m:['Rajesh Kumar','Arjun Patel','Suresh Reddy','Vikram Singh','Anil Sharma'],f:['Priya Sharma','Anjali Nair']},
+ NG:{m:['Chinedu Okafor','Emeka Eze','Tunde Bello'],f:['Ngozi Obi']},
+ TG:{m:['Komlan Agbeko','Kossi Amegah'],f:['Afi Mensah']},
+ BF:{m:['Issa Ouédraogo','Moussa Sawadogo'],f:['Awa Kaboré']},
+ CN:{m:['张伟','李强'],f:['王芳','刘洋']},
+};
+const CITIES=[['阿克拉','Accra'],['特马','Tema'],['库马西','Kumasi'],['塔科拉迪','Takoradi'],['卡索阿','Kasoa'],['塔马利','Tamale'],['奥布阿西','Obuasi'],['科福里杜阿','Koforidua']];
+const AV_COL=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8','#C9F0D5'];
+const LANGS={GH:['English','Twi'],VN:['Tiếng Việt'],IN:['Hindi','English'],NG:['English','Igbo'],TG:['Français','Ewe'],BF:['Français','Mooré'],CN:['中文','English']};
+
+const WORKERS=[];let wid=1;const used=new Set();
+IND.forEach(ind=>ind.roles.forEach(r=>{
+  const n=ri(2,4);
+  for(let k=0;k<n;k++){
+    let nat=rnd()<.55?'GH':pick(['VN','IN','NG','TG','BF','GH','VN','IN']);
+    if(r[0]==='中英翻译'||r[0]==='报关员') nat=rnd()<.7?'GH':'CN';
+    if(ind.id==='min'&&nat==='VN'&&rnd()<.5) nat='GH';
+    const female=rnd()<(['保洁','家政保姆','会计文员','质检员','采摘工','种植工','中英翻译'].includes(r[0])?.6:.12);
+    const pool=NAMES[nat][female?'f':'m'];let name=pick(pool),tries=0;
+    while(used.has(name)&&tries++<8) name=pick(pool);used.add(name);
+    const exp=ri(1,12);const city=ind.id==='min'&&rnd()<.6?CITIES[6]:ind.id==='log'&&rnd()<.5?CITIES[1]:pick(CITIES);
+    const zh=nat==='CN'?'母语':r[0]==='中英翻译'?'流利(HSK5)':rnd()<.22?'基础':rnd()<.1?'流利':'不会';
+    const sal=Math.round((r[2]*(0.85+exp*0.035)*(0.9+rnd()*.25))/50)*50;
+    WORKERS.push({id:wid++,name,nat,female,ind:ind.id,role:r[0],roleEn:r[1],exp,age:ri(21,48),sal,city,zh,
+      langs:[...LANGS[nat],...(zh!=='不会'&&nat!=='CN'?['中文']:[])],
+      skills:r[3].slice(0,ri(2,r[3].length)),rating:(4+rnd()*1).toFixed(1),jobs:ri(1,9),
+      card:nat==='GH'||rnd()<.85, permit:nat==='GH'?null:rnd()<.75, health:rnd()<.8, police:rnd()<.6,
+      avail:pick(['可立即上岗','可立即上岗','1周内到岗','2周内到岗']),stay:rnd()<.5?'需要包住':'自行解决住宿',
+      shift:pick(['白班','可倒班','可夜班']),col:AV_COL[wid%AV_COL.length],isNew:rnd()<.18});
+  }
+}));
+const W=id=>WORKERS.find(w=>w.id===+id);
+const initials=n=>/[一-龥]/.test(n)?n.slice(-1):n.split(' ').filter(Boolean).slice(0,2).map(s=>s[0]).join('');
+const avatar=(w,cls='')=>w.photo?`<div class="av ${cls}" style="background:#ddd url('${w.photo}') center/cover"></div>`:`<div class="av ${cls}" style="background:${w.col}">${initials(w.name)}</div>`;
+const money=n=>'GH₵'+n.toLocaleString('en-US');
+
+/* ============ STATE ============ */
+const S={view:'home',params:{},hist:[],saved:new Set([3,8,15]),
+  f:{ind:'all',role:'all',nat:'all',zh:false,ver:false,now:false,q:'',sort:'rec'},
+  jobFilter:'all',translate:true,
+  jobs:[
+   {id:1,title:'焊工',en:'Welder',ind:'ind',exp:'3+ 年',sal:'3,500–4,500',city:'特马',n:5,apps:42,status:'open',nats:['GH','VN'],zh:false,stay:true,desc:'钢结构厂房焊接，需会看图纸，包住宿和午餐。'},
+   {id:2,title:'中餐厨师',en:'Chinese Cook',ind:'svc',exp:'5+ 年',sal:'4,000–6,000',city:'阿克拉',n:2,apps:18,status:'open',nats:['GH','CN'],zh:true,stay:true,desc:'公司食堂约60人，川菜、面点优先。'},
+   {id:3,title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,800–2,200',city:'库马西',n:20,apps:126,status:'open',nats:['GH','BF','TG'],zh:false,stay:false,desc:'腰果季节性采收，计件+底薪。'},
+   {id:4,title:'挖掘机司机',en:'Excavator Operator',ind:'con',exp:'4+ 年',sal:'4,500–5,800',city:'塔科拉迪',n:3,apps:33,status:'pause',nats:['GH','IN'],zh:false,stay:true,desc:'道路项目土方作业，熟悉卡特/三一机型。'},
+  ],
+  chats:[],interviews:[],
+};
+const nowT=()=>{const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')};
+(function seedChats(){
+  const pairs=[
+   [WORKERS.find(w=>w.role==='焊工'),'Good morning boss, I saw your welding job in Tema. I have 6 years experience with steel structure.','老板早上好，我看到您在特马的焊工岗位，我有6年钢结构经验。',2,'08:24'],
+   [WORKERS.find(w=>w.role==='中英翻译'),'王总您好，明天清关的文件我已经整理好了，需要我几点到港口？','Hello Mr. Wang, I have prepared the customs documents for tomorrow. What time should I be at the port?',0,'09:02'],
+   [WORKERS.find(w=>w.nat==='VN'),'Tôi có thể bắt đầu làm việc từ thứ Hai tuần sau.','我下周一就可以开始上班。',1,'昨天'],
+   [WORKERS.find(w=>w.role==='挖掘机司机'),'Please is the job still available? I can send my certificate.','请问岗位还在招吗？我可以发证书给您。',0,'昨天'],
+   [WORKERS.find(w=>w.role==='中餐厨师'),'Thank you for the interview today, I will wait for your call.','谢谢您今天的面试，我等您的电话。',0,'周一'],
+  ];
+  const cols=['#EE5A47','#F8C94A','#FF9F43','#5B8CFF','#E2B2FA'];
+  pairs.forEach(([w,o,t,u,tm],i)=>{if(!w)return;S.chats.push({wid:w.id,unread:u,color:cols[i],msgs:[{me:false,o,t,tm}]})});
+})();
+S.interviews.push({wid:S.chats[0]?.wid||1,job:'焊工',date:'11月14日',d:14,mo:'NOV',time:'10:00',way:'到厂面试',place:'特马工业区'});
+
+/* ============ ROUTER ============ */
+const TABS=['home','browse','jobs','chats','me'];
+const $=s=>document.querySelector(s);
+function go(v,p={}){S.hist.push({view:S.view,params:S.params,top:$('#screen').scrollTop});S.view=v;S.params=p;render(true)}
+function back(){const p=S.hist.pop();if(!p)return S.mode==='wk'?(S.view=S.me?'w_home':'welcome',render(true)):tab('home');S.view=p.view;S.params=p.params;render(false);$('#screen').scrollTop=p.top||0}
+function tab(v){S.hist=[];S.view=v;S.params={};render(true)}
+const rate=w=>w.rating?'★ '+w.rating:'新人';
+function render(top){
+  const sc=$('#screen');sc.innerHTML=`<div class="fade">${V[S.view]()}</div>`;
+  const fx=$('#fixed');fx.innerHTML='';sc.querySelectorAll('.bbar,.quick,.inputbar').forEach(e=>fx.appendChild(e));
+  sc.classList.toggle('chatpad',S.view==='chat');
+  const wk=['w_home','w_apps','w_me'].includes(S.view);const hasNav=TABS.includes(S.view)||wk;sc.classList.toggle('nonav',!hasNav);
+  $('#navwrap').innerHTML=wk?wnav():hasNav?nav():'';
+  if(top)sc.scrollTop=0;
+  if(S.view==='chat'){sc.scrollTop=sc.scrollHeight}
+}
+function nav(){
+  const un=S.chats.reduce((a,c)=>a+c.unread,0);
+  const b=(v,i,extra='')=>`<button class="${S.view===v?'on':''}" onclick="tab('${v}')" aria-label="${v}">${ic(i)}${extra}</button>`;
+  return `<div class="nav">${b('home','home')}${b('browse','users')}<button class="add" onclick="go('post')" aria-label="发布">${ic('plus')}</button>${b('chats','chat',un?`<span class="cnt">${un}</span>`:'')}${b('me','user')}</div>`;
+}
+function toast(m){const t=$('#toast');t.innerHTML=ic('check',16)+m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2000)}
+function openSheet(h){$('#sheet').innerHTML='<div class="grab"></div>'+h;$('#sheet').classList.add('on');$('#mask').classList.add('on')}
+function closeSheet(){$('#sheet').classList.remove('on');$('#mask').classList.remove('on')}
+function pickOne(el){el.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+
+/* ============ FILTER ============ */
+function filtered(){
+  const f=S.f,q=f.q.trim().toLowerCase();
+  let l=WORKERS.filter(w=>(f.ind==='all'||w.ind===f.ind)&&(f.role==='all'||w.role===f.role)&&(f.nat==='all'||w.nat===f.nat)
+    &&(!f.zh||w.zh!=='不会')&&(!f.ver||(w.card&&(w.permit!==false)))&&(!f.now||w.avail==='可立即上岗')
+    &&(!q||(w.name+w.role+w.roleEn+w.skills.join('')+w.city+NATS[w.nat].zh).toLowerCase().includes(q)));
+  const s=f.sort;
+  if(s==='sal')l.sort((a,b)=>a.sal-b.sal);else if(s==='exp')l.sort((a,b)=>b.exp-a.exp);else if(s==='rate')l.sort((a,b)=>(+b.rating||0)-(+a.rating||0));
+  return l;
+}
+function setF(k,v){S.f[k]=v;if(k==='ind')S.f.role='all';render(false)}
+function toggleSave(id,ev){ev&&ev.stopPropagation();S.saved.has(id)?(S.saved.delete(id),toast('已取消收藏')):(S.saved.add(id),toast('已收藏到人才夹'));render(false)}
+
+/* ============ COMPONENTS ============ */
+function wCard(w){
+  const ind=IND.find(i=>i.id===w.ind);const sv=S.saved.has(w.id);
+  return `<div class="wc" onclick="go('worker',{id:${w.id}})">
+   <div class="top"><div class="row between" style="align-items:flex-start;gap:8px">
+     <h3>${w.role}<small>${w.roleEn} · ${ind.zh}</small></h3>
+     <div class="row gap6"><span class="badge cream">${rate(w)}</span><span class="badge ${w.avail==='可立即上岗'?'lilac':'grey'}">${w.avail==='可立即上岗'?'可上岗':w.avail.replace('到岗','')}</span></div></div>
+     <div class="cols"><div><div class="l">经验</div><div class="v">${w.exp}+ 年</div></div>
+       <div><div class="l">期望月薪</div><div class="v"><span style="font-size:13px">₵</span>${w.sal.toLocaleString('en-US')}</div></div>
+       <div><div class="l">所在地</div><div class="v">${w.city}</div></div></div></div>
+   <div class="bot">${avatar(w,'sm')}<div style="flex:1;min-width:0"><div class="nm row gap6">${w.name} ${flag(w.nat)}</div>
+     <div class="em">${w.langs.join(' · ')}${w.zh!=='不会'&&w.nat!=='CN'?' ('+w.zh+')':''}</div></div>
+     <button class="act ${sv?'on':''}" onclick="toggleSave(${w.id},event)">${ic('heart')}</button>
+     <button class="act" onclick="event.stopPropagation();openChat(${w.id})">${ic('chat')}</button>
+     <button class="act">${ic('right')}</button></div></div>`;
+}
+function mCard(w){
+  const ind=IND.find(i=>i.id===w.ind);
+  return `<div class="mc" onclick="go('worker',{id:${w.id}})"><div class="row between">${avatar(w)}<span class="tag" style="background:${ind.color};color:${ind.ink}">${ind.zh}</span></div>
+   <div class="b" style="margin-top:12px;font-size:16px">${w.role}</div><div class="sm row gap6" style="margin-top:2px">${flag(w.nat)} ${w.name}</div>
+   <div class="row between" style="margin-top:12px"><b>${money(w.sal)}<span class="muted xs">/月</span></b><span class="xs muted">${rate(w)}</span></div></div>`;
+}
+
+/* ============ VIEWS ============ */
+const V={};
+V.home=()=>{
+  const natCount=c=>WORKERS.filter(w=>w.nat===c).length;
+  const recs=[...WORKERS.filter(w=>w.isNew&&w.self),...[...WORKERS].sort((a,b)=>(+b.rating||0)-(+a.rating||0))].filter((w,i,a)=>a.indexOf(w)===i).slice(0,8);
+  return `<div class="pad">
+  <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · 鑫源建材</div></div></div>
+   <div class="row gap6"><button class="icbtn" onclick="tab('browse');setTimeout(()=>$('#q')&&$('#q').focus(),50)">${ic('search')}</button><button class="icbtn" onclick="openNotifs()">${ic('bell')}<span class="dot"></span></button></div></div>
+  <h1 class="hero">在加纳<br>找到<span class="hl">靠谱</span>的<br>工友</h1>
+  <div class="searchbar" onclick="tab('browse')">${ic('search')}<span style="flex:1">搜索工种、技能、城市…</span><span class="pill dark">${ic('filter',16)}筛选</span></div>
+  <div class="stats"><div class="stat"><div class="n">${WORKERS.length}</div><div class="xs muted">在册工人</div></div>
+   <div class="stat"><div class="n">${WORKERS.length?Math.round(WORKERS.filter(w=>w.card).length/WORKERS.length*100):0}%</div><div class="xs muted">证件已核验</div></div>
+   <div class="stat" style="background:var(--lime)"><div class="n">+${WORKERS.filter(w=>w.isNew).length}</div><div class="xs">本周新增</div></div></div>
+  <div class="sec-h">按行业找人 <a onclick="setF('ind','all');tab('browse')">全部 ›</a></div>
+  <div class="stack">${IND.map((i,k)=>`<div class="sc ${k===IND.length-1?'last':''}" style="background:${i.color};color:${i.ink}" onclick="S.f.ind='${i.id}';S.f.role='all';tab('browse')">
+    <div class="row between"><div class="row gap"><div class="ic">${ic(i.icon)}</div><div><div class="t">${i.zh}</div><div class="roles">${i.roles.slice(0,4).map(r=>r[0]).join(' · ')}…</div></div></div>
+    <div class="row gap"><span class="sm" style="opacity:.8">${WORKERS.filter(w=>w.ind===i.id).length}人</span><div class="go">${ic('arrow',18)}</div></div></div></div>`).join('')}</div>
+  <div class="sec-h">按国籍 <a>Nationality</a></div>
+  <div class="hscroll">${Object.keys(NATS).map(c=>`<div class="natc" onclick="S.f.nat='${c}';S.f.ind='all';S.f.role='all';tab('browse')"><div class="row gap6">${flag(c)}<span class="sm b">${NATS[c].zh}</span></div><div class="n">${natCount(c)}</div><div class="xs muted">${NATS[c].en}</div></div>`).join('')}</div>
+  <div class="sec-h">今日推荐 <a onclick="S.f.sort='rate';tab('browse')">更多 ›</a></div>
+  <div class="hscroll">${recs.map(mCard).join('')}</div>
+  <div class="box" style="background:#161616;color:#fff;margin-top:22px"><div class="row between"><div><div class="b" style="font-size:17px">用工合规小贴士</div><div class="sm" style="opacity:.7;margin-top:4px;line-height:1.5">2026年加纳全国最低日薪 GH₵21.77。外籍员工需持有效工作许可；加纳员工需登记 SSNIT。薪资参考 WageIndicator / Paylab 公开数据，具体以官方最新规定为准。</div></div><div class="go" style="width:40px;height:40px;border-radius:50%;background:var(--lime);color:#111;display:grid;place-items:center;flex:none;margin-left:10px">${ic('arrow')}</div></div></div>
+  </div>`;
+};
+
+V.browse=()=>{
+  const f=S.f;const ind=IND.find(i=>i.id===f.ind);const list=filtered();
+  return `<div class="pad">
+   <div class="row between" style="margin-top:6px"><div class="title">人才库</div><span class="badge cream">${list.length} 位候选人</span></div>
+   <div class="searchbar" style="margin:14px 0">${ic('search')}<input id="q" placeholder="搜索工种 / 技能 / 姓名 / 城市" value="${f.q}" oninput="S.f.q=this.value;updList()">${f.q?`<button onclick="S.f.q='';render(false)">${ic('x',18)}</button>`:''}</div>
+   <div class="tabsx"><div class="tabx" style="${f.ind==='all'?'background:#161616;color:#fff':''}" onclick="setF('ind','all')">全部行业</div>
+    ${IND.map(i=>`<div class="tabx" style="${f.ind===i.id?`background:${i.color};color:${i.ink}`:''}" onclick="setF('ind','${i.id}')">${i.zh}</div>`).join('')}</div>
+   ${ind?`<div class="chips" style="margin-top:10px"><span class="chip sm ${f.role==='all'?'on':''}" onclick="setF('role','all')">全部工种</span>${ind.roles.map(r=>`<span class="chip sm ${f.role===r[0]?'on':''}" onclick="setF('role','${r[0]}')">${r[0]}</span>`).join('')}</div>`:''}
+   <div class="chips" style="margin-top:10px"><span class="chip sm ${f.nat==='all'?'on':''}" onclick="setF('nat','all')">全部国籍</span>${Object.keys(NATS).map(c=>`<span class="chip sm ${f.nat===c?'on':''}" onclick="setF('nat','${c}')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
+   <div class="row between" style="margin-top:6px;gap:8px"><div class="toggles">
+     <span class="tg ${f.zh?'on':''}" onclick="setF('zh',${!f.zh})">会中文</span><span class="tg ${f.ver?'on':''}" onclick="setF('ver',${!f.ver})">证件齐全</span><span class="tg ${f.now?'on':''}" onclick="setF('now',${!f.now})">可立即上岗</span></div>
+     <select class="select" style="margin-top:10px" onchange="setF('sort',this.value)">${[['rec','综合'],['rate','评分'],['exp','经验'],['sal','薪资低→高']].map(o=>`<option value="${o[0]}" ${f.sort===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+   <div id="list" style="margin-top:16px">${listHTML(list)}</div></div>`;
+};
+const listHTML=l=>l.length?l.map(wCard).join(''):`<div class="empty">${ic('search',40)}<p style="margin-top:10px">没有符合条件的人选<br><span class="sm">试试放宽筛选条件</span></p></div>`;
+function updList(){const l=filtered();$('#list').innerHTML=listHTML(l);document.querySelector('.badge.cream').textContent=l.length+' 位候选人'}
+
+V.worker=()=>{
+  const w=W(S.params.id);const ind=IND.find(i=>i.id===w.ind);const sv=S.saved.has(w.id);
+  const ink=ind.ink;const head=ind.id==='min'?'#3A3A3A':ind.color;
+  const ver=[['Ghana Card / 身份证件',w.card],[w.nat==='GH'?'加纳公民（无需工作许可）':'工作许可 Work Permit',w.nat==='GH'?true:w.permit],['健康证明',w.health],['无犯罪记录 Police Report',w.police]];
+  const reviews=w.self?[]:[['鑫达钢构','技术扎实，出勤好，能吃苦。',5],['华建工程','沟通顺畅，按时完成任务。',4]];
+  return `<div class="dhead" style="background:${head};color:${ink}">
+   <div class="row between"><button class="icbtn" onclick="back()">${ic('back')}</button><span class="b">人才详情</span>
+   <button class="icbtn" onclick="toggleSave(${w.id})" style="${sv?'color:var(--red)':''}">${sv?ic('heart').replace('class="i"','class="i" style="fill:var(--red)"'):ic('heart')}</button></div>
+   <div style="margin-top:14px;display:inline-block;position:relative">${avatar(w,'lg')}<span style="position:absolute;bottom:4px;right:0;transform:scale(1.4)">${flag(w.nat)}</span></div>
+   <div class="name">${w.name}</div><div class="rpill" style="color:#161616">${w.role} · ${w.roleEn}</div>
+   <div class="sm" style="margin-top:8px;opacity:.8">${ic('pin',14)} ${w.city}, Ghana · ${NATS[w.nat].zh} · ${w.age?w.age+'岁 · ':''}${w.female?'女':'男'}</div>
+   <div class="kv" style="color:#161616"><span>${money(w.sal)}/月</span><span>${ic('brief',15)}${w.exp}+ 年</span><span>${rate(w)}</span></div></div>
+  <div class="pad">
+   <div class="box"><h4>基本信息</h4><div class="inf">
+     <div><div class="l">到岗时间</div><div class="v">${w.avail}</div></div><div><div class="l">班次偏好</div><div class="v">${w.shift}</div></div>
+     <div><div class="l">中文水平</div><div class="v">${w.zh}</div></div><div><div class="l">住宿</div><div class="v">${w.stay}</div></div>
+     <div><div class="l">语言</div><div class="v">${w.langs.join(' / ')}</div></div><div><div class="l">做过中企</div><div class="v">${w.jobs} 家</div></div></div></div>
+   <div class="box"><h4>技能标签</h4><div class="chips wrap">${w.skills.map(s=>`<span class="chip sm" style="background:${ind.id==='min'?'#E6E3DC':ind.color};color:${ind.id==='min'||ind.id==='ind'||ind.id==='log'?(ind.id==='min'?'#161616':'#fff'):'#161616'}">${s}</span>`).join('')}<span class="chip sm" style="background:#EEE9DE">${w.exp}年${w.role}经验</span></div></div>
+   <div class="box"><h4>证件核验 <span class="xs muted">平台人工审核</span></h4>${ver.map(v=>`<div class="vf"><span class="ok ${v[1]?'':'no'}">${ic(v[1]?'check':'x')}</span>${v[0]}<span class="xs muted" style="margin-left:auto">${v[1]?'已核验':w.pending?'审核中':'待补充'}</span></div>`).join('')}</div>
+   <div class="box"><h4>雇主评价 <span class="xs muted">${reviews.length} 条</span></h4>${reviews.length?'':'<div class="muted sm">新注册用户，暂无评价</div>'}${reviews.map(r=>`<div class="review"><div class="row between"><b>${r[0]}</b><span class="xs">${'★'.repeat(r[2])}</span></div><div class="muted" style="margin-top:3px">${r[1]}</div></div>`).join('')}</div>
+   <div class="sec-h">录用流程</div>
+   <div>${[['Stage 1','简历筛选','#9D7DFF','#fff','查看证件与工作经历，确认技能与岗位匹配。'],['Stage 2','面试 / 试工','#EE5A47','#161616','到厂面试或视频面试，技术岗建议安排半天试工。'],['Stage 3','签约入职','#F8C94A','#161616','签订劳动合同，登记 SSNIT，外籍员工办理工作许可。']].map(s=>`<div class="stage" style="background:${s[2]};color:${s[3]}"><span class="s">${s[0]}</span><div class="st" style="color:#161616">${ic('arrow',16)}</div><div class="t">${s[1]}</div><p>${s[4]}</p></div>`).join('')}</div>
+  </div>
+  <div class="bbar"><button class="sqbtn" onclick="openChat(${w.id})">${ic('chat')}</button><button class="sqbtn" onclick="toast('已拨打平台中转电话')">${ic('phone')}</button><button class="bigbtn" onclick="inviteSheet(${w.id})">发起面试邀请 ${ic('right',18)}</button></div>`;
+};
+
+V.jobs=()=>{
+  const own=S.jobs.filter(j=>j.owner==='me');const l=own.filter(j=>S.jobFilter==='all'||j.status===S.jobFilter);
+  return `<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">我的招工</div><button class="pill dark" onclick="go('post')">${ic('plus',16)}发布岗位</button></div>
+  <div class="seg">${[['all','全部 '+own.length],['open','招聘中 '+own.filter(j=>j.status==='open').length],['pause','已暂停 '+own.filter(j=>j.status==='pause').length]].map(t=>`<button class="${S.jobFilter===t[0]?'on':''}" onclick="S.jobFilter='${t[0]}';render(false)">${t[1]}</button>`).join('')}</div>
+  ${l.length?l.map(j=>{const ind=IND.find(i=>i.id===j.ind);const m=WORKERS.filter(w=>w.role===j.title).length;return `<div class="wc">
+   <div class="top"><div class="row between" style="align-items:flex-start;gap:8px"><h3>${j.title}<small>${j.en} · ${ind?ind.zh:''} · 招 ${j.n} 人</small></h3>
+    <div class="row gap6"><span class="badge cream">${j.apps} 申请</span><span class="badge ${j.status==='open'?'lilac':'grey'}" style="cursor:pointer" onclick="toggleJob(${j.id})">${j.status==='open'?'招聘中':'已暂停'}</span></div></div>
+    <div class="cols"><div><div class="l">经验</div><div class="v">${j.exp}</div></div><div><div class="l">月薪 GH₵</div><div class="v">${j.sal.split('–').map(x=>(+x.replace(/\D/g,'')/1000).toFixed(1).replace('.0','')+'k').join('–')}</div></div><div><div class="l">地点</div><div class="v">${j.city}</div></div></div>
+    <div class="row gap6" style="margin-top:12px;flex-wrap:wrap">${j.nats.map(c=>`<span class="chip sm" style="background:#F1ECDF">${flag(c)}${NATS[c].zh}</span>`).join('')}${j.zh?'<span class="chip sm" style="background:#F1ECDF">需中文</span>':''}${j.stay?'<span class="chip sm" style="background:#F1ECDF">包住宿</span>':''}</div></div>
+   <div class="bot"><div style="flex:1"><div class="xs muted">匹配人才</div><div class="nm">${m} 位 ${j.title} 可联系</div></div>
+    <button class="act del" onclick="delJob(${j.id})">${ic('trash')}</button><button class="act" onclick="go('post',{edit:${j.id}})">${ic('edit')}</button>
+    <button class="act" onclick="S.f={...S.f,ind:'${j.ind}',role:'${j.title}',nat:'all',q:''};tab('browse')">${ic('right')}</button></div></div>`}).join(''):`<div class="empty">暂无岗位</div>`}</div>`;
+};
+function toggleJob(id){const j=S.jobs.find(x=>x.id===id);j.status=j.status==='open'?'pause':'open';if(j.dbid)dbSafe(()=>DB.q('jobs?id=eq.'+j.dbid,{method:'PATCH',body:JSON.stringify(jobRow(j))}));toast(j.status==='open'?'岗位已恢复招聘':'岗位已暂停');render(false)}
+function delJob(id){const j=S.jobs.find(x=>x.id===id);openSheet(`<div class="b" style="font-size:20px">删除「${j.title}」岗位？</div><p class="muted sm" style="margin:8px 0 18px">删除后已收到的 ${j.apps} 份申请将无法查看。</p><div class="row gap"><button class="bigbtn" style="background:var(--card);color:#161616" onclick="closeSheet()">取消</button><button class="bigbtn" style="background:var(--red)" onclick="if(${j.dbid||0})dbSafe(()=>DB.q('jobs?id=eq.${j.dbid}',{method:'DELETE'}));S.jobs=S.jobs.filter(x=>x.id!==${id});closeSheet();toast('已删除');render(false)">确认删除</button></div>`)}
+
+V.post=()=>{
+  const e=S.params.edit?S.jobs.find(j=>j.id===S.params.edit):null;
+  const sel=e?e.ind:'ind';const ind=IND.find(i=>i.id===sel);
+  const [lo,hi]=e?e.sal.split('–'):['',''];
+  return `<div class="hdr"><button class="icbtn" style="background:#161616;color:#fff" onclick="back()">${ic('back')}</button><span class="pill" style="background:var(--gold)">${ic('edit',15)}${e?'编辑岗位':'新岗位'}</span></div>
+  <div class="formwrap"><h2>${e?'修改招工信息':'嘿，发布新的招工'}</h2><div class="sm" style="opacity:.75">发布后将推送给匹配的工人 · Post a job</div>
+   <div class="fl">行业</div><div class="chips wrap" id="pInd">${IND.map(i=>`<span class="chip sm ${i.id===sel?'on':''}" data-v="${i.id}" onclick="pickOne(this);fillRoles('${i.id}')">${i.zh}</span>`).join('')}</div>
+   <div class="fl">工种</div><div class="chips wrap" id="pRole">${rolesChips(ind,e?e.title:null)}</div>
+   <div class="fl">岗位标题（可自定义）</div><input class="fi" id="pTitle" placeholder="例如：钢结构焊工" value="${e?e.title:''}">
+   <div class="two"><div><div class="fl">招聘人数</div><div class="stepper"><button onclick="stp(-1)">−</button><b id="pN">${e?e.n:1}</b><button onclick="stp(1)">+</button></div></div>
+    <div><div class="fl">经验要求</div><select class="fi" id="pExp" style="padding:14px 16px">${['不限','1+ 年','3+ 年','5+ 年','8+ 年'].map(x=>`<option ${e&&e.exp===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
+   <div class="fl">月薪范围 (GH₵)</div><div class="two"><input class="fi" id="pLo" inputmode="numeric" placeholder="最低 2,000" value="${lo}"><input class="fi" id="pHi" inputmode="numeric" placeholder="最高 3,500" value="${hi}"></div>
+   <div class="fl">工作地点</div><div class="chips wrap" id="pCity">${CITIES.map((c,k)=>`<span class="chip sm ${(e?e.city===c[0]:k===0)?'on':''}" onclick="pickOne(this)">${c[0]}</span>`).join('')}</div>
+   <div class="fl">国籍偏好（可多选）</div><div class="chips wrap" id="pNat">${Object.keys(NATS).map(c=>`<span class="chip sm ${(e?e.nats.includes(c):c==='GH')?'on':''}" data-v="${c}" onclick="this.classList.toggle('on')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
+   <div class="fl">待遇与要求</div><div class="chips wrap" id="pOpt"><span class="chip sm ${e&&e.stay?'on':''}" data-v="stay" onclick="this.classList.toggle('on')">包住宿</span><span class="chip sm" onclick="this.classList.toggle('on')">包午餐</span><span class="chip sm ${e&&e.zh?'on':''}" data-v="zh" onclick="this.classList.toggle('on')">需会中文</span><span class="chip sm" onclick="this.classList.toggle('on')">有交通车</span><span class="chip sm" onclick="this.classList.toggle('on')">可夜班</span><span class="chip sm" onclick="this.classList.toggle('on')">需工作许可</span></div>
+   <div class="fl">岗位描述</div><textarea class="fi" id="pDesc" placeholder="工作内容、上班时间、试用期等…">${e?e.desc:''}</textarea>
+  </div>
+  <div class="bbar" style="background:var(--red)"><button class="bigbtn" onclick="savePost(${e?e.id:0})">${e?'保存修改':'发布岗位'}</button></div>`;
+};
+const rolesChips=(ind,cur)=>ind.roles.map((r,k)=>`<span class="chip sm ${(cur?cur===r[0]:k===0)?'on':''}" data-v="${r[0]}" data-en="${r[1]}" onclick="pickOne(this);$('#pTitle').value=this.dataset.v">${r[0]}</span>`).join('');
+function fillRoles(id){$('#pRole').innerHTML=rolesChips(IND.find(i=>i.id===id));$('#pTitle').value=''}
+function stp(d){const b=$('#pN');b.textContent=Math.max(1,+b.textContent+d)}
+function savePost(id){
+  const role=$('#pRole .chip.on');const title=$('#pTitle').value.trim()||role?.dataset.v;
+  const lo=$('#pLo').value.replace(/\D/g,''),hi=$('#pHi').value.replace(/\D/g,'');
+  if(!title){toast('请填写岗位名称');return} if(!lo||!hi){toast('请填写月薪范围');return}
+  const fmt=n=>(+n).toLocaleString('en-US');
+  const opts=[...document.querySelectorAll('#pOpt .chip.on')].map(c=>c.dataset.v);
+  const data={title,en:role?.dataset.en||'',ind:$('#pInd .chip.on').dataset.v,exp:$('#pExp').value,sal:fmt(lo)+'–'+fmt(hi),city:$('#pCity .chip.on').textContent,
+    n:+$('#pN').textContent,nats:[...document.querySelectorAll('#pNat .chip.on')].map(c=>c.dataset.v),zh:opts.includes('zh'),stay:opts.includes('stay'),desc:$('#pDesc').value};
+  if(!data.nats.length)data.nats=['GH'];
+  data.descEn=null;
+  if(id){const j=S.jobs.find(j=>j.id===id);Object.assign(j,data);if(j.dbid)dbSafe(()=>DB.q('jobs?id=eq.'+j.dbid,{method:'PATCH',body:JSON.stringify(jobRow(j))}));toast('岗位已更新')}
+  else{const j={id:Date.now(),apps:0,status:'open',owner:'me',company:MYCO,...data};S.jobs.unshift(j);toast('发布成功，已推送给匹配工人');
+    dbSafe(async()=>{const r=await DB.q('jobs',{method:'POST',body:JSON.stringify(jobRow(j))});j.dbid=r[0].id})}
+  S.jobFilter='all';tab('jobs');
+}
+
+V.chats=()=>`<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">消息</div><div class="row gap6"><span class="muted sm">${S.chats.length} 个对话</span><button class="icbtn" onclick="S.translate=!S.translate;toast(S.translate?'自动翻译已开启':'自动翻译已关闭');render(false)" style="${S.translate?'background:var(--lime)':''}">${ic('tr')}</button></div></div>
+  <div class="sm muted" style="margin:6px 0 18px">${S.translate?'自动翻译已开启：英语 / 越南语 / 法语 ⇄ 中文':'自动翻译已关闭'}</div>
+  ${S.chats.length?S.chats.map((c,k)=>{const w=W(c.wid);const m=c.msgs[c.msgs.length-1];const dark=['#5B8CFF'].includes(c.color);
+   return `<div class="cb" style="background:${c.color};color:${dark?'#fff':'#161616'};z-index:${20-k}" onclick="openChat(${w.id})">${avatar(w)}<div style="flex:1;min-width:0;padding-right:26px"><div class="row gap6"><b>${w.name}</b>${flag(w.nat)}<span class="xs" style="opacity:.6">${m.tm}</span></div>
+   <div class="xs" style="opacity:.7">${w.role}</div><div class="msg">${S.translate&&!m.me?m.t:m.o}</div></div>${c.unread?`<span class="un">${c.unread}</span>`:''}<span class="tail" style="background:${c.color};${k%2?'right':'left'}:46px"></span></div>`}).join(''):'<div class="empty">暂无消息</div>'}
+  <div class="box" style="margin-top:22px;display:flex;gap:12px;align-items:center"><div class="qi" style="width:44px;height:44px;border-radius:14px;background:var(--gold);display:grid;place-items:center">${ic('shield')}</div><div class="sm">为保护双方，平台对话与通话均可留存记录。<br><span class="muted">请勿在面试前向工人收取任何费用。</span></div></div></div>`;
+
+function openChat(id){let c=S.chats.find(c=>c.wid===id);if(!c){const w=W(id);c={wid:id,unread:0,color:'#E2B2FA',msgs:[]};S.chats.unshift(c)}c.unread=0;go('chat',{id})}
+const QUICK=[['您好，请问什么时候可以来面试？','Hello, when can you come for an interview?'],['请发一下您的证件照片','Please send me photos of your documents'],['月薪可以面谈','Salary is negotiable'],['我们包住宿','Accommodation is provided'],['请把定位发我','Please share your location']];
+V.chat=()=>{
+  const w=W(S.params.id);const c=S.chats.find(c=>c.wid===w.id);
+  return `<div class="chead"><button class="icbtn" onclick="back()">${ic('back')}</button><div style="cursor:pointer" onclick="go('worker',{id:${w.id}})">${avatar(w,'sm')}</div><div style="flex:1;min-width:0"><div class="b row gap6" style="white-space:nowrap;overflow:hidden">${w.name} ${flag(w.nat)}</div><div class="xs muted">${w.role} · ${w.langs.join('/')}</div></div>
+   <button class="icbtn" style="${S.translate?'background:var(--lime)':''}" onclick="S.translate=!S.translate;render(false)">${ic('tr')}</button><button class="icbtn" onclick="toast('正在呼叫…')">${ic('phone')}</button></div>
+  <div class="msgs"><div class="xs muted" style="text-align:center;margin:6px 0 10px">${S.translate?'已开启自动翻译 · 对方看到的是英文':'翻译已关闭'}</div>
+   ${c.msgs.length?'':`<div class="empty sm">打个招呼吧，系统会自动把中文翻译成 ${w.langs[0]}</div>`}
+   ${c.msgs.map(m=>`<div class="m ${m.me?'me':'them'}">${m.o}${S.translate&&m.t?`<div class="tr">${m.t}</div>`:''}<div class="tm">${m.tm}</div></div>`).join('')}</div>
+  <div class="quick">${QUICK.map((q,k)=>`<span class="chip sm" onclick="sendMsg(${k})">${q[0]}</span>`).join('')}</div>
+  <div class="inputbar"><input id="mi" placeholder="输入中文，自动翻译…" onkeydown="if(event.key==='Enter')sendMsg()"><button class="icbtn dark" style="width:50px;height:50px" onclick="sendMsg()">${ic('send')}</button></div>`;
+};
+const REPLIES=[['OK boss, thank you. I will be there on time.','好的老板，谢谢，我会准时到。'],['Yes please, I can send my Ghana Card and certificate now.','好的，我现在可以发我的加纳身份证和证书。'],['Thank you sir, where exactly is the site?','谢谢先生，具体工地在哪里？'],['I am available. Please what time?','我有空，请问几点？']];
+function sendMsg(k){
+  const id=S.params.id;const c=S.chats.find(c=>c.wid===id);let o,t;
+  if(k!==undefined){[o,t]=QUICK[k]}else{o=$('#mi').value.trim();if(!o)return;t='[EN] '+o}
+  c.msgs.push({me:true,o,t,tm:nowT()});render(false);
+  setTimeout(()=>{const r=pick(REPLIES);c.msgs.push({me:false,o:r[0],t:r[1],tm:nowT()});if(S.view==='chat'&&S.params.id===id){render(false)}else c.unread++},1300);
+}
+
+function inviteSheet(id){
+  const w=W(id);const jobs=S.jobs.filter(j=>j.status==='open');const d=new Date();
+  const days=[...Array(6)].map((_,k)=>{const x=new Date(d);x.setDate(d.getDate()+k+1);return x});
+  const wk='日一二三四五六';
+  openSheet(`<div class="row gap">${avatar(w)}<div><div class="b" style="font-size:18px">邀请 ${w.name} 面试</div><div class="sm muted">${w.role} · ${w.city}</div></div></div>
+   <div class="fl" style="font-size:14px">面试岗位</div><div class="chips wrap" id="iJob">${(jobs.length?jobs:[{title:w.role}]).map((j,k)=>`<span class="chip sm ${k===0?'on':''}" onclick="pickOne(this)">${j.title}</span>`).join('')}</div>
+   <div class="fl" style="font-size:14px">日期</div><div class="chips" id="iDate" style="margin:0 -20px">${days.map((x,k)=>`<span class="chip ${k===0?'on':''}" data-d="${x.getDate()}" data-m="${x.getMonth()+1}" style="flex-direction:column;gap:0;padding:8px 14px"><span class="xs">周${wk[x.getDay()]}</span><b>${x.getMonth()+1}/${x.getDate()}</b></span>`).join('')}</div>
+   <div class="fl" style="font-size:14px">时间</div><div class="chips wrap" id="iTime">${['08:30','10:00','13:30','15:00'].map((t,k)=>`<span class="chip sm ${k===1?'on':''}" onclick="pickOne(this)">${t}</span>`).join('')}</div>
+   <div class="fl" style="font-size:14px">方式</div><div class="chips wrap" id="iWay">${['到厂面试','视频面试','电话面试','直接试工'].map((t,k)=>`<span class="chip sm ${k===0?'on':''}" onclick="pickOne(this)">${t}</span>`).join('')}</div>
+   <button class="bigbtn" style="width:100%;margin-top:22px" onclick="sendInvite(${id})">发送邀请（自动翻译为英文）</button>`);
+  document.querySelectorAll('#iDate .chip').forEach(c=>c.onclick=()=>pickOne(c));
+}
+function sendInvite(id){
+  const w=W(id);const job=$('#iJob .chip.on').textContent,dc=$('#iDate .chip.on'),time=$('#iTime .chip.on').textContent,way=$('#iWay .chip.on').textContent;
+  const mo=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][dc.dataset.m-1];
+  const wayEn={'到厂面试':'on-site interview','视频面试':'video interview','电话面试':'phone interview','直接试工':'trial work'}[way];
+  S.interviews.unshift({wid:id,job,date:`${dc.dataset.m}月${dc.dataset.d}日`,d:dc.dataset.d,mo,time,way,place:w.city});
+  let c=S.chats.find(c=>c.wid===id);if(!c){c={wid:id,unread:0,color:'#CFE36B',msgs:[]};S.chats.unshift(c)}
+  c.msgs.push({me:true,o:`您好 ${w.name}，邀请您 ${dc.dataset.m}月${dc.dataset.d}日 ${time} 参加「${job}」岗位的${way}，请确认是否能来。`,t:`Hello ${w.name}, you are invited for a ${wayEn} for the ${job} position on ${mo} ${dc.dataset.d} at ${time}. Please confirm.`,tm:nowT()});
+  closeSheet();toast('面试邀请已发送');
+}
+
+V.me=()=>{
+  const qa=[['heart','收藏人才','#FFD9D2',"go('saved')"],['cal','面试安排','#FCEBB0',"go('interviews')"],['doc','用工合同','#E9DDFF',"toast('合同模板即将上线')"],['shield','工作许可','#DDF0A8',"toast('签证/工作许可服务即将上线')"],
+    ['tr','翻译服务','#CFE0FF',"toast('可预约中英翻译陪同')"],['brief','我的岗位','#F1ECDF',"tab('jobs')"],['help','帮助中心','#F1ECDF',"toast('客服：工作日 8:00–18:00')"],['gear','设置','#F1ECDF',"langSheet()"]];
+  return `<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">我的</div><button class="icbtn" onclick="langSheet()">${ic('globe')}</button></div>
+  <div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('shield',14)} 企业已认证</span><span class="b">HireGH</span></div>
+   <div class="cn">鑫源建材（加纳）有限公司</div><div class="sm" style="opacity:.7;margin-top:4px">Xinyuan Building Materials Ghana Ltd. · 特马工业区</div>
+   <div class="row3"><div><b>${S.jobs.filter(j=>j.owner==='me'&&j.status==='open').length}</b><span class="xs">在招岗位</span></div><div><b>${S.jobs.filter(j=>j.owner==='me').reduce((a,j)=>a+j.apps,0)}</b><span class="xs">收到申请</span></div><div><b>${S.interviews.length}</b><span class="xs">待面试</span></div></div></div>
+  <div class="sec-h">常用功能</div>
+  <div class="qa">${qa.map(q=>`<button onclick="${q[3]}"><span class="qi" style="background:${q[2]}">${ic(q[0])}</span>${q[1]}</button>`).join('')}</div>
+  <div class="sec-h">近期面试 <a onclick="go('interviews')">全部 ›</a></div>
+  ${S.interviews.slice(0,2).map(ivCard).join('')||'<div class="empty sm">暂无面试安排</div>'}
+  <div class="box"><div class="li"><span>账号</span><span class="muted sm" style="margin-left:auto">王经理 · +233 ** *** 5821</span></div><div class="li"><span>界面语言</span><span class="muted sm" style="margin-left:auto">简体中文</span></div><div class="li"><span>版本</span><span class="muted sm" style="margin-left:auto">1.1.0 测试版 · ${DB.on?'云端已连接':'本地演示模式'}</span></div><div class="li" style="cursor:pointer" onclick="toWelcome()">${ic('users')}<span>切换身份 / 返回欢迎页</span></div></div></div>`;
+};
+const ivCard=iv=>{const w=W(iv.wid);return `<div class="ivc" onclick="go('worker',{id:${w.id}})"><div class="datebox"><span class="xs b">${iv.mo}</span><b>${iv.d}</b></div><div style="flex:1;min-width:0"><div class="b row gap6">${w.name} ${flag(w.nat)}</div><div class="sm muted">${iv.job} · ${iv.way}</div><div class="sm" style="margin-top:3px">${ic('clock',13)} ${iv.time} · ${iv.place}</div></div><button class="act" onclick="event.stopPropagation();openChat(${w.id})">${ic('chat')}</button></div>`};
+V.saved=()=>{const l=WORKERS.filter(w=>S.saved.has(w.id));return `<div class="hdr"><button class="icbtn" onclick="back()">${ic('back')}</button><b>收藏的人才</b><span style="width:44px"></span></div><div class="pad">${l.length?l.map(wCard).join(''):'<div class="empty">还没有收藏</div>'}</div>`};
+V.interviews=()=>`<div class="hdr"><button class="icbtn" onclick="back()">${ic('back')}</button><b>面试安排</b><span style="width:44px"></span></div><div class="pad">${S.interviews.map(ivCard).join('')||'<div class="empty">暂无面试</div>'}</div>`;
+function langSheet(){openSheet(`<div class="b" style="font-size:20px;margin-bottom:14px">界面语言 / Language</div>${['简体中文','English','Tiếng Việt'].map((l,k)=>`<div class="li" style="cursor:pointer" onclick="closeSheet();toast('${k?'多语言版本开发中':'已是简体中文'}')"><span>${l}</span>${k===0?`<span style="margin-left:auto">${ic('check')}</span>`:''}</div>`).join('')}`)}
+function openNotifs(){openSheet(`<div class="b" style="font-size:20px;margin-bottom:6px">通知</div>${[['新申请','3 位焊工申请了您的「焊工」岗位','10分钟前'],['面试提醒','明天 10:00 有一场到厂面试','1小时前'],['平台公告','新增「越南籍技工」专区','昨天']].map(n=>`<div class="li"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center">${ic('bell')}</span><div style="flex:1"><b class="sm">${n[0]}</b><div class="sm muted">${n[1]}</div></div><span class="xs muted">${n[2]}</span></div>`).join('')}`)}
+
+</script>
+<script>
+/* ================= I18N (worker side) ================= */
+const LANG_LIST=[['en','English'],['vi','Tiếng Việt'],['fr','Français'],['hi','हिन्दी'],['zh','中文']];
+const LI={en:0,vi:1,fr:2,hi:3,zh:4};
+function detectLang(){const ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];for(const l of ls){const c=(l||'').slice(0,2).toLowerCase();if(c in LI)return c}return 'en'}
+const T={
+welcome_title:['Find work with Chinese companies in Ghana','Việc làm tại các công ty Trung Quốc ở Ghana','Trouvez un emploi dans les entreprises chinoises au Ghana','घाना में चीनी कंपनियों में काम पाएँ','在加纳中企找工作'],
+detected:['Phone language detected','Đã nhận diện ngôn ngữ điện thoại','Langue du téléphone détectée','फ़ोन की भाषा पहचानी गई','已识别手机语言'],
+find_job:["I'm looking for work",'Tôi đang tìm việc','Je cherche du travail','मुझे काम चाहिए','我要找工作'],
+find_job_sub:['Create your profile in 3 steps','Tạo hồ sơ trong 3 bước','Créez votre profil en 3 étapes','3 चरणों में प्रोफ़ाइल बनाएँ','3 步创建求职档案'],
+s1:['About you','Thông tin cá nhân','Vos informations','आपके बारे में','基本信息'],
+s2:['Your work','Công việc mong muốn','Votre métier','आपका काम','工作意向'],
+s3:['Documents','Giấy tờ','Documents','दस्तावेज़','证件上传'],
+full_name:['Full name','Họ và tên','Nom complet','पूरा नाम','姓名'],
+phone:['Phone / WhatsApp','Điện thoại / WhatsApp','Téléphone / WhatsApp','फ़ोन / WhatsApp','电话 / WhatsApp'],
+phone_note:['Only visible to verified employers after you accept an interview','Chỉ hiển thị cho nhà tuyển dụng đã xác minh khi bạn nhận phỏng vấn','Visible uniquement par les employeurs vérifiés après acceptation d’un entretien','इंटरव्यू स्वीकार करने के बाद ही सत्यापित नियोक्ता देख सकेंगे','仅在你接受面试后对认证雇主可见'],
+nationality:['Nationality','Quốc tịch','Nationalité','राष्ट्रीयता','国籍'],
+gender:['Gender','Giới tính','Sexe','लिंग','性别'],
+male:['Male','Nam','Homme','पुरुष','男'],female:['Female','Nữ','Femme','महिला','女'],
+age:['Age','Tuổi','Âge','आयु','年龄'],
+city:['Where do you live?','Bạn sống ở đâu?','Où habitez-vous ?','आप कहाँ रहते हैं?','现居城市'],
+photo:['Profile photo','Ảnh đại diện','Photo de profil','प्रोफ़ाइल फ़ोटो','个人照片'],
+tap_upload:['Tap to take or upload a photo','Chạm để chụp hoặc tải ảnh lên','Touchez pour prendre ou importer une photo','फ़ोटो लेने या अपलोड करने के लिए टैप करें','点击拍照或上传'],
+industry:['Industry','Ngành nghề','Secteur','उद्योग','行业'],
+job_type:['Job type','Loại công việc','Métier','काम का प्रकार','工种'],
+experience:['Years of experience','Số năm kinh nghiệm','Années d’expérience','अनुभव (वर्ष)','工作经验（年）'],
+salary:['Expected monthly salary (GH₵)','Lương mong muốn mỗi tháng (GH₵)','Salaire mensuel souhaité (GH₵)','अपेक्षित मासिक वेतन (GH₵)','期望月薪 (GH₵)'],
+minwage:['Ghana minimum wage 2026: GH₵21.77 per day','Lương tối thiểu Ghana 2026: 21,77 GH₵/ngày','Salaire minimum au Ghana 2026 : 21,77 GH₵/jour','घाना न्यूनतम वेतन 2026: GH₵21.77 प्रतिदिन','加纳2026年最低工资：GH₵21.77/天'],
+start:['When can you start?','Khi nào bạn có thể bắt đầu?','Quand pouvez-vous commencer ?','आप कब शुरू कर सकते हैं?','到岗时间'],
+now:['Immediately','Ngay lập tức','Immédiatement','तुरंत','可立即上岗'],
+w1:['Within 1 week','Trong 1 tuần','Sous 1 semaine','1 सप्ताह में','1周内到岗'],
+w2:['Within 2 weeks','Trong 2 tuần','Sous 2 semaines','2 सप्ताह में','2周内到岗'],
+zh_level:['Chinese language level','Trình độ tiếng Trung','Niveau de chinois','चीनी भाषा का स्तर','中文水平'],
+none:['None','Không biết','Aucun','नहीं आती','不会'],basic:['Basic','Cơ bản','Basique','बुनियादी','基础'],fluent:['Fluent','Thành thạo','Courant','धाराप्रवाह','流利'],
+id_type:['ID document','Giấy tờ tùy thân','Pièce d’identité','पहचान पत्र','身份证件'],
+passport:['Passport','Hộ chiếu','Passeport','पासपोर्ट','护照'],
+id_photo:['Photo of your ID','Ảnh giấy tờ tùy thân','Photo de votre pièce','पहचान पत्र की फ़ोटो','证件照片'],
+id_note:['Kept private. Only the HireGH review team can see it.','Được bảo mật. Chỉ đội xét duyệt HireGH xem được.','Confidentiel. Seule l’équipe de vérification HireGH y a accès.','निजी रखा जाता है। केवल HireGH समीक्षा टीम देख सकती है।','仅平台审核人员可见，不对雇主公开'],
+permit:['Do you have a Ghana work permit?','Bạn có giấy phép lao động Ghana không?','Avez-vous un permis de travail ghanéen ?','क्या आपके पास घाना वर्क परमिट है?','是否持有加纳工作许可？'],
+health:['Do you have a health certificate?','Bạn có giấy khám sức khỏe không?','Avez-vous un certificat médical ?','क्या आपके पास स्वास्थ्य प्रमाणपत्र है?','是否有健康证明？'],
+yes:['Yes','Có','Oui','हाँ','有'],no:['No','Không','Non','नहीं','没有'],
+consent:['I agree that HireGH shares my profile with verified employers, as described under Ghana’s Data Protection Act, 2012 (Act 843). I can ask for it to be deleted at any time.','Tôi đồng ý để HireGH chia sẻ hồ sơ với nhà tuyển dụng đã xác minh, theo Luật Bảo vệ Dữ liệu Ghana 2012 (Act 843). Tôi có thể yêu cầu xóa bất cứ lúc nào.','J’accepte que HireGH partage mon profil avec des employeurs vérifiés, conformément à la loi ghanéenne sur la protection des données de 2012 (Act 843). Je peux demander sa suppression à tout moment.','मैं सहमत हूँ कि HireGH मेरी प्रोफ़ाइल सत्यापित नियोक्ताओं से साझा करे, घाना डेटा संरक्षण अधिनियम 2012 (Act 843) के अनुसार। मैं कभी भी इसे हटाने का अनुरोध कर सकता/सकती हूँ।','我同意 HireGH 按加纳《2012年数据保护法》(Act 843) 将我的档案提供给已认证雇主，并可随时要求删除。'],
+next:['Next','Tiếp theo','Suivant','आगे','下一步'],
+submit:['Create my profile','Tạo hồ sơ','Créer mon profil','प्रोफ़ाइल बनाएँ','提交档案'],
+required:['Please fill in the required fields','Vui lòng điền các mục bắt buộc','Veuillez remplir les champs obligatoires','कृपया आवश्यक जानकारी भरें','请填写必填项'],
+need_consent:['Please tick the consent box','Vui lòng đánh dấu đồng ý','Veuillez cocher la case de consentement','कृपया सहमति बॉक्स पर टिक करें','请勾选同意条款'],
+profile_done:['Profile created! Employers can now find you.','Đã tạo hồ sơ! Nhà tuyển dụng có thể tìm thấy bạn.','Profil créé ! Les employeurs peuvent vous trouver.','प्रोफ़ाइल बन गई! अब नियोक्ता आपको ढूँढ सकते हैं।','档案已提交，雇主现在可以找到你'],
+hello:['Hello','Xin chào','Bonjour','नमस्ते','你好'],
+jobs_for_you:['Jobs for you','Việc làm phù hợp với bạn','Offres pour vous','आपके लिए नौकरियाँ','为你推荐'],
+all_jobs:['More jobs','Việc làm khác','Autres offres','और नौकरियाँ','更多岗位'],
+per_month:['/month','/tháng','/mois','/माह','/月'],
+openings:['openings','vị trí','postes','पद','人'],
+apply:['Apply now','Ứng tuyển ngay','Postuler','अभी आवेदन करें','立即申请'],
+applied:['Applied','Đã ứng tuyển','Postulé','आवेदन किया','已申请'],
+apply_ok:['Application sent','Đã gửi đơn ứng tuyển','Candidature envoyée','आवेदन भेजा गया','申请已发送'],
+exp_req:['Experience','Kinh nghiệm','Expérience','अनुभव','经验'],
+location:['Location','Địa điểm','Lieu','स्थान','地点'],
+accommodation:['Accommodation','Có chỗ ở','Logement fourni','आवास','包住宿'],
+need_zh:['Chinese needed','Cần tiếng Trung','Chinois requis','चीनी ज़रूरी','需会中文'],
+desc:['Job description','Mô tả công việc','Description du poste','नौकरी का विवरण','岗位描述'],
+auto_tr:['Auto-translated from Chinese','Tự động dịch từ tiếng Trung','Traduit automatiquement du chinois','चीनी से स्वचालित अनुवाद','原文'],
+no_tr:['Chinese original. Translation will be added once the translation service is connected.','Bản gốc tiếng Trung. Bản dịch sẽ có khi kết nối dịch vụ dịch.','Original en chinois. La traduction sera ajoutée une fois le service connecté.','मूल चीनी पाठ। अनुवाद सेवा जुड़ने पर अनुवाद जोड़ा जाएगा।','原文'],
+my_apps:['My applications','Đơn ứng tuyển của tôi','Mes candidatures','मेरे आवेदन','我的申请'],
+no_apps:['No applications yet','Chưa có đơn ứng tuyển','Aucune candidature pour l’instant','अभी कोई आवेदन नहीं','还没有申请'],
+status_sent:['Sent · waiting for the employer','Đã gửi · chờ nhà tuyển dụng','Envoyée · en attente de l’employeur','भेजा गया · नियोक्ता की प्रतीक्षा','已投递 · 等待雇主回复'],
+me:['My profile','Hồ sơ của tôi','Mon profil','मेरी प्रोफ़ाइल','我的档案'],
+language:['Language','Ngôn ngữ','Langue','भाषा','语言'],
+switch_role:['Switch role','Đổi vai trò','Changer de rôle','भूमिका बदलें','切换身份'],
+verify_pending:['Documents under review','Giấy tờ đang được xét duyệt','Documents en cours de vérification','दस्तावेज़ समीक्षा में','证件审核中'],
+safety:['Never pay money to get a job. Report anyone who asks you to pay.','Không bao giờ trả tiền để có việc. Hãy báo cáo nếu ai đó đòi tiền.','Ne payez jamais pour obtenir un emploi. Signalez toute demande d’argent.','नौकरी पाने के लिए कभी पैसे न दें। पैसे माँगने वाले की शिकायत करें।','找工作无需付费，遇到收费请举报'],
+search_jobs:['Search jobs, companies, cities','Tìm việc, công ty, thành phố','Rechercher un métier, une entreprise, une ville','नौकरी, कंपनी, शहर खोजें','搜索岗位、公司、城市'],
+verified:['Verified employer','Nhà tuyển dụng đã xác minh','Employeur vérifié','सत्यापित नियोक्ता','已认证企业'],
+optional:['(optional)','(không bắt buộc)','(facultatif)','(वैकल्पिक)','（选填）'],
+yrs:['yrs','năm','ans','वर्ष','年'],any:['Any','Không yêu cầu','Indifférent','कोई भी','不限'],
+jobs:['Jobs','Việc làm','Offres','नौकरियाँ','岗位'],
+nationality_lang:['Nationalities wanted','Quốc tịch tuyển','Nationalités recherchées','वांछित राष्ट्रीयता','国籍偏好'],
+nothing:['No jobs match your search','Không có việc phù hợp','Aucune offre ne correspond','कोई नौकरी नहीं मिली','没有匹配的岗位'],
+edit_profile:['Edit profile','Sửa hồ sơ','Modifier le profil','प्रोफ़ाइल बदलें','修改档案'],
+};
+const t=k=>{const r=T[k];if(!r)return k;return r[LI[S.lang]]??r[0]};
+const RT={'焊工':['Thợ hàn','Soudeur','वेल्डर'],'电工':['Thợ điện','Électricien','इलेक्ट्रीशियन'],'机修工':['Thợ sửa máy','Mécanicien','मैकेनिक'],'叉车司机':['Lái xe nâng','Cariste','फोर्कलिफ्ट चालक'],'CNC操作工':['Thợ vận hành CNC','Opérateur CNC','सीएनसी ऑपरेटर'],'质检员':['Nhân viên QC','Contrôleur qualité','गुणवत्ता निरीक्षक'],'普工':['Lao động phổ thông','Ouvrier polyvalent','सामान्य कामगार'],
+'种植工':['Công nhân trồng trọt','Ouvrier agricole','खेत मज़दूर'],'农机手':['Lái máy cày','Conducteur de tracteur','ट्रैक्टर चालक'],'养殖工':['Công nhân chăn nuôi','Éleveur','पशुपालक'],'采摘工':['Công nhân thu hoạch','Cueilleur','फसल तोड़ने वाला'],'灌溉技工':['Kỹ thuật viên tưới tiêu','Technicien d’irrigation','सिंचाई तकनीशियन'],'农场主管':['Quản lý trang trại','Chef d’exploitation','फार्म पर्यवेक्षक'],
+'中餐厨师':['Đầu bếp món Trung','Cuisinier chinois','चीनी रसोइया'],'司机':['Tài xế','Chauffeur','ड्राइवर'],'保安':['Bảo vệ','Agent de sécurité','सुरक्षा गार्ड'],'保洁':['Nhân viên vệ sinh','Agent d’entretien','सफ़ाईकर्मी'],'中英翻译':['Phiên dịch Trung–Anh','Interprète chinois–anglais','चीनी–अंग्रेज़ी दुभाषिया'],'家政保姆':['Giúp việc gia đình','Employé(e) de maison','घरेलू सहायक'],'会计文员':['Nhân viên kế toán','Aide-comptable','लेखा लिपिक'],
+'泥瓦工':['Thợ nề','Maçon','राजमिस्त्री'],'钢筋工':['Thợ sắt','Ferrailleur','सरिया कारीगर'],'木工':['Thợ mộc','Charpentier','बढ़ई'],'水电工':['Thợ điện nước','Plombier-électricien','प्लंबर'],'挖掘机司机':['Lái máy xúc','Conducteur de pelle','खुदाई मशीन चालक'],'测量员':['Trắc địa viên','Géomètre','सर्वेक्षक'],
+'矿工':['Thợ mỏ','Mineur','खनिक'],'爆破员':['Thợ nổ mìn','Boutefeu','विस्फोटक विशेषज्ञ'],'重卡司机':['Lái xe ben','Conducteur de dumper','डंप ट्रक चालक'],'设备维修':['Thợ sửa thiết bị','Mécanicien d’engins','उपकरण मैकेनिक'],'选矿工':['Công nhân tuyển quặng','Opérateur de traitement','अयस्क प्रसंस्करण कर्मी'],
+'仓管员':['Thủ kho','Magasinier','भंडारपाल'],'装卸工':['Công nhân bốc xếp','Manutentionnaire','लोडर'],'货车司机':['Lái xe tải','Chauffeur poids lourd','ट्रक चालक'],'报关员':['Nhân viên khai hải quan','Déclarant en douane','सीमा शुल्क लिपिक']};
+const IT={ind:['Manufacturing','Sản xuất','Industrie','विनिर्माण'],agr:['Agriculture','Nông nghiệp','Agriculture','कृषि'],svc:['Services','Dịch vụ','Services','सेवाएँ'],con:['Construction','Xây dựng','BTP','निर्माण'],min:['Mining','Khai khoáng','Mines','खनन'],log:['Logistics','Kho vận','Logistique','लॉजिस्टिक्स']};
+const NT={GH:['Ghana','Ghana','Ghana','घाना'],VN:['Vietnam','Việt Nam','Viêt Nam','वियतनाम'],IN:['India','Ấn Độ','Inde','भारत'],NG:['Nigeria','Nigeria','Nigéria','नाइजीरिया'],TG:['Togo','Togo','Togo','टोगो'],BF:['Burkina Faso','Burkina Faso','Burkina Faso','बुर्किना फ़ासो'],CN:['China','Trung Quốc','Chine','चीन']};
+const roleT=zh=>{if(S.lang==='zh')return zh;const m=ROLE_MAP[zh];if(!m)return zh;return S.lang==='en'?m.r[1]:(RT[zh]||[])[LI[S.lang]-1]||m.r[1]};
+const indT=id=>{const i=IND.find(x=>x.id===id);return S.lang==='zh'?i.zh:IT[id][LI[S.lang]]};
+const natT=c=>S.lang==='zh'?NATS[c].zh:NT[c][LI[S.lang]];
+const cityT=zh=>{const c=CITIES.find(x=>x[0]===zh);return S.lang==='zh'||!c?zh:c[1]};
+const expT=e=>e==='不限'?t('any'):e.replace('年',t('yrs'));
+const salK=x=>x.split('–').map(v=>(+v.replace(/\D/g,'')/1000).toFixed(1).replace('.0','')+'k').join('–');
+function setLang(l){S.lang=l;document.documentElement.lang=l;render(false)}
+
+/* ================= BACKEND (optional Supabase) ================= */
+const CFG=window.HIREGH_CONFIG||{};
+const DB={on:!!(CFG.supabaseUrl&&CFG.supabaseAnonKey),
+  async q(path,opt={}){const r=await fetch(CFG.supabaseUrl.replace(/\/$/,'')+'/rest/v1/'+path,{...opt,headers:{apikey:CFG.supabaseAnonKey,Authorization:'Bearer '+CFG.supabaseAnonKey,'Content-Type':'application/json',Prefer:'return=representation'}});
+    if(!r.ok)throw new Error(await r.text());const tx=await r.text();return tx?JSON.parse(tx):null}};
+const jobRow=j=>{const {id,dbid,...d}=j;return {data:d}};
+async function dbSafe(fn){if(!DB.on)return null;try{return await fn()}catch(e){console.error(e);toast('云端同步失败 Sync failed');return null}}
+
+/* ================= EXTRA DATA ================= */
+S.lang=detectLang();S.detected=S.lang;document.documentElement.lang=S.lang;
+S.mode=null;S.me=null;S.applied=new Set();S.wq='';
+const MYCO='鑫源建材（加纳）';
+const DESC_EN={1:'Welding for steel-structure factory buildings. Must read drawings. Accommodation and lunch provided.',2:'Staff canteen for about 60 people. Sichuan dishes and pastry skills preferred.',3:'Seasonal cashew harvesting. Base pay plus piece rate.',4:'Earthworks on a road project. Experience with CAT / SANY machines.'};
+S.jobs.forEach(j=>{j.owner='me';j.company=MYCO;j.descEn=DESC_EN[j.id]});
+S.jobs.find(j=>j.id===3).sal='1,300–1,800';
+S.jobs.push(
+ {id:5,owner:'other',company:'中加农业发展',title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,200–1,600',city:'库马西',n:30,apps:61,status:'open',nats:['GH','BF','TG'],zh:false,stay:true,desc:'腰果园采收与分拣，按时+计件，提供宿舍。',descEn:'Cashew harvesting and sorting. Hourly pay plus piece rate. Dormitory provided.'},
+ {id:6,owner:'other',company:'华程路桥',title:'钢筋工',en:'Steel Fixer',ind:'con',exp:'2+ 年',sal:'2,600–3,400',city:'塔科拉迪',n:8,apps:24,status:'open',nats:['GH','NG'],zh:false,stay:true,desc:'路桥项目钢筋绑扎，需能看懂基础图纸。',descEn:'Rebar fixing on a road and bridge project. Must read basic drawings.'},
+ {id:7,owner:'other',company:'远航物流',title:'仓管员',en:'Storekeeper',ind:'log',exp:'2+ 年',sal:'2,800–3,500',city:'特马',n:2,apps:15,status:'open',nats:['GH','IN'],zh:false,stay:false,desc:'仓库出入库、盘点，会基础电脑操作。',descEn:'Warehouse goods in/out and stock counts. Basic computer skills needed.'},
+ {id:8,owner:'other',company:'金泰矿业',title:'重卡司机',en:'Dump Truck Driver',ind:'min',exp:'3+ 年',sal:'4,000–5,200',city:'奥布阿西',n:5,apps:19,status:'open',nats:['GH'],zh:false,stay:true,desc:'矿区自卸车驾驶，白夜班轮换，需重型驾照。',descEn:'Mine dump truck driving, rotating day/night shifts. Valid heavy-vehicle licence required.'},
+ {id:9,owner:'other',company:'鸿运餐饮',title:'保洁',en:'Cleaner',ind:'svc',exp:'不限',sal:'1,200–1,500',city:'阿克拉',n:3,apps:40,status:'open',nats:['GH','TG'],zh:false,stay:false,desc:'餐厅及后厨清洁，每周六天，包工作餐。',descEn:'Restaurant and kitchen cleaning, 6 days a week. Meals provided.'},
+ {id:10,owner:'other',company:'恒达机械',title:'CNC操作工',en:'CNC Operator',ind:'ind',exp:'2+ 年',sal:'2,800–3,800',city:'特马',n:4,apps:12,status:'open',nats:['GH','VN','IN'],zh:false,stay:true,desc:'操作数控车床，首件检验，熟练使用量具。',descEn:'Operate CNC lathes, first-piece inspection, confident with measuring tools.'}
+);
+if(CFG.showDemoData===false){WORKERS.length=0;S.jobs=[];S.chats=[];S.interviews=[]}
+
+/* ================= WORKER VIEWS ================= */
+const NAT_FROM_LANG={vi:'VN',hi:'IN',fr:'TG',zh:'CN',en:'GH'};
+function newReg(){return {step:1,name:'',phone:'',nat:NAT_FROM_LANG[S.lang]||'GH',gender:'m',age:'',city:0,ind:'ind',role:'焊工',exp:2,sal:'',avail:'now',zh:'none',idType:'Ghana Card',idPhoto:null,photo:null,permit:null,health:null,consent:false}}
+function startWorker(){S.mode='wk';S.hist=[];if(S.me){S.view='w_home'}else{S.reg=S.reg||newReg();S.view='w_reg'}render(true)}
+function startEmployer(){S.mode='emp';tab('home')}
+function toWelcome(){S.mode=null;S.hist=[];S.view='welcome';render(true)}
+function rs(k,v){S.reg[k]=v;if(k==='ind')S.reg.role=IND.find(i=>i.id===v).roles[0][0];if(k==='nat'){S.reg.idType=v==='GH'?'Ghana Card':v==='NG'||v==='TG'||v==='BF'?'ECOWAS ID':'passport'}render(false)}
+function resizeImg(f,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.8))};im.src=r.result};r.readAsDataURL(f)})}
+function pickPhoto(k){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;S.reg[k]=await resizeImg(f,k==='photo'?360:1000);render(false)};i.click()}
+
+V.welcome=()=>`<div class="pad" style="padding-top:18px">
+ <div class="row between"><div class="row gap6"><div class="logo">H</div><b style="font-size:18px">HireGH</b></div>
+  <select class="select" onchange="setLang(this.value)">${LANG_LIST.map(l=>`<option value="${l[0]}" ${S.lang===l[0]?'selected':''}>${l[1]}</option>`).join('')}</select></div>
+ <h1 class="hero" style="font-size:34px">${t('welcome_title')}</h1>
+ <div class="sm muted row gap6">${ic('globe',14)} ${t('detected')}: <b style="color:var(--ink)">${LANG_LIST.find(l=>l[0]===S.detected)[1]}</b></div>
+ <div class="chips" style="margin-top:12px">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div>
+ <div class="stack" style="margin-top:26px">
+  <div class="sc" style="background:var(--lime);padding-bottom:46px" onclick="startWorker()"><div class="row between"><div class="row gap"><div class="ic">${ic('user')}</div><div><div class="t">${t('find_job')}</div><div class="roles">${t('find_job_sub')}</div></div></div><div class="go">${ic('arrow',18)}</div></div></div>
+  <div class="sc last" style="background:#161616;color:#fff" onclick="startEmployer()"><div class="row between"><div class="row gap"><div class="ic">${ic('brief')}</div><div><div class="t">我要招人 <span style="font-size:13px;opacity:.6">I'm hiring</span></div><div class="roles">中国企业 · 个人雇主</div></div></div><div class="go">${ic('arrow',18)}</div></div></div>
+ </div>
+ <div class="box row gap" style="margin-top:16px"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center;flex:none">${ic('shield')}</span><span class="sm">${t('safety')}</span></div>
+ <div class="row gap6 wrap" style="margin-top:16px;justify-content:center">${Object.keys(NATS).map(c=>`<span class="chip sm" style="cursor:default">${flag(c)}${natT(c)}</span>`).join('')}</div>
+</div>`;
+
+V.w_reg=()=>{
+  const r=S.reg,st=r.step;const ind=IND.find(i=>i.id===r.ind);
+  const ch=(k,v,label)=>`<span class="chip sm ${r[k]===v?'on':''}" onclick="rs('${k}',${typeof v==='string'?`'${v}'`:v})">${label}</span>`;
+  const head=['#E2B2FA','#F8C94A','#CFE36B'][st-1];
+  let body='';
+  if(st===1)body=`
+   <div class="fl">${t('photo')} <span class="muted sm">${t('optional')}</span></div>
+   <div class="row gap"><div class="up round" onclick="pickPhoto('photo')" style="${r.photo?`background-image:url('${r.photo}')`:''}">${r.photo?'':ic('plus',26)}</div><span class="sm muted" style="flex:1">${t('tap_upload')}</span></div>
+   <div class="fl">${t('full_name')} *</div><input class="fi" value="${r.name.replace(/"/g,'&quot;')}" oninput="S.reg.name=this.value" autocomplete="name">
+   <div class="fl">${t('phone')} *</div><div class="row gap6"><span class="fi" style="width:auto;flex:none">+233</span><input class="fi" inputmode="tel" value="${r.phone}" oninput="S.reg.phone=this.value" placeholder="24 123 4567"></div>
+   <div class="xs muted" style="margin-top:6px">${ic('shield',12)} ${t('phone_note')}</div>
+   <div class="fl">${t('nationality')}</div><div class="chips wrap">${Object.keys(NATS).filter(c=>c!=='CN').map(c=>`<span class="chip sm ${r.nat===c?'on':''}" onclick="rs('nat','${c}')">${flag(c)}${natT(c)}</span>`).join('')}</div>
+   <div class="two"><div><div class="fl">${t('gender')}</div><div class="chips wrap">${ch('gender','m',t('male'))}${ch('gender','f',t('female'))}</div></div>
+    <div><div class="fl">${t('age')}</div><input class="fi" inputmode="numeric" value="${r.age}" oninput="S.reg.age=this.value.replace(/\\D/g,'')"></div></div>
+   <div class="fl">${t('city')}</div><div class="chips wrap">${CITIES.map((c,k)=>ch('city',k,S.lang==='zh'?c[0]:c[1])).join('')}</div>`;
+  if(st===2)body=`
+   <div class="fl">${t('industry')}</div><div class="chips wrap">${IND.map(i=>ch('ind',i.id,indT(i.id))).join('')}</div>
+   <div class="fl">${t('job_type')}</div><div class="chips wrap">${ind.roles.map(x=>ch('role',x[0],roleT(x[0]))).join('')}</div>
+   <div class="fl">${t('experience')}</div><div class="stepper"><button onclick="rs('exp',Math.max(0,S.reg.exp-1))">−</button><b>${r.exp}</b><button onclick="rs('exp',S.reg.exp+1)">+</button></div>
+   <div class="fl">${t('salary')} *</div><input class="fi" inputmode="numeric" value="${r.sal}" oninput="S.reg.sal=this.value.replace(/\\D/g,'')" placeholder="${ROLE_MAP[r.role].r[2]}">
+   <div class="xs muted" style="margin-top:6px">${t('minwage')}</div>
+   <div class="fl">${t('start')}</div><div class="chips wrap">${ch('avail','now',t('now'))}${ch('avail','w1',t('w1'))}${ch('avail','w2',t('w2'))}</div>
+   <div class="fl">${t('zh_level')}</div><div class="chips wrap">${ch('zh','none',t('none'))}${ch('zh','basic',t('basic'))}${ch('zh','fluent',t('fluent'))}</div>`;
+  if(st===3)body=`
+   <div class="fl">${t('id_type')}</div><div class="chips wrap">${ch('idType','Ghana Card','Ghana Card')}${ch('idType','passport',t('passport'))}${ch('idType','ECOWAS ID','ECOWAS ID')}</div>
+   <div class="fl">${t('id_photo')} <span class="muted sm">${t('optional')}</span></div>
+   <div class="up" onclick="pickPhoto('idPhoto')" style="${r.idPhoto?`background-image:url('${r.idPhoto}')`:''}">${r.idPhoto?'':`<div style="text-align:center">${ic('doc',28)}<div class="sm" style="margin-top:6px">${t('tap_upload')}</div></div>`}</div>
+   <div class="xs muted" style="margin-top:6px">${ic('shield',12)} ${t('id_note')}</div>
+   ${r.nat!=='GH'?`<div class="fl">${t('permit')}</div><div class="chips wrap">${ch('permit',true,t('yes'))}${ch('permit',false,t('no'))}</div>`:''}
+   <div class="fl">${t('health')}</div><div class="chips wrap">${ch('health',true,t('yes'))}${ch('health',false,t('no'))}</div>
+   <label class="consent"><input type="checkbox" ${r.consent?'checked':''} onchange="S.reg.consent=this.checked"><span>${t('consent')}</span></label>`;
+  return `<div class="hdr" style="background:${head}"><button class="icbtn" onclick="${st>1?`rs('step',${st-1})`:'toWelcome()'}">${ic('back')}</button>
+   <div class="steps">${[1,2,3].map(i=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>
+   <select class="select" onchange="setLang(this.value)">${LANG_LIST.map(l=>`<option value="${l[0]}" ${S.lang===l[0]?'selected':''}>${l[1]}</option>`).join('')}</select></div>
+  <div class="regwrap" style="--hd:${head}"><div class="sm" style="opacity:.6">${st} / 3</div><h2 class="title">${t('s'+st)}</h2>${body}</div>
+  <div class="bbar"><button class="bigbtn" onclick="${st<3?'regNext()':'submitReg()'}">${st<3?t('next'):t('submit')} ${ic('right',18)}</button></div>`;
+};
+function regNext(){const r=S.reg;if(r.step===1&&(!r.name.trim()||r.phone.replace(/\D/g,'').length<7)){toast(t('required'));return}if(r.step===2&&!r.sal){toast(t('required'));return}r.step++;render(true)}
+async function submitReg(){
+  const r=S.reg;if(!r.consent){toast(t('need_consent'));return}
+  const m=ROLE_MAP[r.role];const zh={none:'不会',basic:'基础',fluent:'流利'}[r.zh];
+  const w={id:900000+Math.floor(Math.random()*99999),name:r.name.trim(),nat:r.nat,female:r.gender==='f',ind:r.ind,role:r.role,roleEn:m.r[1],exp:r.exp,age:+r.age||null,sal:+r.sal,
+    city:CITIES[r.city][0],zh,langs:[...LANGS[r.nat],...(r.zh!=='none'?['中文']:[])],skills:m.r[3].slice(0,2),rating:null,jobs:0,
+    card:false,permit:r.nat==='GH'?null:false,health:false,police:false,pending:true,selfPermit:r.permit,selfHealth:r.health,
+    avail:{now:'可立即上岗',w1:'1周内到岗',w2:'2周内到岗'}[r.avail],stay:'—',shift:'—',col:AV_COL[Math.floor(Math.random()*AV_COL.length)],isNew:true,photo:r.photo,lang:S.lang,self:true};
+  WORKERS.unshift(w);S.me=w;
+  const saved=await dbSafe(async()=>{const {id,...d}=w;const res=await DB.q('workers',{method:'POST',body:JSON.stringify({data:d})});const dbid=res[0].id;
+    await DB.q('worker_docs',{method:'POST',body:JSON.stringify({worker_id:dbid,data:{phone:'+233 '+r.phone,idType:r.idType,idPhoto:r.idPhoto,permit:r.permit,health:r.health,consentAt:new Date().toISOString(),lang:S.lang}})});
+    w.id=100000+dbid;w.dbid=dbid;return true});
+  toast(t('profile_done'));S.view='w_home';S.hist=[];render(true);
+}
+
+function wJobCard(j){
+  const ind=IND.find(i=>i.id===j.ind);const ap=S.applied.has(j.id);
+  return `<div class="wc" onclick="go('w_job',{id:${j.id}})"><div class="top"><div class="row between" style="align-items:flex-start;gap:8px">
+   <h3>${roleT(j.title)}<small class="row gap6">${j.company} ${ic('shield',13)}</small></h3>
+   <span class="badge" style="background:${ind.color};color:${ind.ink}">${indT(j.ind)}</span></div>
+   <div class="cols"><div><div class="l">${t('exp_req')}</div><div class="v">${expT(j.exp)}</div></div><div><div class="l">GH₵${t('per_month')}</div><div class="v">${salK(j.sal)}</div></div><div><div class="l">${t('location')}</div><div class="v">${cityT(j.city)}</div></div></div></div>
+   <div class="bot"><div class="row gap6 wrap" style="flex:1">${j.stay?`<span class="chip sm" style="background:#F1ECDF">${t('accommodation')}</span>`:''}${j.zh?`<span class="chip sm" style="background:#F1ECDF">${t('need_zh')}</span>`:''}<span class="chip sm" style="background:#F1ECDF">${j.n} ${t('openings')}</span></div>
+   ${ap?`<span class="badge lime">${ic('check',13)} ${t('applied')}</span>`:`<button class="act">${ic('right')}</button>`}</div></div>`;
+}
+V.w_home=()=>{
+  const me=S.me;const q=S.wq.trim().toLowerCase();
+  const open=S.jobs.filter(j=>j.status==='open'&&(!q||(roleT(j.title)+j.title+j.company+cityT(j.city)+j.city).toLowerCase().includes(q)));
+  const mine=open.filter(j=>me&&(j.title===me.role||j.ind===me.ind));const rest=open.filter(j=>!mine.includes(j));
+  return `<div class="pad"><div class="row between"><div class="row gap">${me?avatar(me):''}<div><div class="muted sm">${t('hello')},</div><div class="b">${me?me.name:''}</div></div></div>
+   <button class="icbtn" onclick="langPick()">${ic('globe')}</button></div>
+   ${me?`<div class="ccard" style="margin-top:16px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('clock',14)} ${t('verify_pending')}</span><span class="b">${flag(me.nat)}</span></div>
+    <div class="cn">${roleT(me.role)}</div><div class="sm" style="opacity:.7;margin-top:4px">${indT(me.ind)} · ${me.exp} ${t('yrs')} · ${cityT(me.city)}</div>
+    <div class="row3"><div><b>${mine.length}</b><span class="xs">${t('jobs_for_you')}</span></div><div><b>${S.applied.size}</b><span class="xs">${t('applied')}</span></div></div></div>`:''}
+   <div class="searchbar" style="margin-top:14px">${ic('search')}<input placeholder="${t('search_jobs')}" value="${S.wq}" oninput="S.wq=this.value;clearTimeout(window._wq);window._wq=setTimeout(()=>{render(false);const i=document.querySelector('.searchbar input');i.focus();i.setSelectionRange(i.value.length,i.value.length)},350)"></div>
+   ${mine.length?`<div class="sec-h">${t('jobs_for_you')}</div>${mine.map(wJobCard).join('')}`:''}
+   ${rest.length?`<div class="sec-h">${t('all_jobs')}</div>${rest.map(wJobCard).join('')}`:''}
+   ${!open.length?`<div class="empty">${t('nothing')}</div>`:''}
+   <div class="box sm row gap">${ic('shield')}<span>${t('safety')}</span></div></div>`;
+};
+V.w_job=()=>{
+  const j=S.jobs.find(x=>x.id===S.params.id);const ind=IND.find(i=>i.id===j.ind);const ap=S.applied.has(j.id);
+  const d=S.lang==='zh'?j.desc:j.descEn;
+  return `<div class="dhead" style="background:${ind.id==='min'?'#3A3A3A':ind.color};color:${ind.ink}">
+   <div class="row between"><button class="icbtn" onclick="back()">${ic('back')}</button><span class="b">${indT(j.ind)}</span><span style="width:44px"></span></div>
+   <div class="name" style="margin-top:18px">${roleT(j.title)}</div><div class="rpill" style="color:#161616">${j.company} · ${t('verified')}</div>
+   <div class="kv" style="color:#161616"><span>GH₵${j.sal}${t('per_month')}</span><span>${ic('pin',15)}${cityT(j.city)}</span><span>${expT(j.exp)}</span></div></div>
+  <div class="pad"><div class="box"><h4>${t('desc')}</h4><div style="font-size:15px;line-height:1.6">${d||j.desc}</div>
+   <div class="xs muted" style="margin-top:10px">${ic('tr',12)} ${d?(S.lang==='zh'?'':t('auto_tr')):t('no_tr')}</div></div>
+   <div class="box"><div class="inf"><div><div class="l">${t('openings')}</div><div class="v">${j.n}</div></div><div><div class="l">${t('exp_req')}</div><div class="v">${expT(j.exp)}</div></div>
+    <div><div class="l">${t('accommodation')}</div><div class="v">${j.stay?t('yes'):t('no')}</div></div><div><div class="l">${t('need_zh')}</div><div class="v">${j.zh?t('yes'):t('no')}</div></div></div></div>
+   <div class="box"><h4>${t('nationality_lang')}</h4><div class="chips wrap">${j.nats.map(c=>`<span class="chip sm" style="background:#F1ECDF">${flag(c)}${natT(c)}</span>`).join('')}</div></div>
+   <div class="box sm row gap">${ic('shield')}<span>${t('safety')}</span></div></div>
+  <div class="bbar"><button class="bigbtn ${ap?'lime':''}" onclick="${ap?'':`applyJob(${j.id})`}">${ap?ic('check')+' '+t('applied'):t('apply')+' '+ic('right',18)}</button></div>`;
+};
+function applyJob(id){
+  if(!S.me){startWorker();return}
+  const j=S.jobs.find(x=>x.id===id);S.applied.add(id);j.apps++;
+  if(j.owner==='me'){let c=S.chats.find(c=>c.wid===S.me.id);if(!c){c={wid:S.me.id,unread:0,color:'#CFE36B',msgs:[]};S.chats.unshift(c)}
+    c.msgs.push({me:false,o:`Hello, I just applied for the ${j.en||j.title} job in ${cityT(j.city)}.`,t:`您好，我刚申请了您在${j.city}的「${j.title}」岗位。`,tm:nowT()});c.unread++}
+  if(j.dbid)dbSafe(()=>DB.q('jobs?id=eq.'+j.dbid,{method:'PATCH',body:JSON.stringify(jobRow(j))}));
+  toast(t('apply_ok'));render(false);
+}
+V.w_apps=()=>{const l=S.jobs.filter(j=>S.applied.has(j.id));return `<div class="pad"><div class="title" style="margin-top:6px">${t('my_apps')}</div><div style="margin-top:16px">
+  ${l.length?l.map(j=>`<div class="ivc" onclick="go('w_job',{id:${j.id}})"><div class="datebox" style="background:${IND.find(i=>i.id===j.ind).color}">${ic(IND.find(i=>i.id===j.ind).icon)}</div><div style="flex:1;min-width:0"><div class="b">${roleT(j.title)}</div><div class="sm muted">${j.company} · ${cityT(j.city)}</div><div class="sm" style="margin-top:3px">${ic('clock',13)} ${t('status_sent')}</div></div></div>`).join(''):`<div class="empty">${t('no_apps')}</div>`}</div></div>`};
+V.w_me=()=>{const w=S.me;if(!w)return '';return `<div class="pad"><div class="title" style="margin-top:6px">${t('me')}</div>
+  <div class="box" style="text-align:center">${avatar(w,'lg')}<div class="b" style="font-size:22px;margin-top:8px">${w.name}</div><div class="sm muted">${roleT(w.role)} · ${natT(w.nat)}</div>
+   <span class="badge gold" style="display:inline-block;margin-top:10px">${ic('clock',13)} ${t('verify_pending')}</span></div>
+  <div class="box"><div class="inf"><div><div class="l">${t('industry')}</div><div class="v">${indT(w.ind)}</div></div><div><div class="l">${t('experience')}</div><div class="v">${w.exp}</div></div>
+   <div><div class="l">${t('salary')}</div><div class="v">GH₵${w.sal.toLocaleString('en-US')}</div></div><div><div class="l">${t('city').replace('?','')}</div><div class="v">${cityT(w.city)}</div></div>
+   <div><div class="l">${t('zh_level')}</div><div class="v">${t({不会:'none',基础:'basic',流利:'fluent'}[w.zh])}</div></div><div><div class="l">${t('start')}</div><div class="v">${t({可立即上岗:'now','1周内到岗':'w1','2周内到岗':'w2'}[w.avail])}</div></div></div></div>
+  <div class="box"><h4>${t('language')}</h4><div class="chips wrap">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div></div>
+  <div class="box"><div class="li" style="cursor:pointer" onclick="S.reg={...S.reg,step:1};S.view='w_reg';render(true)">${ic('edit')}<span>${t('edit_profile')}</span></div><div class="li" style="cursor:pointer" onclick="toWelcome()">${ic('users')}<span>${t('switch_role')}</span></div></div></div>`};
+function langPick(){openSheet(`<div class="b" style="font-size:20px;margin-bottom:10px">${t('language')}</div>${LANG_LIST.map(l=>`<div class="li" style="cursor:pointer" onclick="closeSheet();setLang('${l[0]}')"><span>${l[1]}</span>${S.lang===l[0]?`<span style="margin-left:auto">${ic('check')}</span>`:''}</div>`).join('')}`)}
+function wnav(){const b=(v,i)=>`<button class="${S.view===v?'on':''}" onclick="S.hist=[];S.view='${v}';render(true)">${ic(i)}</button>`;return `<div class="nav">${b('w_home','brief')}${b('w_apps','doc')}${b('w_me','user')}</div>`}
+
+/* ================= BOOT ================= */
+async function boot(){
+  S.view='welcome';render(true);
+  if(!DB.on)return;
+  const ws=await dbSafe(()=>DB.q('workers?select=id,data&order=id.asc&limit=2000'));
+  (ws||[]).forEach(r=>WORKERS.unshift({...r.data,id:100000+r.id,dbid:r.id}));
+  const js=await dbSafe(()=>DB.q('jobs?select=id,data&order=id.asc&limit=1000'));
+  (js||[]).forEach(r=>S.jobs.unshift({...r.data,id:100000+r.id,dbid:r.id}));
+  render(false);
+}
+boot();
+/* Android 返回键（App 内） */
+(function(){const C=window.Capacitor;if(!C||!C.isNativePlatform||!C.isNativePlatform())return;const A=C.Plugins&&C.Plugins.App;if(!A)return;
+ A.addListener('backButton',()=>{if($('#sheet').classList.contains('on'))return closeSheet();if(S.hist.length)return back();
+  if(S.mode==='wk'&&S.view!=='w_home'&&S.me){S.view='w_home';return render(true)}if(S.mode==='emp'&&S.view!=='home')return tab('home');
+  if(S.view!=='welcome')return toWelcome();A.exitApp()})})();
+if(!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+</script>
+</body>
+</html>
