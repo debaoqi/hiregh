@@ -1,14 +1,23 @@
 {
-  "version": "1.4.0",
-  "build": 14,
+  "version": "1.4.1",
+  "build": 15,
   "date": "2026-11-12",
   "force": false,
   "minNative": 0,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
-    "zh": ["新增自动检查更新：有新版本时会弹窗提示，一键更新", "更新后显示本次更新内容", "“我的 / 设置”里可手动检查更新", "以后的更新无需重新下载安装包"],
-    "en": ["Automatic update check: you will see a message when a new version is ready", "See what changed after each update", "Check for updates any time in “Me”", "Future updates no longer need a new download"],
-    "vi": ["Tự động kiểm tra cập nhật: có thông báo khi có phiên bản mới", "Xem nội dung thay đổi sau khi cập nhật", "Kiểm tra cập nhật bất cứ lúc nào trong “Tôi”", "Các bản cập nhật sau không cần tải lại ứng dụng"]
+    "zh": [
+      "测试更新：验证自动提示升级功能",
+      "如果你看到这个窗口，说明更新流程已跑通"
+    ],
+    "en": [
+      "Test update: checking the update message",
+      "If you can see this, updates are working"
+    ],
+    "vi": [
+      "Bản cập nhật thử: kiểm tra thông báo cập nhật",
+      "Nếu bạn thấy thông báo này, cập nhật đã hoạt động"
+    ]
   }
 }
