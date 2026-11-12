@@ -1118,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.9.0',APP_BUILD=21;
+const APP_VER='1.10.0',APP_BUILD=22;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1433,7 +1433,7 @@ const NEW_ROLES={
 seed=20261201;const _w0=WORKERS.length;
 IND.forEach(ind=>(NEW_ROLES[ind.id]||[]).forEach(r=>{
   if(ROLE_MAP[r[0]])return;ind.roles.push(r);ROLE_MAP[r[0]]={ind,r};
-  const n=ri(1,3);
+  const n=ind.id==='svc'?ri(2,4):ri(1,3);
   for(let k=0;k<n;k++){
     const nat=rnd()<.8?'GH':'CN';
     const female=rnd()<(/服务员|收银|导购|理货|洗衣|美发|前台|文员|包装|缝纫|分拣|帮工/.test(r[0])?.65:.12);
@@ -1538,6 +1538,74 @@ setInterval(()=>{if(document.visibilityState==='visible'){syncDB();syncMe()}},30
 try{window.Capacitor&&window.Capacitor.Plugins.App&&window.Capacitor.Plugins.App.addListener('resume',()=>{syncDB(true);syncMe()})}catch(e){}
 syncDB(true);
 
+</script>
+<script>
+/* ================= v1.10 · 首页去掉称呼栏 + 人才库按行业/工种完整展示 + 更新逻辑修正 ================= */
+/* 1) 首页：去掉顶部称呼栏（搜索已在下方，通知移到“我的”） */
+const _vh10=V.home;
+V.home=()=>{let h=_vh10();const a=h.indexOf('<div class="row between">');const b=h.indexOf('<h1 class="hero"');
+  if(a>=0&&b>a)h=h.slice(0,a)+h.slice(b).replace('<h1 class="hero"','<h1 class="hero" style="margin-top:14px"');return h};
+const _vme10=V.me;
+V.me=()=>{let h=_vme10();const k='<button class="icbtn" onclick="langSheet()">';const i=h.indexOf(k);if(i<0)return h;const j=h.indexOf('</button>',i)+9;
+  const unread=S.chats.reduce((a,c)=>a+(c.unread||0),0)+S.interviews.filter(x=>!x.status).length;
+  return h.slice(0,i)+`<span class="row gap6"><button class="icbtn" onclick="openNotifs()">${ic('bell')}${unread?'<span class="dot"></span>':''}</button>`+h.slice(i,j)+'</span>'+h.slice(j)};
+
+/* 2) 服务业招工需求（示例岗位，来自其他企业） */
+[{id:11,company:'金龙大酒店',companyEn:'Golden Dragon Hotel',title:'餐厅服务员',en:'Waiter / Waitress',ind:'svc',exp:'不限',sal:'1,300–1,700',city:'阿克拉',n:6,apps:22,nats:['GH'],stay:true,zh:false,
+   desc:'中餐厅点菜、上菜、餐台清理，两班倒，包住宿和工作餐。',descEn:'Take orders, serve food and clear tables in a Chinese restaurant. Two shifts. Accommodation and meals provided.'},
+ {id:12,company:'金龙大酒店',companyEn:'Golden Dragon Hotel',title:'酒店客房服务员',en:'Hotel Room Attendant',ind:'svc',exp:'1+ 年',sal:'1,300–1,600',city:'阿克拉',n:4,apps:15,nats:['GH'],stay:true,zh:false,
+   desc:'客房清扫、布草更换、补充客用品，有酒店经验优先。',descEn:'Clean guest rooms, change linen and refill supplies. Hotel experience preferred.'},
+ {id:13,company:'星光KTV',companyEn:'Starlight KTV',title:'KTV/娱乐场所服务员',en:'KTV & Lounge Attendant',ind:'svc',exp:'不限',sal:'1,500–2,000',city:'特马',n:5,apps:18,nats:['GH'],stay:false,zh:false,
+   desc:'包厢引导、酒水服务、包厢整理，夜班为主，有提成。',descEn:'Guide guests to rooms, serve drinks and tidy rooms. Mostly night shifts, with commission.'},
+ {id:14,company:'华联超市',companyEn:'Hualian Supermarket',title:'收银员',en:'Cashier',ind:'svc',exp:'1+ 年',sal:'1,500–1,800',city:'库马西',n:3,apps:27,nats:['GH'],stay:false,zh:false,
+   desc:'收银、MoMo 收款、日结对账，需细心、会基本英语。',descEn:'Operate the till, take MoMo payments and balance the cash daily. Careful work and basic English needed.'},
+ {id:15,company:'华联超市',companyEn:'Hualian Supermarket',title:'超市理货员',en:'Shelf Stocker',ind:'svc',exp:'不限',sal:'1,200–1,400',city:'库马西',n:4,apps:11,nats:['GH'],stay:false,zh:false,
+   desc:'上货、补货、整理货架、更换价签。',descEn:'Stock and refill shelves, keep them tidy and change price tags.'}
+].forEach(j=>{if(S.jobs.some(x=>x.id===j.id))return;const c=CITY_LL[j.city];
+  S.jobs.push({...j,owner:'other',status:'open',loc:c?{lat:c[0],lng:c[1],addr:(CITIES.find(x=>x[0]===j.city)||[,j.city])[1]+', Ghana',approx:true}:null})});
+
+/* 3) 人才库：行业、工种全部展开，带人数；“全部行业”按行业分组列出所有工种 */
+S.f.showRoles=S.f.showRoles!==false;
+V.browse=()=>{
+  const f=S.f;const ind=IND.find(i=>i.id===f.ind);const list=filtered();
+  const VW=WORKERS.filter(visW);const cntInd=id=>VW.filter(w=>w.ind===id).length;const cntRole=r=>VW.filter(w=>w.role===r).length;
+  const roleChip=(r,i)=>{const n=cntRole(r[0]);const on=f.role===r[0];
+    return `<span class="chip sm ${on?'on':''}" style="${n?'':'opacity:.55'}" onclick="S.f.ind='${i.id}';setF('role','${r[0]}')">${r[0]} <b style="font-weight:700;opacity:.6;margin-left:2px">${n}</b></span>`};
+  const allRoles=`<div class="row between" style="margin-top:12px"><b class="sm">按工种找人 <span class="muted" style="font-weight:500">· ${IND.reduce((a,i)=>a+i.roles.length,0)} 个工种</span></b><a class="sm" style="text-decoration:underline;cursor:pointer" onclick="S.f.showRoles=!S.f.showRoles;render(false)">${f.showRoles?'收起':'展开'}</a></div>
+   ${f.showRoles?IND.map(i=>`<div style="margin-top:10px;padding:12px 12px 6px;border-radius:18px;background:var(--card)">
+     <div class="row between" style="margin-bottom:8px"><span class="row gap6 b sm"><i style="width:10px;height:10px;border-radius:50%;background:${i.color};display:inline-block"></i>${i.zh}<span class="muted" style="font-weight:500">${cntInd(i.id)} 人</span></span><a class="xs muted" style="cursor:pointer" onclick="setF('ind','${i.id}')">只看此行业 ›</a></div>
+     <div class="chips wrap">${i.roles.map(r=>roleChip(r,i)).join('')}</div></div>`).join(''):''}`;
+  return `<div class="pad">
+   <div class="row between" style="margin-top:6px"><div class="title">人才库</div><span class="badge cream">${list.length} 位候选人</span></div>
+   <div class="searchbar" style="margin:14px 0">${ic('search')}<input id="q" placeholder="搜索工种 / 技能 / 姓名 / 城市" value="${esc(f.q)}" oninput="S.f.q=this.value;updList()">${f.q?`<button onclick="S.f.q='';render(false)">${ic('x',18)}</button>`:''}</div>
+   <div class="chips wrap"><span class="chip sm ${f.ind==='all'?'on':''}" onclick="setF('ind','all')">全部行业 <b style="opacity:.6">${VW.length}</b></span>
+    ${IND.map(i=>`<span class="chip sm" style="${f.ind===i.id?`background:${i.color};color:${i.ink};border-color:transparent`:''}" onclick="setF('ind','${i.id}')">${i.zh} <b style="opacity:.6">${cntInd(i.id)}</b></span>`).join('')}</div>
+   ${ind?`<div class="chips wrap" style="margin-top:10px"><span class="chip sm ${f.role==='all'?'on':''}" onclick="setF('role','all')">全部工种</span>${ind.roles.map(r=>roleChip(r,ind)).join('')}</div>`:allRoles}
+   <div class="chips" style="margin-top:12px"><span class="chip sm ${f.nat==='all'?'on':''}" onclick="setF('nat','all')">全部国籍</span>${Object.keys(NATS).map(c=>`<span class="chip sm ${f.nat===c?'on':''}" onclick="setF('nat','${c}')">${flag(c)}${NATS[c].zh}</span>`).join('')}</div>
+   <div class="row between" style="margin-top:6px;gap:8px"><div class="toggles">
+     <span class="tg ${f.zh?'on':''}" onclick="setF('zh',${!f.zh})">会中文</span><span class="tg ${f.ver?'on':''}" onclick="setF('ver',${!f.ver})">证件齐全</span><span class="tg ${f.now?'on':''}" onclick="setF('now',${!f.now})">可立即上岗</span></div>
+     <select class="select" style="margin-top:10px" onchange="setF('sort',this.value)">${[['rec','综合'],['rate','评分'],['exp','经验'],['sal','薪资低→高']].map(o=>`<option value="${o[0]}" ${f.sort===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+   ${f.role!=='all'?`<div class="row between sm" style="margin-top:12px;padding:10px 14px;border-radius:14px;background:var(--gold)"><span>当前工种：<b>${esc(f.role)}</b></span><a style="cursor:pointer;text-decoration:underline" onclick="setF('role','all')">清除</a></div>`:''}
+   <div id="list" style="margin-top:16px">${list.length?list.map(wCard).join(''):`<div class="empty">${ic('search',40)}<p style="margin-top:10px">${f.role!=='all'?'暂时还没有「'+esc(f.role)+'」':'没有符合条件的人选'}<br><span class="sm">可以发布招工，让合适的人主动找你</span></p><button class="bigbtn" style="margin-top:14px" onclick="go('post')">${ic('plus',18)} 发布招工</button></div>`}</div></div>`;
+};
+
+/* 4) 更新逻辑：先完成网页内容更新，安装包更新另行提示，不再互相卡住 */
+async function checkUpdate(manual){
+  if(UPD.busy)return;UPD.busy=true;
+  try{
+    const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
+    if((+v.build||0)>APP_BUILD){
+      if(!manual&&!v.force){const d=LS.get('updLater',null);if(d&&d.b===v.build&&Date.now()-d.t<6*3600e3)return}
+      showUpd(v,'web');return}
+    if(isNative()&&v.minNative){const nb=await nativeBuild();
+      if(nb&&nb<v.minNative){if(!manual){const d=LS.get('apkLater',0);if(Date.now()-d<24*3600e3)return}showUpd(v,'apk');return}}
+    if(manual)toast(t('upd_latest')+' · v'+APP_VER);
+  }catch(e){if(manual)toast(t('upd_fail'))}
+  finally{UPD.busy=false;if(S.view==='settings'||S.view==='w_me')render(false)}
+}
+function updLater(b){LS.set('updLater',{b,t:Date.now()});LS.set('apkLater',Date.now());closeSheet()}
+
+render(false);
 </script>
 </body>
 </html>

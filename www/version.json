@@ -1,6 +1,6 @@
 {
-  "version": "1.9.0",
-  "build": 21,
+  "version": "1.10.0",
+  "build": 22,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,14 +8,16 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "后台删除、停用、驳回或修改工人后，手机上会自动同步：打开App、切回前台、切换页面时立即更新，使用中每30秒自动检查",
-      "工人档案被后台删除后，工人手机上会提示重新注册",
-      "人才库只显示审核通过的工人（自己手机上未通过的档案不再混入）",
-      "修复：自己发布并审核通过的岗位重复显示的问题"
+      "首页去掉顶部称呼栏，通知入口移到“我的”右上角",
+      "人才库：行业和工种全部展开显示，并标出人数",
+      "“全部行业”下按行业分组列出全部 79 个工种，点工种直接筛选",
+      "服务业新增餐厅服务员、酒店客房服务员、KTV服务员、收银员、理货员等招工需求",
+      "修复：需要新安装包时，网页内容也能先正常更新"
     ],
     "en": [
-      "Changes made by the platform now appear on your phone right away",
-      "If your profile is removed, you will be asked to create it again"
+      "Cleaner home page",
+      "All industries and job types are now shown with worker counts",
+      "More service jobs: waiters, hotel room attendants, KTV attendants, cashiers"
     ]
   }
 }
