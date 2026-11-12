@@ -498,11 +498,19 @@ function arBar(){const top=document.querySelector('.main .top');if(!top)return;
      <button class="btn sm lime" style="margin-left:auto" onclick="go('${page}')">立即查看</button><button class="btn sm" style="color:#161616" onclick="AR.fresh={W:0,E:0,J:0,R:0};arTitle();document.getElementById('arNew').remove()">知道了</button></div>`}
   else if(bn)bn.remove()}
 setInterval(()=>{const a=document.getElementById('arAgo');if(a)a.textContent=arAgo()},1000);
-const _render0=render;render=function(){_render0();if(S.session){if(!AR.seen&&(S.W.length||S.J.length||S.E.length||LIVE))AR.seen=arSnap();arBar()}};
+const _render0=render;render=function(){_render0();if(S.session){if(!AR.seen&&(S.W.length||S.J.length||S.E.length||LIVE))AR.seen=arSnap();if(!AR.timer&&AR.sec>0)arStart();arBar();admVerBar()}};
 const _go0=go;go=function(p){arSeen(p);return _go0(p)};
 window.addEventListener('focus',()=>{if(AR.sec)arTick()});
 if(S.session){AR.seen=arSnap();arStart()}
 
+
+/* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
+const ADMIN_BUILD=18;let ADM_NEW=false;
+async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
+function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
+  d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
+  d.innerHTML='<b>后台已更新到新版本</b><span style="opacity:.7">刷新后生效（需要重新登录）</span><button class="btn sm lime" onclick="location.reload()">立即刷新</button>';document.body.appendChild(d)}
+setInterval(admVerCheck,60000);setTimeout(admVerCheck,5000);
 </script>
 </body>
 </html>
