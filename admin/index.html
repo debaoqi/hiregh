@@ -120,10 +120,12 @@ textarea.inp{min-height:80px;resize:vertical}
 
 <script>
 /* ===== 云端配置：与 App 填写相同的 Supabase 信息（留空 = 演示模式） ===== */
-window.HIREGH_CONFIG = window.HIREGH_CONFIG || { supabaseUrl: '', supabaseAnonKey: '' };
+window.HIREGH_CONFIG = window.HIREGH_CONFIG || {
+  supabaseUrl: 'https://vctokfjzgjtvsqftadeh.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjdG9rZmp6Z2p0dnNxZnRhZGVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0ODU3NjAsImV4cCI6MjExMDA2MTc2MH0.4yA4ijyvz9F60W2yOCaVLi-tJmCLHHLslx5TbYo-ASA' };
 </script>
 <script>
-const CFG=window.HIREGH_CONFIG||{};const LIVE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
+const CFG=window.HIREGH_CONFIG||{};const LIVE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey)&&!/[?&]demo\b/.test(location.search);
 const U=(CFG.supabaseUrl||'').replace(/\/$/,''),K=CFG.supabaseAnonKey;
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s);
@@ -137,7 +139,7 @@ const fmt=d=>{if(!d)return '—';const x=new Date(d);return `${x.getUTCMonth()+1
 const money=n=>'GH₵'+(+n||0).toLocaleString('en-US');
 
 /* ---------- reference data (same as App) ---------- */
-const NATS={GH:['加纳','linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)','#000'],VN:['越南','#DA251D','#FFCD00'],IN:['印度','linear-gradient(#FF9933 0 33%,#fff 33% 66%,#138808 66%)'],NG:['尼日利亚','linear-gradient(90deg,#008751 0 33%,#fff 33% 66%,#008751 66%)'],TG:['多哥','repeating-linear-gradient(#006A4E 0 3px,#FFCE00 3px 6px)'],BF:['布基纳法索','linear-gradient(#EF2B2D 0 50%,#009E49 50%)','#FCD116'],CN:['中国','#DE2910','#FFDE00']};
+const NATS={GH:['加纳','linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)','#000'],VN:['越南','#DA251D','#FFCD00'],CN:['中国','#DE2910','#FFDE00']};
 const flag=c=>{const n=NATS[c];if(!n)return '';return `<span class="flag" style="background:${n[1]}">${n[2]?`<i style="color:${n[2]}">★</i>`:''}</span>`};
 const natName=c=>NATS[c]?NATS[c][0]:esc(c||'—');
 const IND={ind:['工业制造',['焊工','电工','机修工','叉车司机','CNC操作工','质检员','普工']],agr:['农业种植',['种植工','农机手','养殖工','采摘工','灌溉技工','农场主管']],svc:['服务业',['中餐厨师','司机','保安','保洁','中英翻译','家政保姆','会计文员']],con:['建筑工程',['泥瓦工','钢筋工','木工','水电工','挖掘机司机','测量员']],min:['矿业能源',['矿工','爆破员','重卡司机','设备维修','选矿工']],log:['物流仓储',['仓管员','装卸工','货车司机','报关员']]};
@@ -183,18 +185,18 @@ async function run(fn,ok){try{await fn();if(ok)toast(ok);render()}catch(e){conso
 /* ---------- demo data ---------- */
 function demo(){
   let sd=7;const rnd=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};const pick=a=>a[Math.floor(rnd()*a.length)];
-  const NM={GH:['Kwame Mensah','Ama Owusu','Kofi Boateng','Akosua Asante','Yaw Darko','Efua Appiah','Kwabena Ofori','Abena Osei','Kojo Asare','Esi Mensah','Samuel Tetteh','Grace Nyarko','Isaac Owusu','Joseph Ansah'],VN:['Nguyễn Văn An','Trần Thị Hoa','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam'],IN:['Rajesh Kumar','Priya Sharma','Arjun Patel','Suresh Reddy','Vikram Singh'],NG:['Chinedu Okafor','Emeka Eze','Ngozi Obi'],TG:['Komlan Agbeko','Afi Mensah'],BF:['Issa Ouédraogo','Awa Kaboré']};
-  const LG={GH:'en',VN:'vi',IN:'hi',NG:'en',TG:'fr',BF:'fr'};const cols=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8'];
+  const NM={GH:['Kwame Mensah','Ama Owusu','Kofi Boateng','Akosua Asante','Yaw Darko','Efua Appiah','Kwabena Ofori','Abena Osei','Kojo Asare','Esi Mensah','Samuel Tetteh','Grace Nyarko','Isaac Owusu','Joseph Ansah'],VN:['Nguyễn Văn An','Trần Thị Hoa','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam','Đỗ Thị Lan'],CN:['张伟','李强','陈明','王芳','赵磊','刘洋']};
+  const LG={GH:'en',VN:'vi',CN:'zh'};const cols=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8'];
   const now=Date.now();let id=1000;S.W=[];
   for(let k=0;k<168;k++){
     const ago=Math.floor(Math.pow(rnd(),1.6)*60);const t=now-ago*864e5-Math.floor(rnd()*864e5*.9);
-    const nat=rnd()<.55?'GH':pick(['VN','IN','NG','TG','BF']);const ind=pick(Object.keys(IND));const role=pick(IND[ind][1]);
+    const nat=rnd()<.62?'GH':(rnd()<.65?'VN':'CN');const ind=pick(Object.keys(IND));const role=pick(IND[ind][1]);
     let status=ago<=2?(rnd()<.8?'pending':'approved'):ago<=6?(rnd()<.35?'pending':'approved'):'approved';
     if(status==='approved'&&rnd()<.09)status='rejected';if(status==='approved'&&rnd()<.04)status='disabled';
     const w={id:++id,created_at:new Date(t).toISOString(),status,review:status==='pending'?null:{by:'admin@hiregh.com',at:new Date(t+36e5*5).toISOString(),reason:status==='rejected'?pick(['证件照片不清晰','信息与证件不一致','重复注册']):''},
-      d:{name:pick(NM[nat])+(rnd()<.3?' Jr':''),nat,female:rnd()<.25,age:20+Math.floor(rnd()*26),city:pick(CITIES),ind,role,exp:1+Math.floor(rnd()*12),sal:Math.round((1200+rnd()*4500)/50)*50,zh:rnd()<.75?'不会':pick(['基础','流利']),avail:pick(AVAIL),lang:LG[nat],col:pick(cols),pending:status==='pending',card:status==='approved',health:status==='approved'&&rnd()<.8,permit:nat==='GH'?null:status==='approved'}};
+      d:{name:pick(NM[nat])+(rnd()<.3?' Jr':''),nat,female:rnd()<.25,age:20+Math.floor(rnd()*26),city:pick(CITIES),ind,role,exp:1+Math.floor(rnd()*12),sal:Math.round((1200+rnd()*4500)/50)*50,zh:nat==='CN'?'母语':rnd()<.75?'不会':pick(['基础','流利']),avail:pick(AVAIL),lang:LG[nat],col:pick(cols),pending:status==='pending',card:status==='approved',health:status==='approved'&&rnd()<.8,permit:nat==='GH'?null:status==='approved'}};
     S.W.push(w);
-    S.docs[w.id]={id:w.id,data:{phone:'+233 '+(20+Math.floor(rnd()*39))+' '+String(Math.floor(rnd()*9e6)+1e6).replace(/(\d{3})(\d{4})/,'$1 $2'),idType:nat==='GH'?'Ghana Card':nat==='VN'||nat==='IN'?'passport':'ECOWAS ID',idPhoto:demoId(w.d.name,nat),permit:nat==='GH'?null:rnd()<.7,health:rnd()<.75,consentAt:w.created_at,lang:LG[nat]}};
+    S.docs[w.id]={id:w.id,data:{phone:'+233 '+(20+Math.floor(rnd()*39))+' '+String(Math.floor(rnd()*9e6)+1e6).replace(/(\d{3})(\d{4})/,'$1 $2'),idType:nat==='GH'?'Ghana Card':'passport',idPhoto:demoId(w.d.name,nat),permit:nat==='GH'?null:rnd()<.7,health:rnd()<.75,consentAt:w.created_at,lang:LG[nat]}};
   }
   S.W.sort((a,b)=>b.created_at.localeCompare(a.created_at));
   const co=['鑫源建材（加纳）','中加农业发展','华程路桥','远航物流','金泰矿业','鸿运餐饮','恒达机械','海湾水泥'];
@@ -237,7 +239,7 @@ function loginView(){return `<div class="login"><div class="lbox"><div class="br
   <p class="note" style="margin-top:14px">管理员账号在 Supabase → Authentication → Users 中创建，并加入 admins 表。</p>`
  :`<p class="note">当前未连接数据库，将使用<b>示例数据</b>展示后台全部功能。所有修改只在本页面临时生效。<br>连接 Supabase 后，这里会变成管理员登录。</p>
   <button class="btn dark" style="width:100%;justify-content:center;margin-top:18px;padding:13px" onclick="doLogin()">进入演示后台</button>`}
- <div id="lerr" style="color:var(--red);margin-top:10px;font-size:13px"></div></div></div>`}
+ <div id="lerr" style="color:var(--red);margin-top:10px;font-size:13px"></div>${LIVE?'<a href="?demo" style="display:block;margin-top:14px;font-size:13px;color:var(--ink2)">还没有管理员账号？先看演示数据 →</a>':''}</div></div>`}
 async function doLogin(){try{await API.login(LIVE?$('#em').value.trim():'',LIVE?$('#pw').value:'');await API.load();const h=location.hash.slice(1);if(TITLE[h])S.page=h;render()}catch(e){S.session=null;render();$('#lerr').textContent=e.message}}
 function logout(){S.session=null;S.W=[];S.docs={};render()}
 
