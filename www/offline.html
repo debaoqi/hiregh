@@ -1,0 +1,8 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>HireGH</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#EDE8DC;font-family:-apple-system,"PingFang SC","Noto Sans SC",Roboto,sans-serif;color:#161616;text-align:center}
+.c{padding:32px}.i{width:76px;height:76px;border-radius:24px;background:#CFE36B;display:grid;place-items:center;font-size:38px;font-weight:900;margin:0 auto 22px}
+h1{font-size:22px;margin:0 0 8px}p{color:#6b675e;margin:4px 0;line-height:1.6}button{margin-top:26px;border:0;border-radius:40px;background:#161616;color:#fff;font-size:17px;font-weight:700;padding:16px 40px}</style></head>
+<body><div class="c"><div class="i">H</div><h1 id="t">No internet connection</h1><p id="d">Please check your network and try again.</p>
+<button id="b" onclick="location.href='https://hiregh.pages.dev/?r='+Date.now()">Try again</button></div>
+<script>const L=(navigator.language||'en').toLowerCase();const M={zh:['网络未连接','请检查网络后重试','重试'],vi:['Không có kết nối mạng','Vui lòng kiểm tra mạng và thử lại','Thử lại']};const m=M[L.slice(0,2)];if(m){t.textContent=m[0];d.textContent=m[1];b.textContent=m[2]}
+addEventListener('online',()=>b.click());</script></body></html>

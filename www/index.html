@@ -1121,5 +1121,84 @@ const _vr=V.w_reg;V.w_reg=()=>{let h=_vr();if(S.reg.editing&&S.reg.step===3)h=h.
 const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_reg';render(true)`,'editProfile()').replace(`<div class="li" style="cursor:pointer" onclick="toWelcome()">`,`<div class="li" style="cursor:pointer" onclick="reportSheet('${t('feedback')}')">${ic('help')}<span>${t('feedback')}</span></div><div class="li" style="cursor:pointer" onclick="toWelcome()">`);
 
 </script>
+<script>
+/* ================= v1.4 · 版本更新检测 ================= */
+const APP_VER='1.4.0',APP_BUILD=14;
+Object.assign(T,{
+ upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
+ upd_now:['Update now','Cập nhật ngay','立即更新'],
+ upd_later:['Later','Để sau','稍后'],
+ upd_apk:['Download & install','Tải và cài đặt','下载安装新版'],
+ upd_apk_tip:['This update needs a new install package. After download, open the file to install. Your data will be kept.','Bản cập nhật cần gói cài đặt mới. Tải xong, mở tệp để cài. Dữ liệu vẫn được giữ.','本次更新需要安装新的安装包。下载完成后点击文件安装，原有数据会保留。'],
+ upd_done:['Updated to','Đã cập nhật lên','已更新到'],
+ upd_new:["What's new",'Có gì mới','更新内容'],
+ upd_latest:['You have the latest version','Bạn đang dùng phiên bản mới nhất','已是最新版本'],
+ upd_check:['Check for updates','Kiểm tra cập nhật','检查更新'],
+ upd_fail:['Cannot check now. Please try again later.','Chưa kiểm tra được. Vui lòng thử lại sau.','暂时无法检查，请稍后再试'],
+ upd_force:['This version is required to keep using the app.','Cần cập nhật để tiếp tục sử dụng.','此版本为必要更新，更新后才能继续使用'],
+ ok:['OK','OK','知道了'],
+});
+const UPD={remote:null,native:null,busy:false};
+const isNative=()=>!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+async function nativeBuild(){if(UPD.native!==null)return UPD.native;try{const i=await window.Capacitor.Plugins.App.getInfo();UPD.native=+i.build||0}catch(e){UPD.native=0}return UPD.native}
+const notesOf=v=>{const n=v.notes||{};return n[S.lang]||n.en||n.zh||[]};
+const updNotes=v=>`<div class="xs muted b" style="margin:14px 0 6px">${t('upd_new')}</div><ul style="margin:0;padding-left:20px;line-height:1.7;font-size:14px">${notesOf(v).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+async function checkUpdate(manual){
+  if(UPD.busy)return;UPD.busy=true;
+  try{
+    const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
+    const nb=isNative()?await nativeBuild():0;
+    // 1) 需要新安装包（原生外壳有变化时才会出现）
+    if(isNative()&&v.minNative&&nb&&nb<v.minNative){showUpd(v,'apk');return}
+    // 2) 网页内容有新版本：一键刷新即完成更新
+    if((+v.build||0)>APP_BUILD){
+      if(!manual&&!v.force){const d=LS.get('updLater',null);if(d&&d.b===v.build&&Date.now()-d.t<6*3600e3)return}
+      showUpd(v,'web');return}
+    if(manual)toast(t('upd_latest')+' · v'+APP_VER);
+  }catch(e){if(manual)toast(t('upd_fail'))}
+  finally{UPD.busy=false;if(S.view==='settings'||S.view==='w_me')render(false)}
+}
+function showUpd(v,kind){
+  const force=!!v.force||kind==='apk'&&v.forceNative;
+  openSheet(`<div class="row gap" style="align-items:center"><span style="width:52px;height:52px;border-radius:16px;background:var(--lime);display:grid;place-items:center;font-size:24px;font-weight:900">H</span>
+   <div><div class="b" style="font-size:20px">${t('upd_title')}</div><div class="sm muted">v${APP_VER} → <b style="color:var(--ink)">v${esc(v.version)}</b>${v.date?' · '+esc(v.date):''}</div></div></div>
+   ${updNotes(v)}
+   ${kind==='apk'?`<div class="note-y" style="margin-top:14px">${t('upd_apk_tip')}</div>`:''}
+   ${force?`<div class="xs" style="margin-top:10px;color:var(--red)">${t('upd_force')}</div>`:''}
+   <div class="row gap" style="margin-top:18px">${force?'':`<button class="bigbtn" style="background:var(--card);color:#161616;flex:0 0 34%" onclick="updLater(${+v.build||0})">${t('upd_later')}</button>`}
+   <button class="bigbtn" style="flex:1" onclick="${kind==='apk'?'doApk()':'doUpdate()'}">${kind==='apk'?t('upd_apk'):t('upd_now')}</button></div>`);
+  $('#sheet').dataset.force=force?'1':'0'
+}
+function updLater(b){LS.set('updLater',{b,t:Date.now()});closeSheet()}
+async function doUpdate(){
+  LS.set('updFrom',APP_VER);persist&&persist();
+  try{if('serviceWorker' in navigator){const rg=await navigator.serviceWorker.getRegistration();if(rg){await rg.update();if(rg.waiting)rg.waiting.postMessage('skip')}}
+      if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(e){}
+  location.replace(location.pathname+'?v='+(UPD.remote?UPD.remote.build:Date.now()));
+}
+function doApk(){const u=(UPD.remote&&UPD.remote.apk)||'https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk';
+  if(isNative()){location.href=u}else window.open(u,'_blank')}
+/* 强制更新时，关闭弹窗会再次弹出 */
+const _open0=openSheet;openSheet=function(h){$('#sheet').dataset.force='0';return _open0(h)};
+const _close0=closeSheet;closeSheet=function(){if($('#sheet').dataset.force==='1')return;return _close0()};
+/* 更新完成后，告诉用户更新了什么（只显示一次） */
+(function afterUpdate(){const from=LS.get('updFrom',null);const seen=LS.get('seenVer',null);LS.set('seenVer',APP_VER);
+  if(!from||from===APP_VER)return;LS.set('updFrom',null);
+  setTimeout(async()=>{let v=null;try{v=await (await fetch('/version.json?t='+Date.now(),{cache:'no-store'})).json()}catch(e){}
+    openSheet(`<div class="b" style="font-size:20px">✓ ${t('upd_done')} v${APP_VER}</div>${v&&v.version===APP_VER?updNotes(v):''}<button class="bigbtn" style="width:100%;margin-top:18px" onclick="closeSheet()">${t('ok')}</button>`)},600)})();
+/* 何时检查：启动后、回到前台、每 30 分钟 */
+if(location.protocol==='https:'){
+  setTimeout(()=>checkUpdate(false),2500);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate(false)});
+  setInterval(()=>checkUpdate(false),30*60e3);
+  try{window.Capacitor&&window.Capacitor.Plugins.App&&window.Capacitor.Plugins.App.addListener('resume',()=>checkUpdate(false))}catch(e){}
+}
+const hasUpd=()=>UPD.remote&&(+UPD.remote.build||0)>APP_BUILD;
+const updRow=()=>`<div class="li" style="cursor:pointer" onclick="${hasUpd()?"showUpd(UPD.remote,'web')":'checkUpdate(true)'}">${ic('download')}<div style="flex:1"><div class="b" style="font-size:15px">${t('upd_check')}</div><div class="xs muted">v${APP_VER}${hasUpd()?` → <b style="color:var(--red)">v${esc(UPD.remote.version)}</b>`:''}</div></div>${hasUpd()?'<span style="width:9px;height:9px;border-radius:50%;background:var(--red)"></span>':'<span class="muted">›</span>'}</div>`;
+P.download='<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>';
+const _vset=V.settings;V.settings=()=>_vset().replace(/<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">版本<\/div>.*?<\/div><\/div><\/div>/,'').replace('<div class="box"><div class="li" style="cursor:pointer" onclick="openSheet(','<div class="box">'+updRow()+'<div class="li" style="cursor:pointer" onclick="openSheet(');
+const _vme2=V.w_me;V.w_me=()=>_vme2().replace(`<div class="li" style="cursor:pointer" onclick="toWelcome()">`,updRow()+`<div class="li" style="cursor:pointer" onclick="toWelcome()">`);
+
+</script>
 </body>
 </html>
