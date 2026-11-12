@@ -1,6 +1,6 @@
 {
-  "version": "2.0.5",
-  "build": 29,
+  "version": "2.0.6",
+  "build": 30,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,7 +8,7 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "首页“靠谱”换成新字体（站酷庆科黄油体）"
+      "首页“靠谱”恢复与标题相同的字体"
     ],
     "en": [
       "Small design update"
