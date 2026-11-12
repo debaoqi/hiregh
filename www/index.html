@@ -449,7 +449,7 @@ V.home=()=>{
   return `<div class="pad">
   <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · 鑫源建材</div></div></div>
    <div class="row gap6"><button class="icbtn" onclick="tab('browse');setTimeout(()=>$('#q')&&$('#q').focus(),50)">${ic('search')}</button><button class="icbtn" onclick="openNotifs()">${ic('bell')}<span class="dot"></span></button></div></div>
-  <h1 class="hero">在加纳<br>找到<span class="hl">靠谱</span>的工友</h1>
+  <h1 class="hero">在加纳<br>找<span class="hl">靠谱</span>的人</h1>
   <div class="searchbar" onclick="tab('browse')">${ic('search')}<span style="flex:1">搜索工种、技能、城市…</span><span class="pill dark">${ic('filter',16)}筛选</span></div>
   <div class="stats"><div class="stat"><div class="n">${WORKERS.length}</div><div class="xs muted">在册工人</div></div>
    <div class="stat"><div class="n">${WORKERS.length?Math.round(WORKERS.filter(w=>w.card).length/WORKERS.length*100):0}%</div><div class="xs muted">证件已核验</div></div>
@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.5.0',APP_BUILD=16;
+const APP_VER='1.5.1',APP_BUILD=17;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
