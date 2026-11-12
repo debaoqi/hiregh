@@ -1,6 +1,6 @@
 {
-  "version": "2.0.2",
-  "build": 26,
+  "version": "2.0.3",
+  "build": 27,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,11 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "欢迎页恢复原来的设计",
-      "英文状态下调整间距：标题保持一行、标签保持一行，黑色卡片上移"
+      "英文标题“Finding work is easy”按屏幕宽度自动缩小，保持一行完整显示"
     ],
     "en": [
-      "Tidier welcome page in English"
+      "The title now always fits on one line"
     ]
   }
 }

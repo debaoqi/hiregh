@@ -1118,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.0.2',APP_BUILD=26;
+const APP_VER='2.0.3',APP_BUILD=27;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1913,9 +1913,19 @@ render(false);
 <script>
 /* ================= v2.0.2 · “靠谱”加粗 ================= */
 (function(){const st=document.createElement('style');st.textContent=`.hero .hl{font-weight:900;-webkit-text-stroke:.8px currentColor;letter-spacing:0}
-html:not([lang=zh]) h1.hero[style*="font-size:36px"]{font-size:min(36px,8.4vw)!important;white-space:nowrap;letter-spacing:-1.2px}
+html:not([lang=zh]) h1.hero[style*="font-size:36px"]{font-size:min(32px,7.4vw)!important;white-space:nowrap;letter-spacing:-1px;max-width:100%;overflow:hidden}
 html:not([lang=zh]) .sc .row.gap6.wrap{gap:4px!important;flex-wrap:nowrap!important;margin-top:10px!important}
 html:not([lang=zh]) .sc .row.gap6.wrap span{font-size:min(11px,3vw)!important;padding:4px 7px!important;white-space:nowrap}`;document.head.appendChild(st)})();
+
+/* 英文标题自动缩小到一行内完整显示 */
+function fitWelTitle(){if(S.view!=='welcome')return;const h=document.querySelector('h1.hero');if(!h)return;
+  if(document.documentElement.lang==='zh'){h.style.removeProperty('white-space');return}
+  h.style.setProperty('white-space','nowrap','important');h.style.setProperty('letter-spacing','-1px','important');
+  let fs=Math.min(32,innerWidth*0.074,h.parentElement.clientWidth*0.085);h.style.setProperty('font-size',fs+'px','important');let n=0;
+  while(h.scrollWidth>h.clientWidth+1&&fs>16&&n++<40){fs-=1;h.style.setProperty('font-size',fs+'px','important')}}
+const _render14=render;render=function(top){_render14(top);fitWelTitle()};
+window.addEventListener('resize',fitWelTitle);document.fonts&&document.fonts.ready.then(fitWelTitle);
+render(false);
 </script>
 </body>
 </html>
