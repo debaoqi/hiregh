@@ -447,7 +447,7 @@ V.home=()=>{
   const natCount=c=>WORKERS.filter(w=>w.nat===c).length;
   const recs=[...WORKERS.filter(w=>w.isNew&&w.self),...[...WORKERS].sort((a,b)=>(!!b.photo-!!a.photo)||((+b.rating||0)-(+a.rating||0)))].filter((w,i,a)=>a.indexOf(w)===i).slice(0,8);
   return `<div class="pad">
-  <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · 鑫源建材</div></div></div>
+  <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · ${typeof coShort==='function'?coShort():'鑫源建材'}</div></div></div>
    <div class="row gap6"><button class="icbtn" onclick="tab('browse');setTimeout(()=>$('#q')&&$('#q').focus(),50)">${ic('search')}</button><button class="icbtn" onclick="openNotifs()">${ic('bell')}<span class="dot"></span></button></div></div>
   <h1 class="hero">在加纳<br>找<span class="hl">靠谱</span>的人</h1>
   <div class="searchbar" onclick="tab('browse')">${ic('search')}<span style="flex:1">搜索工种、技能、城市…</span><span class="pill dark">${ic('filter',16)}筛选</span></div>
@@ -617,7 +617,7 @@ V.me=()=>{
     ['tr','翻译服务','#CFE0FF',"go('translate')"],['brief','我的岗位','#F1ECDF',"tab('jobs')"],['help','帮助中心','#F1ECDF',"go('help')"],['gear','设置','#F1ECDF',"go('settings')"]];
   return `<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">我的</div><button class="icbtn" onclick="langSheet()">${ic('globe')}</button></div>
   <div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('shield',14)} 企业已认证</span><span class="b">HireGH</span></div>
-   <div class="cn">鑫源建材（加纳）有限公司</div><div class="sm" style="opacity:.7;margin-top:4px">Xinyuan Building Materials Ghana Ltd. · 特马工业区</div>
+   <div class="row between" style="align-items:flex-start;gap:10px"><div style="min-width:0"><div class="cn">${esc(S.company.name)}</div><div class="sm" style="opacity:.7;margin-top:4px">${esc(S.company.en)}</div></div><button class="pill" style="background:#161616;color:#fff;border:0;padding:7px 12px;flex:none" onclick="go('company')">${ic('edit',14)} 修改</button></div><div class="sm" style="margin-top:8px;cursor:pointer;text-decoration:underline" onclick="openExt(mapLink(S.company.loc))">${ic('pin',14)} ${esc((S.company.loc&&S.company.loc.addr)||'设置企业位置')} · 谷歌地图</div>
    <div class="row3"><div><b>${S.jobs.filter(j=>j.owner==='me'&&j.status==='open').length}</b><span class="xs">在招岗位</span></div><div><b>${S.jobs.filter(j=>j.owner==='me').reduce((a,j)=>a+j.apps,0)}</b><span class="xs">收到申请</span></div><div><b>${S.interviews.length}</b><span class="xs">待面试</span></div></div></div>
   <div class="sec-h">常用功能</div>
   <div class="qa">${qa.map(q=>`<button onclick="${q[3]}"><span class="qi" style="background:${q[2]}">${ic(q[0])}</span>${q[1]}</button>`).join('')}</div>
@@ -829,7 +829,7 @@ async function submitReg(){
 function wJobCard(j){
   const ind=IND.find(i=>i.id===j.ind);const ap=S.applied.has(j.id);
   return `<div class="wc" onclick="go('w_job',{id:${j.id}})"><div class="top"><div class="row between" style="align-items:flex-start;gap:8px">
-   <h3>${roleT(j.title)}<small class="row gap6">${j.company} ${ic('shield',13)}</small></h3>
+   <h3>${roleT(j.title)}<small class="row gap6">${esc(coT(j))} ${ic('shield',13)}</small></h3>
    <span class="badge" style="background:${ind.color};color:${ind.ink}">${indT(j.ind)}</span></div>
    <div class="cols"><div><div class="l">${t('exp_req')}</div><div class="v">${expT(j.exp)}</div></div><div><div class="l">GH₵${t('per_month')}</div><div class="v">${salK(j.sal)}</div></div><div><div class="l">${t('location')}</div><div class="v">${cityT(j.city)}</div></div></div></div>
    <div class="bot"><div class="row gap6 wrap" style="flex:1">${j.stay?`<span class="chip sm" style="background:#F1ECDF">${t('accommodation')}</span>`:''}${j.zh?`<span class="chip sm" style="background:#F1ECDF">${t('need_zh')}</span>`:''}<span class="chip sm" style="background:#F1ECDF">${j.n} ${t('openings')}</span></div>
@@ -855,7 +855,7 @@ V.w_job=()=>{
   const d=S.lang==='zh'?j.desc:j.descEn;
   return `<div class="dhead" style="background:${ind.id==='min'?'#3A3A3A':ind.color};color:${ind.ink}">
    <div class="row between"><button class="icbtn" onclick="back()">${ic('back')}</button><span class="b">${indT(j.ind)}</span><span style="width:44px"></span></div>
-   <div class="name" style="margin-top:18px">${roleT(j.title)}</div><div class="rpill" style="color:#161616">${j.company} · ${t('verified')}</div>
+   <div class="name" style="margin-top:18px">${roleT(j.title)}</div><div class="rpill" style="color:#161616">${esc(coT(j))} · ${t('verified')}</div>
    <div class="kv" style="color:#161616"><span>GH₵${j.sal}${t('per_month')}</span><span>${ic('pin',15)}${cityT(j.city)}</span><span>${expT(j.exp)}</span></div></div>
   <div class="pad"><div class="box"><h4>${t('desc')}</h4><div style="font-size:15px;line-height:1.6">${d||j.desc}</div>
    <div class="xs muted" style="margin-top:10px">${ic('tr',12)} ${d?(S.lang==='zh'?'':t('auto_tr')):t('no_tr')}</div></div>
@@ -874,7 +874,7 @@ function applyJob(id){
   toast(t('apply_ok'));render(false);
 }
 V.w_apps=()=>{const l=S.jobs.filter(j=>S.applied.has(j.id));return `<div class="pad"><div class="title" style="margin-top:6px">${t('my_apps')}</div><div style="margin-top:16px">
-  ${l.length?l.map(j=>`<div class="ivc" onclick="go('w_job',{id:${j.id}})"><div class="datebox" style="background:${IND.find(i=>i.id===j.ind).color}">${ic(IND.find(i=>i.id===j.ind).icon)}</div><div style="flex:1;min-width:0"><div class="b">${roleT(j.title)}</div><div class="sm muted">${j.company} · ${cityT(j.city)}</div><div class="sm" style="margin-top:3px">${ic('clock',13)} ${t('status_sent')}</div></div></div>`).join(''):`<div class="empty">${t('no_apps')}</div>`}</div></div>`};
+  ${l.length?l.map(j=>`<div class="ivc" onclick="go('w_job',{id:${j.id}})"><div class="datebox" style="background:${IND.find(i=>i.id===j.ind).color}">${ic(IND.find(i=>i.id===j.ind).icon)}</div><div style="flex:1;min-width:0"><div class="b">${roleT(j.title)}</div><div class="sm muted">${esc(coT(j))} · ${cityT(j.city)}</div><div class="sm" style="margin-top:3px">${ic('clock',13)} ${t('status_sent')}</div></div></div>`).join(''):`<div class="empty">${t('no_apps')}</div>`}</div></div>`};
 V.w_me=()=>{const w=S.me;if(!w)return '';return `<div class="pad"><div class="title" style="margin-top:6px">${t('me')}</div>
   <div class="box" style="text-align:center">${avatar(w,'lg')}<div class="b" style="font-size:22px;margin-top:8px">${w.name}</div><div class="sm muted">${roleT(w.role)} · ${natT(w.nat)}</div>
    <span class="badge gold" style="display:inline-block;margin-top:10px">${ic('clock',13)} ${t('verify_pending')}</span></div>
@@ -957,7 +957,7 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 
 /* ---------- 举报 / 反馈（进入管理后台“举报与反馈”） ---------- */
 async function submitReport(data){
-  data={...data,reporter:S.mode==='wk'&&S.me?S.me.name:(S.mode==='emp'?'企业：鑫源建材':'访客'),lang:S.lang,at:new Date().toISOString()};
+  data={...data,reporter:S.mode==='wk'&&S.me?S.me.name:(S.mode==='emp'?'企业：'+S.company.name:'访客'),lang:S.lang,at:new Date().toISOString()};
   if(DB.on){const r=await dbSafe(()=>DB.q('rpc/submit_report',{method:'POST',body:JSON.stringify({p_data:data})}));if(r===null)return false}
   return true}
 function reportSheet(target){
@@ -1009,7 +1009,7 @@ function contractText(w,j){const c=S.ct;const title=j?j.title:w.role;const en=j?
  const prob=c.prob==='0'?['无试用期','No probation period']:[`试用期 ${c.prob} 个月`,`Probation period: ${c.prob} month(s)`];
  return `劳动合同（草稿） / EMPLOYMENT CONTRACT (DRAFT)
 
-甲方（雇主） Employer：鑫源建材（加纳）有限公司 Xinyuan Building Materials Ghana Ltd.
+甲方（雇主） Employer：${S.company.name} ${S.company.en}
 乙方（员工） Employee：${w.name}（${NATS[w.nat].zh} / ${NATS[w.nat].en}）
 
 1. 岗位 Position：${title} / ${en}
@@ -1090,7 +1090,7 @@ async function sendFeedback(){const c=$('#fbC').value.trim();if(!c){toast('请�
 V.settings=()=>{const row=(label,sub,ctl)=>`<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">${label}</div>${sub?`<div class="xs muted" style="margin-top:2px">${sub}</div>`:''}</div>${ctl}</div>`;
  return pageHdr('设置')+`<div class="pad">
   <div class="box" style="margin-top:0">${row('聊天自动翻译','中文 ⇄ 英语',sw(S.translate,"S.translate=!S.translate;render(false)"))}${row('新消息提醒','',sw(S.settings.notify,"S.settings.notify=!S.settings.notify;render(false)"))}${row('面试提醒','面试前一天提醒',sw(S.settings.ivRemind,"S.settings.ivRemind=!S.settings.ivRemind;render(false)"))}</div>
-  <div class="box">${row('企业信息','鑫源建材（加纳）有限公司 · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','HireGH 1.3.0','')}</div>
+  <div class="box">${row('企业信息',esc(S.company.name)+' · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','HireGH 1.3.0','')}</div>
   <div class="box"><div class="li" style="cursor:pointer" onclick="openSheet('<div class=&quot;b&quot; style=&quot;font-size:18px&quot;>清除本机数据？</div><p class=&quot;sm muted&quot; style=&quot;margin:8px 0 16px&quot;>会清除本机保存的聊天、收藏、面试和岗位草稿，不影响云端数据。</p><button class=&quot;bigbtn&quot; style=&quot;width:100%;background:var(--red)&quot; onclick=&quot;LS.clear();location.reload()&quot;>确认清除</button>')">${ic('trash')}<span>清除本机数据</span></div>
    <div class="li" style="cursor:pointer" onclick="toWelcome()">${ic('users')}<span>切换身份 / 返回欢迎页</span></div></div></div>`};
 
@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='1.6.0',APP_BUILD=18;
+const APP_VER='1.7.0',APP_BUILD=19;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1269,6 +1269,133 @@ render=function(top){_render6(top);
 const hasPhoto=w=>!!(w&&w.photo&&/^(data:image\/|https:\/\/)/.test(w.photo));
 const _filtered6=filtered;
 filtered=function(){return _filtered6().sort((a,b)=>hasPhoto(b)-hasPhoto(a))};
+
+</script>
+<script>
+/* ================= v1.7 · 企业名称 + 中英自动翻译 + 企业定位（谷歌地图） ================= */
+Object.assign(T,{
+ co_loc:['Company location','Company location','企业位置'],
+ open_map:['Open in Google Maps','Open in Google Maps','在谷歌地图中打开'],
+ directions:['Directions','Directions','导航前往'],
+ approx_loc:['Approximate location (city)','Approximate location (city)','城市大致位置'],
+});
+/* ---------- 企业资料（本机保存，发布岗位时带上） ---------- */
+const CITY_LL={'阿克拉':[5.6037,-0.1870],'特马':[5.6698,-0.0166],'库马西':[6.6885,-1.6244],'塔科拉迪':[4.8845,-1.7554],'卡索阿':[5.5340,-0.4168],'塔马利':[9.4008,-0.8393],'奥布阿西':[6.2023,-1.6704],'科福里杜阿':[6.0940,-0.2591]};
+S.company=Object.assign({name:'鑫源建材（加纳）有限公司',en:'Xinyuan Building Materials (Ghana) Co., Ltd.',
+  loc:{lat:5.6742464,lng:0.0122904,addr:'Tema Heavy Industrial Area, Tema, Ghana',approx:true}},LS.get('company',{}));
+function saveCompany(){LS.set('company',S.company);
+  // 同步到本企业所有岗位（位置跟随企业的岗位一起更新）
+  S.jobs.filter(j=>j.owner==='me').forEach(j=>{j.company=S.company.name;j.companyEn=S.company.en;if(!j.loc||j.locFromCo)j.loc={...S.company.loc},j.locFromCo=true});
+  persist()}
+S.jobs.filter(j=>j.owner==='me').forEach(j=>{j.company=S.company.name;j.companyEn=S.company.en;if(!j.loc){j.loc={...S.company.loc};j.locFromCo=true}});
+S.jobs.filter(j=>j.owner!=='me'&&!j.loc&&CITY_LL[j.city]).forEach(j=>{const c=CITY_LL[j.city];j.loc={lat:c[0],lng:c[1],addr:(CITIES.find(x=>x[0]===j.city)||[,j.city])[1]+', Ghana',approx:true}});
+const coT=j=>S.lang==='zh'?(j.company||''):(j.companyEn||j.company||'');
+const coShort=()=>S.company.name.replace(/（.*?）|\(.*?\)|有限公司|有限责任公司|公司/g,'').trim()||S.company.name;
+
+/* ---------- 中文 → 英文自动翻译 ---------- */
+async function zh2en(text){
+  text=(text||'').trim();if(!text)return '';if(!/[一-龥]/.test(text))return text;
+  const tmo=()=>{const c=new AbortController();setTimeout(()=>c.abort(),6000);return c.signal};
+  try{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=en&dt=t&q='+encodeURIComponent(text.slice(0,1500)),{signal:tmo()});
+    const j=await r.json();const out=(j[0]||[]).map(x=>x[0]).join('');if(out)return out}catch(e){}
+  try{const r=await fetch('https://api.mymemory.translated.net/get?langpair=zh-CN|en&q='+encodeURIComponent(text.slice(0,450)),{signal:tmo()});
+    const out=(await r.json()).responseData.translatedText;if(out&&!/MYMEMORY|QUERY LENGTH/i.test(out))return out}catch(e){}
+  return ''}
+let _trT=null;
+function autoEn(srcId,dstId){const src=$('#'+srcId),dst=$('#'+dstId);if(!src||!dst)return;
+  if(dst.dataset.manual==='1')return;clearTimeout(_trT);
+  _trT=setTimeout(async()=>{const v=src.value;if(!v.trim()){dst.value='';return}dst.placeholder='翻译中… Translating…';
+    const en=await zh2en(v);if(src.value===v&&dst.dataset.manual!=='1'){dst.value=en||dst.value;dst.placeholder='English name'}},600)}
+
+/* ---------- 地图 ---------- */
+const mapQ=l=>l&&l.lat!=null?`${l.lat},${l.lng}`:encodeURIComponent((l&&l.addr)||'Ghana');
+const mapEmbed=l=>`https://maps.google.com/maps?q=${mapQ(l)}&z=${l&&l.approx?13:16}&hl=${S.lang==='zh'?'zh-CN':'en'}&output=embed`;
+const mapLink=l=>`https://www.google.com/maps/search/?api=1&query=${mapQ(l)}`;
+const mapDir=l=>`https://www.google.com/maps/dir/?api=1&destination=${mapQ(l)}`;
+function openExt(u){if(isNative())location.href=u;else window.open(u,'_blank')}
+const mapFrame=(l,h=180)=>l&&(l.lat!=null||l.addr)?`<iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${mapEmbed(l)}" style="display:block;width:100%;height:${h}px;border:0;border-radius:16px;background:#E4DFD3"></iframe>`:`<div class="empty sm" style="height:${h}px;display:grid;place-items:center;border-radius:16px;background:#E4DFD3">尚未设置位置</div>`;
+const LOCS={};   // 正在编辑的位置：co = 企业资料，post = 发布岗位
+function locBox(ctx){const l=LOCS[ctx];return `<div id="locBox_${ctx}">${mapFrame(l)}
+  <div class="sm" style="margin-top:8px;line-height:1.5">${ic('pin',14)} ${l?esc(l.addr||''):'—'}${l&&l.lat!=null?` <span class="xs muted">(${(+l.lat).toFixed(5)}, ${(+l.lng).toFixed(5)})</span>`:''}${l&&l.approx?` <span class="badge gold" style="font-size:11px">大致位置</span>`:''}</div>
+  <div class="chips wrap" style="margin-top:8px"><span class="chip sm on" onclick="locNow('${ctx}')">${ic('pin',14)}自动定位当前位置</span><span class="chip sm" onclick="locSearch('${ctx}')">搜索地址 / 粘贴地图链接</span>${ctx==='post'?`<span class="chip sm" onclick="setLoc('post',{...S.company.loc},true)">用企业地址</span>`:''}${l?`<span class="chip sm" onclick="openExt(mapLink(LOCS['${ctx}']))">谷歌地图查看</span>`:''}</div></div>`}
+function setLoc(ctx,l,fromCo){LOCS[ctx]=l;if(ctx==='post')LOCS.postFromCo=!!fromCo;const b=$('#locBox_'+ctx);if(b)b.outerHTML=locBox(ctx)}
+async function revGeo(lat,lng){try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=17&accept-language=en`);const j=await r.json();return j.display_name||''}catch(e){return ''}}
+function locNow(ctx){
+  if(!navigator.geolocation){toast('此设备不支持定位，请搜索地址');return}
+  toast('正在定位…');
+  navigator.geolocation.getCurrentPosition(async p=>{const lat=+p.coords.latitude.toFixed(6),lng=+p.coords.longitude.toFixed(6);
+      setLoc(ctx,{lat,lng,addr:'当前位置',approx:false});toast('定位成功');const a=await revGeo(lat,lng);if(a&&LOCS[ctx]&&LOCS[ctx].lat===lat){LOCS[ctx].addr=a;setLoc(ctx,LOCS[ctx],ctx==='post'?false:undefined)}},
+    e=>{toast(e.code===1?'没有定位权限：请在手机设置中允许 HireGH 使用位置，或搜索地址':'定位失败，请到空旷处重试或搜索地址')},
+    {enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
+function parseLL(s){s=(s||'').trim();let m=s.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/[?&](?:q|query|ll|destination)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/^(-?\d{1,2}\.\d+)\s*[, ]\s*(-?\d{1,3}\.\d+)$/);
+  return m?{lat:+m[1],lng:+m[2]}:null}
+function locSearch(ctx){openSheet(`<div class="b" style="font-size:20px">设置位置</div>
+  <div class="sm muted" style="margin:6px 0 12px;line-height:1.6">输入英文地址或地名（如 Tema Industrial Area、Spintex Road Accra），或粘贴谷歌地图分享链接 / 坐标（如 5.6742, 0.0123）。</div>
+  <input class="fi" id="locQ" placeholder="地址 / 地图链接 / 坐标" style="background:var(--card);border-color:transparent">
+  <button class="bigbtn" style="width:100%;margin-top:12px" onclick="doLocSearch('${ctx}')">搜索</button><div id="locRes" style="margin-top:10px"></div>`);setTimeout(()=>$('#locQ')&&$('#locQ').focus(),200)}
+async function doLocSearch(ctx){const q=$('#locQ').value.trim();if(!q)return;
+  const ll=parseLL(q);if(ll){closeSheet();setLoc(ctx,{...ll,addr:await revGeo(ll.lat,ll.lng)||q,approx:false});toast('位置已设置');return}
+  if(/goo\.gl|maps\.app/.test(q)){$('#locRes').innerHTML='<div class="sm" style="color:var(--red)">短链接无法识别：请在谷歌地图里长按位置，复制坐标后粘贴。</div>';return}
+  $('#locRes').innerHTML='<div class="sm muted">搜索中…</div>';
+  try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&countrycodes=gh&limit=6&accept-language=en&q='+encodeURIComponent(q));const l=await r.json();
+    window.__locR=l;$('#locRes').innerHTML=l.length?l.map((x,k)=>`<div class="li" style="cursor:pointer" onclick="pickLocRes('${ctx}',${k})">${ic('pin',16)}<span class="sm">${esc(x.display_name)}</span></div>`).join(''):'<div class="sm muted">没有找到，请换英文地名，或粘贴坐标。</div>'}
+  catch(e){$('#locRes').innerHTML='<div class="sm" style="color:var(--red)">网络错误，请稍后再试</div>'}}
+function pickLocRes(ctx,k){const x=window.__locR[k];closeSheet();setLoc(ctx,{lat:+(+x.lat).toFixed(6),lng:+(+x.lon).toFixed(6),addr:x.display_name,approx:false});toast('位置已设置')}
+
+/* ---------- 企业资料编辑页（我的 → 企业信息） ---------- */
+V.company=()=>{if(!LOCS.coInit){LOCS.co=S.company.loc?{...S.company.loc}:null;LOCS.coInit=1}
+ return pageHdr('企业信息')+`<div class="pad">
+  <div class="fl" style="margin-top:0">企业名称（中文）</div><input class="fi" id="coName" value="${esc(S.company.name)}" oninput="autoEn('coName','coEn')" placeholder="例如：鑫源建材（加纳）有限公司">
+  <div class="fl">英文名称 <span class="xs muted">· 自动翻译，可修改</span></div><input class="fi" id="coEn" value="${esc(S.company.en)}" oninput="this.dataset.manual='1'" placeholder="English name">
+  <div class="fl">企业位置 <span class="xs muted">· 工人可在谷歌地图中看到并导航</span></div>${locBox('co')}
+ </div><div class="bbar"><button class="bigbtn" onclick="saveCo()">保存企业信息</button></div>`};
+async function saveCo(){const name=$('#coName').value.trim();if(!name){toast('请填写企业名称');return}
+  let en=$('#coEn').value.trim();if(!en)en=await zh2en(name)||name;
+  S.company={...S.company,name,en,loc:LOCS.co||S.company.loc};LOCS.coInit=0;saveCompany();toast('企业信息已保存');back()}
+
+/* ---------- 发布新的招工：加企业名称（自动英文）和企业位置 ---------- */
+const _vpost7=V.post;
+V.post=()=>{const e=S.params.edit?S.jobs.find(j=>j.id===S.params.edit):null;const key=e?'e'+e.id:'new';
+  if(LOCS.postKey!==key){LOCS.postKey=key;LOCS.post=e&&e.loc?{...e.loc}:{...S.company.loc};LOCS.postFromCo=e?!!e.locFromCo:true}
+  const blk=`<div class="fl">企业名称</div><input class="fi" id="pCo" value="${esc(e?e.company:S.company.name)}" oninput="autoEn('pCo','pCoEn')" placeholder="企业中文名称">
+   <div class="xs" style="opacity:.75;margin:8px 2px 4px">英文名称（自动翻译，可修改）</div><input class="fi" id="pCoEn" value="${esc(e?(e.companyEn||''):S.company.en)}" oninput="this.dataset.manual='1'" placeholder="English name">
+   <div class="fl">企业位置 <span class="xs" style="opacity:.75">· 工人打开岗位可直接查看地图</span></div><div style="background:#fff;border-radius:20px;padding:10px;color:#161616">${locBox('post')}</div>
+   <div class="fl">行业</div>`;
+  return _vpost7().replace('<div class="fl">行业</div>',blk)};
+async function savePost(id){
+  const role=$('#pRole .chip.on');const title=$('#pTitle').value.trim()||role?.dataset.v;
+  const lo=$('#pLo').value.replace(/\D/g,''),hi=$('#pHi').value.replace(/\D/g,'');
+  const co=$('#pCo').value.trim();
+  if(!co){toast('请填写企业名称');return}
+  if(!title){toast('请填写岗位名称');return} if(!lo||!hi){toast('请填写月薪范围');return}
+  const btn=document.querySelector('.bbar .bigbtn');if(btn){btn.disabled=true;btn.textContent='正在翻译并发布…'}
+  const fmt=n=>(+n).toLocaleString('en-US');
+  const opts=[...document.querySelectorAll('#pOpt .chip.on')].map(c=>c.dataset.v);
+  const desc=$('#pDesc').value;
+  let coEn=$('#pCoEn').value.trim();
+  const [cEn,dEn]=await Promise.all([coEn?coEn:zh2en(co),zh2en(desc)]);coEn=cEn||co;
+  const data={title,en:role?.dataset.en||'',ind:$('#pInd .chip.on').dataset.v,exp:$('#pExp').value,sal:fmt(lo)+'–'+fmt(hi),city:$('#pCity .chip.on').textContent,
+    n:+$('#pN').textContent,nats:[...document.querySelectorAll('#pNat .chip.on')].map(c=>c.dataset.v),zh:opts.includes('zh'),stay:opts.includes('stay'),desc,descEn:dEn||null,
+    company:co,companyEn:coEn,loc:LOCS.post||null,locFromCo:!!LOCS.postFromCo};
+  if(!data.nats.length)data.nats=['GH'];
+  // 第一次发布时，如果企业资料还是默认值，就用这次填写的企业名称
+  if(co!==S.company.name&&!LS.get('company',null)){S.company={...S.company,name:co,en:coEn};LS.set('company',S.company)}
+  LOCS.postKey=null;
+  if(id){const j=S.jobs.find(j=>j.id===id);Object.assign(j,data);if(j.dbid)dbSafe(()=>DB.q('jobs?id=eq.'+j.dbid,{method:'PATCH',body:JSON.stringify(jobRow(j))}));toast('岗位已更新')}
+  else{const j={id:Date.now(),apps:0,status:'open',owner:'me',...data};S.jobs.unshift(j);toast('发布成功，已推送给匹配工人');
+    dbSafe(async()=>{const r=await DB.q('rpc/post_job',{method:'POST',body:JSON.stringify({p_data:jobRow(j).data})});j.dbid=r;toast('已提交，平台审核通过后工人可见')})}
+  S.jobFilter='all';tab('jobs');
+}
+FORM_VIEWS.push('company');
+
+/* ---------- 工人端岗位详情：显示企业位置 + 谷歌地图 ---------- */
+const _vwj7=V.w_job;
+V.w_job=()=>{const j=S.jobs.find(x=>x.id===S.params.id);let h=_vwj7();if(!j||!j.loc)return h;
+  const box=`<div class="box"><h4>${ic('pin',16)} ${t('co_loc')}</h4><div class="sm" style="margin:-4px 0 10px">${esc(coT(j))}${j.loc.addr?' · <span class="muted">'+esc(j.loc.addr)+'</span>':''}${j.loc.approx?' <span class="badge gold" style="font-size:11px">'+t('approx_loc')+'</span>':''}</div>
+   ${mapFrame(j.loc,190)}<div class="row gap6" style="margin-top:10px"><button class="bigbtn" style="flex:1;padding:13px 10px;font-size:14px;background:var(--card);color:#161616" onclick="openExt(mapLink(S.jobs.find(x=>x.id===${j.id}).loc))">${ic('pin',16)} ${t('open_map')}</button><button class="bigbtn" style="flex:1;padding:13px 10px;font-size:14px" onclick="openExt(mapDir(S.jobs.find(x=>x.id===${j.id}).loc))">${t('directions')}</button></div></div>`;
+  return h.replace(`<div class="box"><h4>${t('nationality_lang')}</h4>`,box+`<div class="box"><h4>${t('nationality_lang')}</h4>`)};
+
+const _vset7=V.settings;V.settings=()=>_vset7().replace('<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">企业信息','<div class="li" style="cursor:pointer" onclick="go(\'company\')"><div style="flex:1"><div class="b" style="font-size:15px">企业信息');
 
 </script>
 </body>

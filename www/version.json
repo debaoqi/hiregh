@@ -1,26 +1,25 @@
 {
-  "version": "1.6.0",
-  "build": 18,
+  "version": "1.7.0",
+  "build": 19,
   "date": "2026-11-12",
   "force": false,
-  "minNative": 0,
+  "minNative": 18,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "手机上填写和上传的资料会一直保存，系统更新后不会丢失",
-      "没填完的注册表单也会自动保存，下次打开继续填",
-      "重新打开 App 直接回到上次的身份（工人/企业）",
-      "工人可以看到自己的审核结果（审核中 / 已通过 / 需修改）",
-      "填表时不会被更新提示打断",
-      "人才库中有照片的工人优先显示"
+      "发布招工可填写企业名称，中文自动翻译成英文",
+      "发布招工可设置企业位置：自动定位、搜索地址或粘贴地图坐标",
+      "工人打开岗位能直接看到地图，一键用谷歌地图导航",
+      "“我的”中可修改企业名称和企业位置",
+      "岗位描述自动翻译成英文给工人看",
+      "本次需要安装新的安装包（用于手机定位），原有数据会保留"
     ],
     "en": [
-      "Your saved profile and photos stay after every update",
-      "Unfinished forms are saved automatically",
-      "The app opens where you left off",
-      "See your review result: under review / approved / needs changes",
-      "Update messages wait until you finish a form"
+      "Jobs now show the company location on a map",
+      "Open in Google Maps and get directions with one tap",
+      "Company names and job descriptions are translated into English",
+      "This update needs a new install package. Your data will be kept."
     ]
   }
 }
