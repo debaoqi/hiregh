@@ -21,6 +21,11 @@ jobs:
       - run: python3 make_icons.py www
       - run: npx cap add android
       - run: python3 make_icons.py android
+      - name: Location permission (for company location)
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n</manifest>#' $M
+          grep -n "permission" $M
       - name: Set app version
         run: |
           VER=$(node -p "require('./www/version.json').version")
