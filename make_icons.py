@@ -24,4 +24,6 @@ else:
         m=Image.new('L',(s,s),0); ImageDraw.Draw(m).rounded_rectangle((0,0,s-1,s-1),radius=s//4,fill=255)
         im.paste(icon(s),((w-s)//2,(h-s)//2),m); im.save(f)
     p=res+'/values/ic_launcher_background.xml'
-    if os.path.exists(p): open(p,'w').write(open(p).read().replace('#FFFFFF','#CFE36B'))
+    if os.path.exists(p):
+        x=open(p).read().replace('#FFFFFF','#CFE36B')
+        open(p,'w').write(x)
