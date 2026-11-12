@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HireGH 管理后台</title>
+<style>
+:root{--bg:#EDE8DC;--card:#FBF9F4;--ink:#161616;--ink2:#55524B;--muted:#9C978B;--line:#E7E1D4;--soft:#F3EFE6;
+--lime:#CFE36B;--gold:#F8C94A;--red:#EE5A47;--lilac:#E2B2FA;--blue:#5B8CFF;--bar:#2E3A12;--side:#161616}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:middle}
+.app{display:flex;min-height:100vh}
+.side{width:228px;background:var(--side);color:#cfcfcf;padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px;flex:none}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:17px;padding:4px 8px 18px}
+.logo{width:34px;height:34px;border-radius:11px;background:var(--lime);color:#161616;display:grid;place-items:center;font-weight:900}
+.nav a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:14px;cursor:pointer;text-decoration:none;color:inherit}
+.nav a:hover{background:#242424}
+.nav a.on{background:var(--lime);color:#161616;font-weight:700}
+.nav .cnt{margin-left:auto;background:var(--red);color:#fff;font-size:11px;border-radius:10px;padding:1px 7px;font-weight:700}
+.side .foot{margin-top:auto;font-size:12px;color:#8a8a8a;padding:8px}
+.main{flex:1;min-width:0;padding:18px 26px 60px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.top h1{font-size:26px;letter-spacing:-.5px;margin-right:auto}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:30px;padding:9px 14px;min-width:260px;color:var(--muted)}
+.search input{border:0;background:none;outline:none;flex:1;color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:30px;padding:6px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:30px;padding:9px 16px;font-weight:600;background:var(--card);white-space:nowrap}
+.btn:hover{filter:brightness(.97)}
+.btn.dark{background:#161616;color:#fff}.btn.lime{background:var(--lime)}.btn.red{background:var(--red);color:#fff}.btn.sm{padding:6px 11px;font-size:12.5px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+.card{background:var(--card);border-radius:24px;padding:18px}
+.kpi .l{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.kpi .n{font-size:30px;font-weight:800;letter-spacing:-1px;margin-top:6px}
+.kpi .d{font-size:12px;color:var(--ink2);margin-top:2px}
+.kpi.hl{background:var(--lime)}.kpi.warn{background:var(--gold)}
+.row2{grid-template-columns:2fr 1fr;margin-top:14px}
+.row3{grid-template-columns:1fr 1fr 1fr;margin-top:14px}
+.ch{font-weight:800;font-size:16px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ch .sub{font-weight:500;font-size:12.5px;color:var(--muted)}
+.ch .r{margin-left:auto;display:flex;gap:6px}
+.seg{display:inline-flex;background:var(--soft);border-radius:30px;padding:3px}
+.seg button{padding:6px 12px;border-radius:26px;font-size:12.5px;font-weight:600;color:var(--ink2)}
+.seg button.on{background:#161616;color:#fff}
+.hbar{display:grid;grid-template-columns:96px 1fr 44px;align-items:center;gap:10px;margin:9px 0;font-size:13px}
+.hbar .t{height:12px;background:var(--soft);border-radius:6px;overflow:hidden}
+.hbar .t i{display:block;height:100%;background:var(--bar);border-radius:0 6px 6px 0}
+.hbar .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:10px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+.tbl tr:hover td{background:#F7F4EC}
+.tbl tr.clk{cursor:pointer}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.who small{color:var(--muted);font-size:12px}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none;background:#ddd center/cover}
+.av.lg{width:76px;height:76px;font-size:26px}
+.flag{width:20px;height:14px;border-radius:3px;display:inline-block;position:relative;overflow:hidden;vertical-align:middle;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.flag i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:8px}
+.st-pending{background:#FCE7A6}.st-approved{background:#DDEFA0}.st-rejected{background:#FAD2CB}.st-disabled{background:#E3E0DA;color:#666}.st-offline{background:#E3E0DA;color:#666}.st-open{background:#FAD2CB}.st-doing{background:#FCE7A6}.st-done{background:#DDEFA0}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.sel{appearance:none;background:var(--card);border:0;border-radius:30px;padding:8px 30px 8px 14px;font-weight:600;font-size:13px;background-image:linear-gradient(45deg,transparent 50%,#888 50%),linear-gradient(135deg,#888 50%,transparent 50%);background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.bulk{display:flex;align-items:center;gap:8px;background:#161616;color:#fff;border-radius:18px;padding:8px 10px 8px 16px;margin-bottom:10px}
+.bulk .btn{background:#2a2a2a;color:#fff}.bulk .btn.lime{background:var(--lime);color:#161616}
+.pager{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:12px;color:var(--ink2);font-size:13px}
+.empty{text-align:center;color:var(--muted);padding:40px}
+input[type=checkbox]{width:17px;height:17px;accent-color:#161616;cursor:pointer}
+/* drawer & modal */
+.mask{position:fixed;inset:0;background:rgba(20,20,20,.35);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+.mask.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--bg);z-index:41;transform:translateX(102%);transition:transform .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.dbody{flex:1;overflow-y:auto;padding:20px 22px}
+.dfoot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;background:var(--bg)}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-46%);opacity:0;pointer-events:none;width:min(620px,94vw);max-height:88vh;overflow-y:auto;background:var(--bg);border-radius:26px;padding:22px;z-index:51;transition:.2s}
+.modal.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+.mask2{z-index:50}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.kv .l{font-size:12px;color:var(--muted)}.kv .v{font-weight:600;margin-top:2px;word-break:break-word}
+.sec{font-weight:800;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.idimg{width:100%;border-radius:16px;background:#fff center/contain no-repeat;height:200px;cursor:zoom-in;border:1px solid var(--line)}
+.chk{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:12px;color:var(--muted);font-weight:600}
+.inp{background:var(--card);border:1.5px solid transparent;border-radius:14px;padding:10px 12px;outline:none;width:100%}
+.inp:focus{border-color:#161616;background:#fff}
+textarea.inp{min-height:80px;resize:vertical}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:#161616;color:#fff;padding:12px 18px;border-radius:30px;opacity:0;transition:.25s;z-index:70;pointer-events:none;display:flex;gap:8px;align-items:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.tip{position:fixed;pointer-events:none;background:#161616;color:#fff;font-size:12px;padding:7px 10px;border-radius:10px;z-index:80;opacity:0;transition:opacity .1s;white-space:nowrap}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lbox{background:var(--card);border-radius:30px;padding:30px;width:min(400px,100%)}
+.note{background:var(--soft);border-radius:16px;padding:12px 14px;font-size:12.5px;color:var(--ink2);line-height:1.6}
+.list .it{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.list .it:last-child{border:0}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;place-items:center;z-index:90;cursor:zoom-out}
+.lb img{max-width:92vw;max-height:90vh;border-radius:10px}
+@media (max-width:1200px){.kpis{grid-template-columns:repeat(3,1fr)}.row3{grid-template-columns:1fr 1fr}}
+@media (max-width:900px){.app{flex-direction:column}.side{width:auto;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:10px}.brand{padding:4px 8px}.nav{display:flex;gap:4px}.nav a{white-space:nowrap}.side .foot{display:none}
+ .main{padding:14px}.row2,.row3{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.hide-sm{display:none}.f2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="mask" id="mask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer"></div>
+<div class="mask mask2" id="mask2" onclick="closeModal()"></div>
+<div class="modal" id="modal"></div>
+<div class="toast" id="toast"></div>
+<div class="tip" id="tip"></div>
+<div class="lb" id="lb" onclick="this.style.display='none'"><img id="lbimg" alt=""></div>
+
+<script>
+/* ===== 云端配置：与 App 填写相同的 Supabase 信息（留空 = 演示模式） ===== */
+window.HIREGH_CONFIG = window.HIREGH_CONFIG || { supabaseUrl: '', supabaseAnonKey: '' };
+</script>
+<script>
+const CFG=window.HIREGH_CONFIG||{};const LIVE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
+const U=(CFG.supabaseUrl||'').replace(/\/$/,''),K=CFG.supabaseAnonKey;
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeImg=u=>typeof u==='string'&&(/^data:image\/(png|jpe?g|webp|gif|svg\+xml);/i.test(u)||/^https:\/\//.test(u))?u:'';
+const P={dash:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',check:'<path d="m5 12 5 5 9-10"/>',users:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7M16 4a4 4 0 0 1 0 8M22 21c0-3-1.8-5.6-4.5-6.6"/>',brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',build:'<path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>',flagi:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',log:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',x:'<path d="M6 6l12 12M18 6 6 18"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',dl:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',out:'<path d="M15 4h4v16h-4M10 17l5-5-5-5M15 12H3"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',alert:'<path d="M12 3 2 21h20zM12 10v5M12 18v.01"/>'};
+const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" ${s?`style="width:${s}px;height:${s}px"`:''}>${P[n]||''}</svg>`;
+function toast(m){const t=$('#toast');t.innerHTML=ic('check',16)+esc(m);t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
+const day=d=>new Date(d).toISOString().slice(0,10);
+const fmt=d=>{if(!d)return '—';const x=new Date(d);return `${x.getUTCMonth()+1}月${x.getUTCDate()}日 ${String(x.getUTCHours()).padStart(2,'0')}:${String(x.getUTCMinutes()).padStart(2,'0')}`};
+const money=n=>'GH₵'+(+n||0).toLocaleString('en-US');
+
+/* ---------- reference data (same as App) ---------- */
+const NATS={GH:['加纳','linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)','#000'],VN:['越南','#DA251D','#FFCD00'],IN:['印度','linear-gradient(#FF9933 0 33%,#fff 33% 66%,#138808 66%)'],NG:['尼日利亚','linear-gradient(90deg,#008751 0 33%,#fff 33% 66%,#008751 66%)'],TG:['多哥','repeating-linear-gradient(#006A4E 0 3px,#FFCE00 3px 6px)'],BF:['布基纳法索','linear-gradient(#EF2B2D 0 50%,#009E49 50%)','#FCD116'],CN:['中国','#DE2910','#FFDE00']};
+const flag=c=>{const n=NATS[c];if(!n)return '';return `<span class="flag" style="background:${n[1]}">${n[2]?`<i style="color:${n[2]}">★</i>`:''}</span>`};
+const natName=c=>NATS[c]?NATS[c][0]:esc(c||'—');
+const IND={ind:['工业制造',['焊工','电工','机修工','叉车司机','CNC操作工','质检员','普工']],agr:['农业种植',['种植工','农机手','养殖工','采摘工','灌溉技工','农场主管']],svc:['服务业',['中餐厨师','司机','保安','保洁','中英翻译','家政保姆','会计文员']],con:['建筑工程',['泥瓦工','钢筋工','木工','水电工','挖掘机司机','测量员']],min:['矿业能源',['矿工','爆破员','重卡司机','设备维修','选矿工']],log:['物流仓储',['仓管员','装卸工','货车司机','报关员']]};
+const indName=i=>IND[i]?IND[i][0]:esc(i||'—');
+const CITIES=['阿克拉','特马','库马西','塔科拉迪','卡索阿','塔马利','奥布阿西','科福里杜阿'];
+const ZH=['不会','基础','流利','母语'];const AVAIL=['可立即上岗','1周内到岗','2周内到岗'];
+const ST={pending:'待审核',approved:'已通过',rejected:'已驳回',disabled:'已停用',offline:'已下架',open:'待处理',doing:'处理中',done:'已处理'};
+const stChip=s=>`<span class="chip st-${esc(s)}">${s==='pending'||s==='open'?ic('clock',13):s==='approved'||s==='done'?ic('check',13):ic('ban',13)}${ST[s]||esc(s)}</span>`;
+const avatar=(w,cls='')=>{const p=safeImg(w.d.photo);const nm=String(w.d.name||'?');const ini=/[一-龥]/.test(nm)?nm.slice(-1):nm.split(' ').filter(Boolean).slice(0,2).map(s=>s[0]).join('');
+  return p?`<div class="av ${cls}" style="background-image:url('${p}')"></div>`:`<div class="av ${cls}" style="background:${esc(w.d.col||'#E2B2FA')}">${esc(ini)}</div>`};
+
+/* ---------- state ---------- */
+const S={page:'dash',session:null,W:[],J:[],E:[],R:[],L:[],A:[],docs:{},days:30,
+  wf:{q:'',status:'all',nat:'all',ind:'all',range:'all'},wpg:1,sel:new Set(),jf:'all',ef:'all',rf:'all',lq:''};
+
+/* ---------- API (Supabase or demo) ---------- */
+async function q(path,opt={}){
+  const r=await fetch(U+'/rest/v1/'+path,{...opt,headers:{apikey:K,Authorization:'Bearer '+S.session.token,'Content-Type':'application/json',Prefer:'return=representation',...(opt.headers||{})}});
+  if(r.status===401){logout();throw new Error('登录已过期，请重新登录')}
+  if(!r.ok)throw new Error(await r.text());const t=await r.text();return t?JSON.parse(t):null}
+const API={
+  async login(email,pw){
+    if(!LIVE){S.session={email:'demo@hiregh',demo:true};return}
+    const r=await fetch(U+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
+    const j=await r.json();if(!r.ok)throw new Error(j.error_description||j.msg||'登录失败');
+    S.session={token:j.access_token,email:j.user.email,uid:j.user.id}},
+  async load(){
+    if(!LIVE){demo();return}
+    const [a,w,j,e,rp,l]=await Promise.all([q('admins?select=*'),q('workers?select=*&order=id.desc&limit=5000'),q('jobs?select=*&order=id.desc&limit=2000'),q('employers?select=*&order=id.desc&limit=2000'),q('reports?select=*&order=id.desc&limit=2000'),q('audit_log?select=*&order=id.desc&limit=500')]);
+    if(!a.some(x=>x.user_id===S.session.uid))throw new Error('该账号不是管理员。请在 Supabase 的 admins 表中添加此账号。');
+    S.A=a;S.W=w.map(r=>({id:r.id,created_at:r.created_at,status:r.status||'pending',review:r.review||null,d:r.data||{}}));
+    S.J=j.map(r=>({id:r.id,created_at:r.created_at,status:r.status||'pending',d:r.data||{}}));
+    S.E=e.map(r=>({id:r.id,created_at:r.created_at,status:r.status||'pending',d:r.data||{}}));
+    S.R=rp.map(r=>({id:r.id,created_at:r.created_at,status:r.status||'open',d:r.data||{}}));S.L=l},
+  async patch(t,id,body){if(LIVE)await q(`${t}?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(body)})},
+  async del(t,id){if(LIVE)await q(`${t}?id=eq.${id}`,{method:'DELETE'})},
+  async docs(wid){if(!LIVE)return S.docs[wid]||null;if(S.docs[wid]!==undefined)return S.docs[wid];const r=await q(`worker_docs?worker_id=eq.${wid}&order=id.desc&limit=1`);return S.docs[wid]=r[0]||null},
+  async patchDocs(wid,data){const d=await API.docs(wid);if(!d)return;d.data={...d.data,...data};if(LIVE)await q(`worker_docs?id=eq.${d.id}`,{method:'PATCH',body:JSON.stringify({data:d.data})})},
+  async log(action,target,detail={}){const row={id:Date.now(),created_at:new Date().toISOString(),admin:S.session.email,action,target,detail};S.L.unshift(row);
+    if(LIVE)q('audit_log',{method:'POST',body:JSON.stringify({admin:row.admin,action,target,detail})}).catch(()=>{})}};
+async function run(fn,ok){try{await fn();if(ok)toast(ok);render()}catch(e){console.error(e);toast('操作失败：'+String(e.message||e).slice(0,80))}}
+
+/* ---------- demo data ---------- */
+function demo(){
+  let sd=7;const rnd=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};const pick=a=>a[Math.floor(rnd()*a.length)];
+  const NM={GH:['Kwame Mensah','Ama Owusu','Kofi Boateng','Akosua Asante','Yaw Darko','Efua Appiah','Kwabena Ofori','Abena Osei','Kojo Asare','Esi Mensah','Samuel Tetteh','Grace Nyarko','Isaac Owusu','Joseph Ansah'],VN:['Nguyễn Văn An','Trần Thị Hoa','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam'],IN:['Rajesh Kumar','Priya Sharma','Arjun Patel','Suresh Reddy','Vikram Singh'],NG:['Chinedu Okafor','Emeka Eze','Ngozi Obi'],TG:['Komlan Agbeko','Afi Mensah'],BF:['Issa Ouédraogo','Awa Kaboré']};
+  const LG={GH:'en',VN:'vi',IN:'hi',NG:'en',TG:'fr',BF:'fr'};const cols=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8'];
+  const now=Date.now();let id=1000;S.W=[];
+  for(let k=0;k<168;k++){
+    const ago=Math.floor(Math.pow(rnd(),1.6)*60);const t=now-ago*864e5-Math.floor(rnd()*864e5*.9);
+    const nat=rnd()<.55?'GH':pick(['VN','IN','NG','TG','BF']);const ind=pick(Object.keys(IND));const role=pick(IND[ind][1]);
+    let status=ago<=2?(rnd()<.8?'pending':'approved'):ago<=6?(rnd()<.35?'pending':'approved'):'approved';
+    if(status==='approved'&&rnd()<.09)status='rejected';if(status==='approved'&&rnd()<.04)status='disabled';
+    const w={id:++id,created_at:new Date(t).toISOString(),status,review:status==='pending'?null:{by:'admin@hiregh.com',at:new Date(t+36e5*5).toISOString(),reason:status==='rejected'?pick(['证件照片不清晰','信息与证件不一致','重复注册']):''},
+      d:{name:pick(NM[nat])+(rnd()<.3?' Jr':''),nat,female:rnd()<.25,age:20+Math.floor(rnd()*26),city:pick(CITIES),ind,role,exp:1+Math.floor(rnd()*12),sal:Math.round((1200+rnd()*4500)/50)*50,zh:rnd()<.75?'不会':pick(['基础','流利']),avail:pick(AVAIL),lang:LG[nat],col:pick(cols),pending:status==='pending',card:status==='approved',health:status==='approved'&&rnd()<.8,permit:nat==='GH'?null:status==='approved'}};
+    S.W.push(w);
+    S.docs[w.id]={id:w.id,data:{phone:'+233 '+(20+Math.floor(rnd()*39))+' '+String(Math.floor(rnd()*9e6)+1e6).replace(/(\d{3})(\d{4})/,'$1 $2'),idType:nat==='GH'?'Ghana Card':nat==='VN'||nat==='IN'?'passport':'ECOWAS ID',idPhoto:demoId(w.d.name,nat),permit:nat==='GH'?null:rnd()<.7,health:rnd()<.75,consentAt:w.created_at,lang:LG[nat]}};
+  }
+  S.W.sort((a,b)=>b.created_at.localeCompare(a.created_at));
+  const co=['鑫源建材（加纳）','中加农业发展','华程路桥','远航物流','金泰矿业','鸿运餐饮','恒达机械','海湾水泥'];
+  S.J=[['焊工',0,'3,500–4,500','特马',5,42],['中餐厨师',0,'4,000–6,000','阿克拉',2,18],['采摘工',1,'1,200–1,600','库马西',30,61],['钢筋工',2,'2,600–3,400','塔科拉迪',8,24],['仓管员',3,'2,800–3,500','特马',2,15],['重卡司机',4,'4,000–5,200','奥布阿西',5,19],['保洁',5,'1,200–1,500','阿克拉',3,40],['CNC操作工',6,'2,800–3,800','特马',4,12],['普工',7,'1,500–1,900','特马',15,0],['电工',7,'3,600–4,600','特马',2,0],['挖掘机司机',0,'4,500–5,800','塔科拉迪',3,33]]
+   .map((x,k)=>({id:200+k,created_at:new Date(now-k*2.3*864e5).toISOString(),status:k>=8?'pending':k===10?'offline':'approved',d:{title:x[0],company:co[x[1]],ind:Object.keys(IND).find(i=>IND[i][1].includes(x[0])),sal:x[2],city:x[3],n:x[4],apps:x[5],exp:'3+ 年',desc:'岗位描述示例：工作内容、上班时间、待遇说明。',descEn:k<8?'Sample job description in English.':''}}));
+  S.J[10].status='offline';
+  S.E=co.map((c,k)=>({id:300+k,created_at:new Date(now-(k*6+1)*864e5).toISOString(),status:k===7?'pending':k===6?'pending':'approved',d:{name:c,license:'CS'+(1e8+k*7319),contact:['王经理','李总','张主管','陈经理','刘总','赵经理','孙总','周经理'][k],phone:'+233 24 '+(1000000+k*13579),city:CITIES[k%8],industry:['建材','农业','路桥','物流','矿业','餐饮','机械','建材'][k],jobs:S.J.filter(j=>j.d.company===c).length}}));
+  S.R=[['收费','有人以“介绍工作”为由向我收取 200 塞地押金','中介 0244xxxxxx','open'],['虚假岗位','岗位写包住宿，面试时说不包','鸿运餐饮 · 保洁','doing'],['骚扰','面试后多次深夜打电话','用户 #1032','open'],['信息错误','工资单位写错了','华程路桥 · 钢筋工','done'],['其他','App 越南语有一处翻译不准确','系统','done']]
+   .map((x,k)=>({id:400+k,created_at:new Date(now-k*1.7*864e5).toISOString(),status:x[3],d:{type:x[0],content:x[1],target:x[2],reporter:pick(S.W).d.name,note:x[3]==='done'?'已联系双方处理':''}}));
+  S.L=S.W.filter(w=>w.review).slice(0,14).map((w,k)=>({id:k,created_at:w.review.at,admin:w.review.by,action:w.status==='rejected'?'驳回工人':'审核通过',target:'worker:'+w.id,detail:{name:w.d.name,reason:w.review.reason||undefined}}));
+  S.A=[{email:'admin@hiregh.com',role:'超级管理员'},{email:'reviewer@hiregh.com',role:'审核员'}];
+}
+function demoId(name,nat){const s=`<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300"><rect width="480" height="300" rx="20" fill="#e9f0dd"/><rect width="480" height="56" rx="20" fill="#2E3A12"/><text x="24" y="37" font-family="Arial" font-size="20" fill="#fff" font-weight="bold">${nat==='GH'?'GHANA CARD':'PASSPORT'} · SAMPLE</text><rect x="24" y="80" width="120" height="150" rx="10" fill="#c9d3b6"/><text x="170" y="110" font-family="Arial" font-size="15" fill="#333">NAME</text><text x="170" y="135" font-family="Arial" font-size="20" fill="#111" font-weight="bold">${name.replace(/[<&]/g,'')}</text><text x="170" y="175" font-family="Arial" font-size="15" fill="#333">ID No. GHA-7${Math.floor(Math.random()*1e8)}</text><text x="24" y="275" font-family="Arial" font-size="14" fill="#b33">演示样例 · DEMO ONLY</text></svg>`;return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s)}
+
+/* ---------- shell ---------- */
+const NAV=[['dash','数据概览','dash'],['review','工人审核','check'],['workers','工人管理','users'],['jobs','岗位管理','brief'],['employers','企业管理','build'],['reports','举报与反馈','flagi'],['logs','操作日志','log'],['settings','系统设置','gear']];
+const TITLE={dash:'数据概览',review:'工人审核',workers:'工人管理',jobs:'岗位管理',employers:'企业管理',reports:'举报与反馈',logs:'操作日志',settings:'系统设置'};
+function go(p){S.page=p;S.sel.clear();if(location.hash!=='#'+p)history.replaceState(null,'','#'+p);render();window.scrollTo(0,0)}
+function render(){
+  $('#tip').style.opacity=0;
+  if(!S.session){$('#root').innerHTML=loginView();return}
+  const cnt={review:S.W.filter(w=>w.status==='pending').length,jobs:S.J.filter(j=>j.status==='pending').length,employers:S.E.filter(e=>e.status==='pending').length,reports:S.R.filter(r=>r.status==='open').length};
+  $('#root').innerHTML=`<div class="app"><aside class="side"><div class="brand"><div class="logo">H</div>HireGH 后台</div>
+   <nav class="nav">${NAV.map(n=>`<a class="${S.page===n[0]?'on':''}" onclick="go('${n[0]}')">${ic(n[2])}${n[1]}${cnt[n[0]]?`<span class="cnt">${cnt[n[0]]}</span>`:''}</a>`).join('')}</nav>
+   <div class="foot">${LIVE?'● 已连接云端数据库':'● 演示模式（示例数据）'}<br>${esc(S.session.email)}</div></aside>
+   <main class="main"><div class="top"><h1>${TITLE[S.page]}</h1>
+    <div class="search">${ic('search')}<input placeholder="搜索工人姓名 / 工种 / 电话" value="${esc(S.wf.q)}" onkeydown="if(event.key==='Enter'){S.wf.q=this.value;S.wpg=1;go('workers')}"></div>
+    <span class="chip" style="background:${LIVE?'var(--lime)':'var(--gold)'}">${LIVE?'云端数据':'演示数据'}</span>
+    <button class="btn" onclick="reload()" title="刷新">${ic('refresh')}</button><button class="btn" onclick="logout()">${ic('out')}退出</button></div>
+    <div id="page">${V[S.page]()}</div></main></div>`;
+  if(S.page==='dash')bindChart();
+}
+async function reload(){try{await API.load();toast('已刷新');render()}catch(e){toast(e.message)}}
+
+/* ---------- login ---------- */
+function loginView(){return `<div class="login"><div class="lbox"><div class="brand" style="color:var(--ink);padding:0 0 16px"><div class="logo">H</div>HireGH 管理后台</div>
+ ${LIVE?`<form onsubmit="event.preventDefault();doLogin()"><div class="fld"><label>管理员邮箱</label><input class="inp" id="em" type="email" autocomplete="username" required></div>
+  <div class="fld" style="margin-top:12px"><label>密码</label><input class="inp" id="pw" type="password" autocomplete="current-password" required></div>
+  <button class="btn dark" style="width:100%;justify-content:center;margin-top:18px;padding:13px">登录</button></form>
+  <p class="note" style="margin-top:14px">管理员账号在 Supabase → Authentication → Users 中创建，并加入 admins 表。</p>`
+ :`<p class="note">当前未连接数据库，将使用<b>示例数据</b>展示后台全部功能。所有修改只在本页面临时生效。<br>连接 Supabase 后，这里会变成管理员登录。</p>
+  <button class="btn dark" style="width:100%;justify-content:center;margin-top:18px;padding:13px" onclick="doLogin()">进入演示后台</button>`}
+ <div id="lerr" style="color:var(--red);margin-top:10px;font-size:13px"></div></div></div>`}
+async function doLogin(){try{await API.login(LIVE?$('#em').value.trim():'',LIVE?$('#pw').value:'');await API.load();const h=location.hash.slice(1);if(TITLE[h])S.page=h;render()}catch(e){S.session=null;render();$('#lerr').textContent=e.message}}
+function logout(){S.session=null;S.W=[];S.docs={};render()}
+
+/* ---------- dashboard ---------- */
+const V={};
+function series(days){const out=[];const t0=new Date();t0.setUTCHours(0,0,0,0);
+  for(let i=days-1;i>=0;i--){const d=new Date(t0-i*864e5);out.push({d:day(d),n:0})}
+  const idx=Object.fromEntries(out.map((x,i)=>[x.d,i]));S.W.forEach(w=>{const k=idx[day(w.created_at)];if(k!==undefined)out[k].n++});return out}
+V.dash=()=>{
+  const today=day(Date.now()),yest=day(Date.now()-864e5);
+  const tN=S.W.filter(w=>day(w.created_at)===today).length,yN=S.W.filter(w=>day(w.created_at)===yest).length;
+  const wk=S.W.filter(w=>Date.now()-new Date(w.created_at)<7*864e5).length,pw=S.W.filter(w=>{const a=Date.now()-new Date(w.created_at);return a>=7*864e5&&a<14*864e5}).length;
+  const pend=S.W.filter(w=>w.status==='pending').length;const appr=S.W.filter(w=>w.status==='approved').length;
+  const delta=(a,b)=>b?`${a>=b?'↑':'↓'} ${Math.abs(Math.round((a-b)/b*100))}%`:'—';
+  const by=(f,map)=>{const m={};S.W.forEach(w=>{const k=f(w);m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[map(k),v])};
+  const hb=(rows)=>{const mx=Math.max(1,...rows.map(r=>r[1]));return rows.map(r=>`<div class="hbar"><span>${r[0]}</span><div class="t"><i style="width:${r[1]/mx*100}%"></i></div><span class="v">${r[1]}</span></div>`).join('')};
+  const recent=S.W.slice(0,7);
+  return `<div class="grid kpis">
+   <div class="card kpi hl"><div class="l">${ic('users',15)}今日新增工人</div><div class="n">${tN}</div><div class="d">昨日 ${yN} · ${delta(tN,yN)}</div></div>
+   <div class="card kpi warn" style="cursor:pointer" onclick="go('review')"><div class="l">${ic('clock',15)}待审核</div><div class="n">${pend}</div><div class="d">点击进入审核 →</div></div>
+   <div class="card kpi"><div class="l">近 7 天新增</div><div class="n">${wk}</div><div class="d">较前 7 天 ${delta(wk,pw)}</div></div>
+   <div class="card kpi"><div class="l">工人总数</div><div class="n">${S.W.length}</div><div class="d">已通过 ${appr}</div></div>
+   <div class="card kpi"><div class="l">在招岗位</div><div class="n">${S.J.filter(j=>j.status==='approved').length}</div><div class="d">待审 ${S.J.filter(j=>j.status==='pending').length}</div></div>
+   <div class="card kpi"><div class="l">待处理举报</div><div class="n">${S.R.filter(r=>r.status==='open').length}</div><div class="d">企业待认证 ${S.E.filter(e=>e.status==='pending').length}</div></div></div>
+  <div class="grid row2"><div class="card"><div class="ch">每日新增工人<span class="sub">按注册日期（加纳时间）</span><div class="r"><div class="seg">${[7,30,60].map(d=>`<button class="${S.days===d?'on':''}" onclick="S.days=${d};render()">${d} 天</button>`).join('')}</div><button class="btn sm" onclick="tableSheet()">表格</button></div></div><div id="chart"></div></div>
+   <div class="card"><div class="ch">最新注册<div class="r"><button class="btn sm" onclick="go('workers')">全部</button></div></div><div class="list">${recent.map(w=>`<div class="it" onclick="openWorker(${w.id})">${avatar(w)}<div style="flex:1;min-width:0"><b style="display:block">${esc(w.d.name)} ${flag(w.d.nat)}</b><small style="color:var(--muted)">${esc(w.d.role)} · ${fmt(w.created_at)}</small></div>${stChip(w.status)}</div>`).join('')||'<div class="empty">暂无数据</div>'}</div></div></div>
+  <div class="grid row3"><div class="card"><div class="ch">国籍分布</div>${hb(by(w=>w.d.nat,k=>flag(k)+' '+natName(k)))}</div>
+   <div class="card"><div class="ch">行业分布</div>${hb(by(w=>w.d.ind,indName))}</div>
+   <div class="card"><div class="ch">审核状态</div>${hb(['pending','approved','rejected','disabled'].map(s=>[ST[s],S.W.filter(w=>w.status===s).length]))}
+    <div class="note" style="margin-top:12px">平均审核时长：${avgReview()}<br>只有“已通过”的工人会在企业端 App 中显示。</div></div></div>`;
+};
+function avgReview(){const r=S.W.filter(w=>w.review&&w.review.at);if(!r.length)return '—';const h=r.reduce((a,w)=>a+(new Date(w.review.at)-new Date(w.created_at)),0)/r.length/36e5;return h<1?Math.round(h*60)+' 分钟':h.toFixed(1)+' 小时'}
+function bindChart(){
+  const el=$('#chart');if(!el)return;const s=series(S.days);const W=760,H=300,pl=34,pb=26,pt=10;const mx=Math.max(4,...s.map(x=>x.n));const step=Math.ceil(mx/4);const top=step*4;
+  const bw=(W-pl-10)/s.length;const y=v=>pt+(H-pt-pb)*(1-v/top);
+  let g='';for(let i=0;i<=4;i++){const v=step*i;g+=`<line x1="${pl}" x2="${W-6}" y1="${y(v)}" y2="${y(v)}" stroke="#E7E1D4" stroke-width="1"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="#9C978B">${v}</text>`}
+  const lbl=Math.ceil(s.length/8);
+  const bars=s.map((x,i)=>{const h=Math.max(0,y(0)-y(x.n));const bx=pl+i*bw+1,w=Math.max(2,bw-2);const r=Math.min(4,w/2,h);
+    const path=h>0?`M${bx},${y(0)} V${y(x.n)+r} Q${bx},${y(x.n)} ${bx+r},${y(x.n)} H${bx+w-r} Q${bx+w},${y(x.n)} ${bx+w},${y(x.n)+r} V${y(0)} Z`:'';
+    return `<g data-i="${i}"><rect x="${pl+i*bw}" y="${pt}" width="${bw}" height="${H-pt-pb}" fill="transparent"/>${path?`<path d="${path}" fill="${i===s.length-1?'#7F9A1E':'#2E3A12'}"/>`:''}${(i%lbl===0&&s.length-1-i>=lbl/2)||i===s.length-1?`<text x="${bx+w/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="#9C978B">${+x.d.slice(5,7)}/${+x.d.slice(8)}</text>`:''}</g>`}).join('');
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="每日新增工人柱状图">${g}${bars}</svg>`;
+  const tip=$('#tip');el.querySelectorAll('g[data-i]').forEach(n=>{n.onmousemove=e=>{const x=s[n.dataset.i];tip.innerHTML=`${x.d}<br><b>${x.n}</b> 位新工人`;tip.style.left=e.clientX+12+'px';tip.style.top=e.clientY-40+'px';tip.style.opacity=1};n.onmouseleave=()=>tip.style.opacity=0;n.onclick=()=>{S.wf.range='d:'+s[n.dataset.i].d;S.wpg=1;go('workers')}});
+}
+function tableSheet(){const s=series(S.days).reverse();openModal(`<div class="ch">每日新增（近 ${S.days} 天）<div class="r"><button class="btn sm" onclick="closeModal()">${ic('x')}</button></div></div><table class="tbl"><tr><th>日期</th><th class="num">新增工人</th></tr>${s.map(x=>`<tr><td>${x.d}</td><td class="num">${x.n}</td></tr>`).join('')}</table>`)}
+
+/* ---------- review queue ---------- */
+V.review=()=>{const l=S.W.filter(w=>w.status==='pending').sort((a,b)=>a.created_at.localeCompare(b.created_at));
+  return `<div class="note" style="margin-bottom:14px">${ic('shield',15)} 按注册先后排序。核对证件照片与填写信息一致后再通过；只有通过的工人才会在企业端显示。</div>
+  ${l.length?`<div class="card" style="padding:6px 12px"><table class="tbl"><tr><th>工人</th><th>国籍</th><th class="hide-sm">工种</th><th class="hide-sm">期望月薪</th><th>注册时间</th><th>等待</th><th></th></tr>
+  ${l.map(w=>{const h=Math.round((Date.now()-new Date(w.created_at))/36e5);return `<tr class="clk" onclick="openWorker(${w.id})"><td><div class="who">${avatar(w)}<div><b>${esc(w.d.name)}</b><small>${esc((w.d.lang||'').toUpperCase())}</small></div></div></td><td>${flag(w.d.nat)} ${natName(w.d.nat)}</td><td class="hide-sm">${esc(w.d.role)}</td><td class="hide-sm">${money(w.d.sal)}</td><td>${fmt(w.created_at)}</td><td><span class="chip" style="background:${h>24?'#FAD2CB':'var(--soft)'}">${h<24?h+' 小时':Math.floor(h/24)+' 天'}</span></td><td><button class="btn sm dark" onclick="event.stopPropagation();openWorker(${w.id})">审核</button></td></tr>`}).join('')}</table></div>`
+  :`<div class="card empty">${ic('check',30)}<p style="margin-top:8px">全部审核完毕</p></div>`}`};
+
+/* ---------- workers ---------- */
+function wFiltered(){const f=S.wf,qq=f.q.trim().toLowerCase();
+  return S.W.filter(w=>{if(f.status!=='all'&&w.status!==f.status)return false;if(f.nat!=='all'&&w.d.nat!==f.nat)return false;if(f.ind!=='all'&&w.d.ind!==f.ind)return false;
+    if(f.range.startsWith('d:')){if(day(w.created_at)!==f.range.slice(2))return false}else if(f.range!=='all'&&Date.now()-new Date(w.created_at)>(+f.range)*864e5)return false;
+    if(qq){const ph=((S.docs[w.id]||{}).data||{}).phone||'';if(!(String(w.d.name)+w.d.role+w.d.city+ph+w.id).toLowerCase().includes(qq))return false}return true})}
+V.workers=()=>{const l=wFiltered();const per=20,pages=Math.max(1,Math.ceil(l.length/per));S.wpg=Math.min(S.wpg,pages);const rows=l.slice((S.wpg-1)*per,S.wpg*per);const f=S.wf;
+  const sel=(k,opts)=>`<select class="sel" onchange="S.wf.${k}=this.value;S.wpg=1;render()">${opts.map(o=>`<option value="${o[0]}" ${f[k]===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>`;
+  return `<div class="filters">
+   ${sel('status',[['all','全部状态'],...['pending','approved','rejected','disabled'].map(s=>[s,ST[s]])])}
+   ${sel('nat',[['all','全部国籍'],...Object.keys(NATS).map(c=>[c,NATS[c][0]])])}
+   ${sel('ind',[['all','全部行业'],...Object.keys(IND).map(i=>[i,IND[i][0]])])}
+   ${sel('range',[['all','全部时间'],['1','今天'],['7','近 7 天'],['30','近 30 天'],...(f.range.startsWith('d:')?[[f.range,f.range.slice(2)]]:[])])}
+   ${f.q?`<span class="chip" style="background:var(--card)">搜索：${esc(f.q)} <button onclick="S.wf.q='';render()">${ic('x',14)}</button></span>`:''}
+   <span style="margin-left:auto;color:var(--muted)">共 ${l.length} 人</span><button class="btn" onclick="exportCSV('workers',wFiltered())">${ic('dl')}导出 CSV</button></div>
+  ${S.sel.size?`<div class="bulk">已选 ${S.sel.size} 人<span style="flex:1"></span><button class="btn sm lime" onclick="bulk('approved')">批量通过</button><button class="btn sm" onclick="bulk('disabled')">批量停用</button><button class="btn sm" onclick="S.sel.clear();render()">取消</button></div>`:''}
+  <div class="card" style="padding:6px 12px;overflow-x:auto"><table class="tbl"><tr><th><input type="checkbox" ${rows.length&&rows.every(w=>S.sel.has(w.id))?'checked':''} onchange="rows_sel(this.checked)"></th><th>工人</th><th>国籍</th><th>行业 / 工种</th><th class="num hide-sm">经验</th><th class="num hide-sm">期望月薪</th><th class="hide-sm">城市</th><th>注册时间</th><th>状态</th><th></th></tr>
+  ${rows.map(w=>`<tr class="clk" onclick="openWorker(${w.id})"><td onclick="event.stopPropagation()"><input type="checkbox" ${S.sel.has(w.id)?'checked':''} onchange="this.checked?S.sel.add(${w.id}):S.sel.delete(${w.id});render()"></td>
+   <td><div class="who">${avatar(w)}<div><b>${esc(w.d.name)}</b><small>#${w.id}</small></div></div></td><td>${flag(w.d.nat)} ${natName(w.d.nat)}</td><td>${indName(w.d.ind)}<br><small style="color:var(--muted)">${esc(w.d.role)}</small></td>
+   <td class="num hide-sm">${esc(w.d.exp)} 年</td><td class="num hide-sm">${money(w.d.sal)}</td><td class="hide-sm">${esc(w.d.city)}</td><td>${fmt(w.created_at)}</td><td>${stChip(w.status)}</td>
+   <td onclick="event.stopPropagation()"><button class="btn sm" onclick="editWorker(${w.id})">${ic('edit',15)}</button></td></tr>`).join('')||`<tr><td colspan="10" class="empty">没有符合条件的工人</td></tr>`}</table></div>
+  <div class="pager">第 ${S.wpg} / ${pages} 页<button class="btn sm" ${S.wpg<=1?'disabled':''} onclick="S.wpg--;render()">上一页</button><button class="btn sm" ${S.wpg>=pages?'disabled':''} onclick="S.wpg++;render()">下一页</button></div>`};
+window.rows_sel=on=>{const l=wFiltered().slice((S.wpg-1)*20,S.wpg*20);l.forEach(w=>on?S.sel.add(w.id):S.sel.delete(w.id));render()};
+function bulk(status){const ids=[...S.sel];confirmBox(`确定将 ${ids.length} 位工人设为「${ST[status]}」？`,()=>run(async()=>{for(const id of ids){const w=S.W.find(x=>x.id===id);await setWorkerStatus(w,status,'',null,true)}await API.log('批量'+ST[status],'workers',{count:ids.length});S.sel.clear()},'已更新 '+ids.length+' 人'))}
+
+/* ---------- worker drawer ---------- */
+async function openWorker(id){const w=S.W.find(x=>x.id===id);if(!w)return;
+  $('#drawer').innerHTML=`<div class="dbody"><div class="empty">加载中…</div></div>`;$('#drawer').classList.add('on');$('#mask').classList.add('on');
+  let doc=null;try{doc=await API.docs(id)}catch(e){toast('证件读取失败：'+e.message)}
+  const dd=(doc&&doc.data)||{};const idp=safeImg(dd.idPhoto);const hist=S.L.filter(l=>l.target==='worker:'+id);const nonGH=w.d.nat!=='GH';
+  $('#drawer').innerHTML=`<div class="dbody">
+   <div style="display:flex;gap:16px;align-items:center">${avatar(w,'lg')}<div style="flex:1;min-width:0"><div style="font-size:22px;font-weight:800">${esc(w.d.name)} ${flag(w.d.nat)}</div><div style="color:var(--ink2);margin:3px 0 8px">${esc(w.d.role)} · ${indName(w.d.ind)} · #${w.id}</div>${stChip(w.status)}</div><button class="btn" onclick="closeDrawer()">${ic('x')}</button></div>
+   ${w.review&&w.review.reason?`<div class="note" style="margin-top:14px;background:#FAD2CB">驳回原因：${esc(w.review.reason)}</div>`:''}
+   <div class="sec">基本信息</div><div class="card kv">
+    <div><div class="l">国籍</div><div class="v">${natName(w.d.nat)}</div></div><div><div class="l">性别 / 年龄</div><div class="v">${w.d.female?'女':'男'} · ${esc(w.d.age||'—')}</div></div>
+    <div><div class="l">电话 / WhatsApp</div><div class="v">${esc(dd.phone||'—')}</div></div><div><div class="l">城市</div><div class="v">${esc(w.d.city)}</div></div>
+    <div><div class="l">工作经验</div><div class="v">${esc(w.d.exp)} 年</div></div><div><div class="l">期望月薪</div><div class="v">${money(w.d.sal)}</div></div>
+    <div><div class="l">中文水平</div><div class="v">${esc(w.d.zh)}</div></div><div><div class="l">到岗时间</div><div class="v">${esc(w.d.avail)}</div></div>
+    <div><div class="l">手机语言</div><div class="v">${esc((w.d.lang||dd.lang||'—').toUpperCase())}</div></div><div><div class="l">注册时间</div><div class="v">${fmt(w.created_at)}</div></div></div>
+   <div class="sec">证件材料 <span style="font-weight:500;color:var(--muted);font-size:12px">仅管理员可见</span></div>
+   <div class="card"><div class="kv" style="margin-bottom:12px"><div><div class="l">证件类型</div><div class="v">${esc(dd.idType||'—')}</div></div><div><div class="l">同意数据条款</div><div class="v">${dd.consentAt?fmt(dd.consentAt):'—'}</div></div>
+    ${nonGH?`<div><div class="l">自述工作许可</div><div class="v">${dd.permit===true?'有':dd.permit===false?'没有':'未填'}</div></div>`:''}<div><div class="l">自述健康证明</div><div class="v">${dd.health===true?'有':dd.health===false?'没有':'未填'}</div></div></div>
+    ${idp?`<div class="idimg" style="background-image:url('${idp}')" onclick="lb('${idp.replace(/'/g,'%27')}')"></div>`:'<div class="note">未上传证件照片</div>'}</div>
+   <div class="sec">审核核对</div><div class="card" id="chk">
+    <label class="chk"><input type="checkbox" id="c_id" ${w.d.card?'checked':''}>身份证件真实有效，与照片本人一致</label>
+    ${nonGH?`<label class="chk"><input type="checkbox" id="c_permit" ${w.d.permit?'checked':''}>加纳工作许可有效</label>`:''}
+    <label class="chk"><input type="checkbox" id="c_health" ${w.d.health?'checked':''}>健康证明已核实</label>
+    <label class="chk" style="border:0"><input type="checkbox" id="c_police" ${w.d.police?'checked':''}>无犯罪记录已核实（可选）</label>
+    <div class="fld" style="margin-top:8px"><label>驳回原因（驳回时必填，会显示给工人）</label><select class="inp" id="rj"><option value="">请选择</option>${['证件照片不清晰','信息与证件不一致','重复注册','证件已过期','疑似虚假信息','其他'].map(x=>`<option>${x}</option>`).join('')}</select></div>
+    <div class="fld" style="margin-top:8px"><label>备注（仅后台可见）</label><textarea class="inp" id="nt" placeholder="例如：已电话核实"></textarea></div></div>
+   <div class="sec">处理记录</div><div class="card">${hist.length?hist.map(h=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:13px"><b>${esc(h.action)}</b> · ${esc(h.admin)} · ${fmt(h.created_at)}${h.detail&&h.detail.reason?`<br><span style="color:var(--muted)">原因：${esc(h.detail.reason)}</span>`:''}</div>`).join(''):'<span style="color:var(--muted)">暂无</span>'}</div>
+  </div>
+  <div class="dfoot"><button class="btn lime" onclick="reviewWorker(${id},'approved')">${ic('check')}审核通过</button><button class="btn red" onclick="reviewWorker(${id},'rejected')">${ic('x')}驳回</button>
+   <button class="btn" onclick="editWorker(${id})">${ic('edit')}编辑</button><span style="flex:1"></span>
+   ${w.status==='disabled'?`<button class="btn" onclick="reviewWorker(${id},'approved')">恢复</button>`:`<button class="btn" onclick="reviewWorker(${id},'disabled')">${ic('ban')}停用</button>`}
+   <button class="btn" onclick="delWorker(${id})">${ic('trash')}删除</button></div>`;
+}
+function closeDrawer(){$('#drawer').classList.remove('on');$('#mask').classList.remove('on')}
+function lb(u){$('#lbimg').src=u;$('#lb').style.display='grid'}
+async function setWorkerStatus(w,status,reason,checks,silent){
+  const review={by:S.session.email,at:new Date().toISOString(),reason:reason||'',note:checks&&checks.note||''};
+  const d={...w.d,pending:status==='pending'};
+  if(checks){d.card=checks.id;d.health=checks.health;d.police=checks.police;if(w.d.nat!=='GH')d.permit=checks.permit}
+  await API.patch('workers',w.id,{status,review,data:d});w.status=status;w.review=review;w.d=d;
+  if(!silent)await API.log(status==='approved'?'审核通过':status==='rejected'?'驳回工人':status==='disabled'?'停用工人':'更新状态','worker:'+w.id,{name:w.d.name,reason:reason||undefined});
+}
+function reviewWorker(id,status){const w=S.W.find(x=>x.id===id);const g=k=>{const e=$('#'+k);return e?e.checked:false};
+  const checks={id:g('c_id'),permit:g('c_permit'),health:g('c_health'),police:g('c_police'),note:($('#nt')||{}).value||''};const reason=($('#rj')||{}).value||'';
+  if(status==='rejected'&&!reason){toast('请选择驳回原因');$('#rj').focus();return}
+  if(status==='approved'&&!checks.id){confirmBox('还没有勾选“身份证件真实有效”，仍然通过吗？',()=>run(()=>setWorkerStatus(w,status,'',checks).then(()=>{closeDrawer();closeModal()}),'已通过'));return}
+  run(async()=>{await setWorkerStatus(w,status,reason,checks);closeDrawer()},status==='approved'?'已审核通过':status==='rejected'?'已驳回':'已停用');
+}
+function delWorker(id){const w=S.W.find(x=>x.id===id);confirmBox(`永久删除「${esc(w.d.name)}」的档案和证件？此操作无法撤销。`,()=>run(async()=>{await API.del('workers',id);S.W=S.W.filter(x=>x.id!==id);await API.log('删除工人','worker:'+id,{name:w.d.name});closeDrawer();closeModal()},'已删除'),'永久删除')}
+async function editWorker(id){const w=S.W.find(x=>x.id===id);let doc=null;try{doc=await API.docs(id)}catch(e){}const ph=doc&&doc.data?doc.data.phone||'':'';
+  const o=(arr,v)=>arr.map(x=>Array.isArray(x)?`<option value="${x[0]}" ${x[0]===v?'selected':''}>${x[1]}</option>`:`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');
+  openModal(`<div class="ch">编辑工人资料 #${id}<div class="r"><button class="btn sm" onclick="closeModal()">${ic('x')}</button></div></div>
+  <div class="f2"><div class="fld"><label>姓名</label><input class="inp" id="e_name" value="${esc(w.d.name)}"></div><div class="fld"><label>电话</label><input class="inp" id="e_phone" value="${esc(ph)}" ${doc?'':'disabled'}></div>
+   <div class="fld"><label>国籍</label><select class="inp" id="e_nat">${o(Object.keys(NATS).map(c=>[c,NATS[c][0]]),w.d.nat)}</select></div><div class="fld"><label>性别</label><select class="inp" id="e_sex">${o([['m','男'],['f','女']],w.d.female?'f':'m')}</select></div>
+   <div class="fld"><label>年龄</label><input class="inp" id="e_age" type="number" value="${esc(w.d.age||'')}"></div><div class="fld"><label>城市</label><select class="inp" id="e_city">${o(CITIES,w.d.city)}</select></div>
+   <div class="fld"><label>行业</label><select class="inp" id="e_ind" onchange="$('#e_role').innerHTML=IND[this.value][1].map(r=>'<option>'+r+'</option>').join('')">${o(Object.keys(IND).map(i=>[i,IND[i][0]]),w.d.ind)}</select></div><div class="fld"><label>工种</label><select class="inp" id="e_role">${o((IND[w.d.ind]||IND.ind)[1],w.d.role)}</select></div>
+   <div class="fld"><label>经验（年）</label><input class="inp" id="e_exp" type="number" value="${esc(w.d.exp)}"></div><div class="fld"><label>期望月薪 GH₵</label><input class="inp" id="e_sal" type="number" value="${esc(w.d.sal)}"></div>
+   <div class="fld"><label>中文水平</label><select class="inp" id="e_zh">${o(ZH,w.d.zh)}</select></div><div class="fld"><label>到岗时间</label><select class="inp" id="e_av">${o(AVAIL,w.d.avail)}</select></div></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="saveWorker(${id})">保存修改</button></div>`)}
+function saveWorker(id){const w=S.W.find(x=>x.id===id);const v=k=>$('#e_'+k).value;
+  const d={...w.d,name:v('name').trim(),nat:v('nat'),female:v('sex')==='f',age:+v('age')||null,city:v('city'),ind:v('ind'),role:v('role'),exp:+v('exp')||0,sal:+v('sal')||0,zh:v('zh'),avail:v('av')};
+  if(!d.name){toast('姓名不能为空');return}
+  const changed=Object.keys(d).filter(k=>JSON.stringify(d[k])!==JSON.stringify(w.d[k]));const phone=v('phone');
+  run(async()=>{await API.patch('workers',id,{data:d});w.d=d;const doc=await API.docs(id).catch(()=>null);if(doc&&phone!==(doc.data||{}).phone){await API.patchDocs(id,{phone});changed.push('phone')}
+    await API.log('编辑工人资料','worker:'+id,{name:d.name,fields:changed.join(',')});closeModal();if($('#drawer').classList.contains('on'))openWorker(id)},'已保存')}
+
+/* ---------- jobs ---------- */
+V.jobs=()=>{const l=S.J.filter(j=>S.jf==='all'||j.status===S.jf);
+  return `<div class="filters"><div class="seg">${[['all','全部'],['pending','待审核'],['approved','已上架'],['offline','已下架'],['rejected','已驳回']].map(t=>`<button class="${S.jf===t[0]?'on':''}" onclick="S.jf='${t[0]}';render()">${t[1]} ${t[0]==='all'?S.J.length:S.J.filter(j=>j.status===t[0]).length}</button>`).join('')}</div><span style="flex:1"></span><button class="btn" onclick="exportCSV('jobs',S.J)">${ic('dl')}导出 CSV</button></div>
+  <div class="card" style="padding:6px 12px;overflow-x:auto"><table class="tbl"><tr><th>岗位</th><th>企业</th><th class="hide-sm">行业</th><th>月薪 GH₵</th><th>地点</th><th class="num">人数</th><th class="num">申请</th><th class="hide-sm">英文描述</th><th>发布</th><th>状态</th><th>操作</th></tr>
+  ${l.map(j=>`<tr><td><b>${esc(j.d.title)}</b></td><td>${esc(j.d.company)}</td><td class="hide-sm">${indName(j.d.ind)}</td><td>${esc(j.d.sal)}</td><td>${esc(j.d.city)}</td><td class="num">${esc(j.d.n)}</td><td class="num">${esc(j.d.apps||0)}</td>
+   <td class="hide-sm">${j.d.descEn?'<span class="chip st-approved">已有</span>':'<span class="chip st-pending">缺少</span>'}</td><td>${fmt(j.created_at)}</td><td>${stChip(j.status)}</td>
+   <td style="white-space:nowrap">${j.status==='pending'||j.status==='offline'||j.status==='rejected'?`<button class="btn sm lime" onclick="jobStatus(${j.id},'approved')">上架</button>`:`<button class="btn sm" onclick="jobStatus(${j.id},'offline')">下架</button>`}
+   ${j.status==='pending'?`<button class="btn sm" onclick="jobStatus(${j.id},'rejected')">驳回</button>`:''}<button class="btn sm" onclick="editJob(${j.id})">${ic('edit',14)}</button><button class="btn sm" onclick="delJob(${j.id})">${ic('trash',14)}</button></td></tr>`).join('')||'<tr><td colspan="11" class="empty">暂无岗位</td></tr>'}</table></div>
+  <div class="note" style="margin-top:12px">工人端看到的岗位描述来自“英文描述”。企业发布的中文岗位如果缺少英文描述，可以点编辑补上，越南语、法语、印地语工人都会看到这段英文。</div>`};
+function jobStatus(id,s){const j=S.J.find(x=>x.id===id);run(async()=>{await API.patch('jobs',id,{status:s});j.status=s;await API.log({approved:'岗位上架',offline:'岗位下架',rejected:'驳回岗位'}[s],'job:'+id,{title:j.d.title,company:j.d.company})},'已更新')}
+function editJob(id){const j=S.J.find(x=>x.id===id);const f=(k,l,t='text')=>`<div class="fld"><label>${l}</label><input class="inp" id="j_${k}" type="${t}" value="${esc(j.d[k]??'')}"></div>`;
+  openModal(`<div class="ch">编辑岗位<div class="r"><button class="btn sm" onclick="closeModal()">${ic('x')}</button></div></div><div class="f2">${f('title','岗位名称')}${f('company','企业')}${f('sal','月薪范围 GH₵')}<div class="fld"><label>地点</label><select class="inp" id="j_city">${CITIES.map(c=>`<option ${c===j.d.city?'selected':''}>${c}</option>`).join('')}</select></div>${f('n','招聘人数','number')}${f('exp','经验要求')}</div>
+  <div class="fld" style="margin-top:12px"><label>中文描述</label><textarea class="inp" id="j_desc">${esc(j.d.desc||'')}</textarea></div><div class="fld" style="margin-top:12px"><label>英文描述（工人端显示）</label><textarea class="inp" id="j_descEn">${esc(j.d.descEn||'')}</textarea></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="saveJob(${id})">保存</button></div>`)}
+function saveJob(id){const j=S.J.find(x=>x.id===id);const g=k=>$('#j_'+k).value;const d={...j.d,title:g('title'),company:g('company'),sal:g('sal'),city:g('city'),n:+g('n')||1,exp:g('exp'),desc:g('desc'),descEn:g('descEn')};
+  run(async()=>{await API.patch('jobs',id,{data:d});j.d=d;await API.log('编辑岗位','job:'+id,{title:d.title});closeModal()},'已保存')}
+function delJob(id){const j=S.J.find(x=>x.id===id);confirmBox(`永久删除岗位「${esc(j.d.title)}」？`,()=>run(async()=>{await API.del('jobs',id);S.J=S.J.filter(x=>x.id!==id);await API.log('删除岗位','job:'+id,{title:j.d.title});closeModal()},'已删除'),'永久删除')}
+
+/* ---------- employers ---------- */
+V.employers=()=>{const l=S.E.filter(e=>S.ef==='all'||e.status===S.ef);
+  return `<div class="filters"><div class="seg">${[['all','全部'],['pending','待认证'],['approved','已认证'],['rejected','已驳回'],['disabled','已停用']].map(t=>`<button class="${S.ef===t[0]?'on':''}" onclick="S.ef='${t[0]}';render()">${t[1]}</button>`).join('')}</div></div>
+  <div class="card" style="padding:6px 12px;overflow-x:auto"><table class="tbl"><tr><th>企业</th><th>注册号</th><th>联系人</th><th class="hide-sm">电话</th><th>城市</th><th class="hide-sm">行业</th><th class="num">岗位</th><th>申请时间</th><th>状态</th><th>操作</th></tr>
+  ${l.map(e=>`<tr><td><b>${esc(e.d.name)}</b></td><td class="mono">${esc(e.d.license)}</td><td>${esc(e.d.contact)}</td><td class="hide-sm">${esc(e.d.phone)}</td><td>${esc(e.d.city)}</td><td class="hide-sm">${esc(e.d.industry)}</td><td class="num">${S.J.filter(j=>j.d.company===e.d.name).length}</td><td>${fmt(e.created_at)}</td><td>${stChip(e.status)}</td>
+   <td style="white-space:nowrap">${e.status!=='approved'?`<button class="btn sm lime" onclick="empStatus(${e.id},'approved')">通过认证</button>`:`<button class="btn sm" onclick="empStatus(${e.id},'disabled')">停用</button>`}${e.status==='pending'?`<button class="btn sm" onclick="empStatus(${e.id},'rejected')">驳回</button>`:''}</td></tr>`).join('')||'<tr><td colspan="10" class="empty">暂无企业</td></tr>'}</table></div>
+  <div class="note" style="margin-top:12px">企业注册与登录功能尚未在 App 中开放（目前所有企业共用演示账号）。上线企业账号后，新企业的认证申请会出现在这里。</div>`};
+function empStatus(id,s){const e=S.E.find(x=>x.id===id);run(async()=>{await API.patch('employers',id,{status:s});e.status=s;await API.log({approved:'企业认证通过',rejected:'驳回企业认证',disabled:'停用企业'}[s],'employer:'+id,{name:e.d.name})},'已更新')}
+
+/* ---------- reports ---------- */
+V.reports=()=>{const l=S.R.filter(r=>S.rf==='all'||r.status===S.rf);
+  return `<div class="filters"><div class="seg">${[['all','全部'],['open','待处理'],['doing','处理中'],['done','已处理']].map(t=>`<button class="${S.rf===t[0]?'on':''}" onclick="S.rf='${t[0]}';render()">${t[1]} ${t[0]==='all'?S.R.length:S.R.filter(r=>r.status===t[0]).length}</button>`).join('')}</div></div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">${l.map(r=>`<div class="card"><div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><span class="chip" style="background:${r.d.type==='收费'||r.d.type==='骚扰'?'#FAD2CB':'var(--soft)'}">${ic('alert',13)}${esc(r.d.type)}</span>${stChip(r.status)}<span style="margin-left:auto;color:var(--muted);font-size:12px">${fmt(r.created_at)}</span></div>
+   <div style="line-height:1.6">${esc(r.d.content)}</div><div style="color:var(--muted);font-size:12.5px;margin-top:8px">举报对象：${esc(r.d.target)} · 举报人：${esc(r.d.reporter)}</div>
+   ${r.d.note?`<div class="note" style="margin-top:8px">处理备注：${esc(r.d.note)}</div>`:''}
+   <div style="display:flex;gap:6px;margin-top:12px">${r.status!=='doing'&&r.status!=='done'?`<button class="btn sm" onclick="repStatus(${r.id},'doing')">开始处理</button>`:''}${r.status!=='done'?`<button class="btn sm lime" onclick="repDone(${r.id})">标记已处理</button>`:`<button class="btn sm" onclick="repStatus(${r.id},'open')">重新打开</button>`}</div></div>`).join('')||'<div class="card empty">暂无举报</div>'}</div>`};
+function repStatus(id,s,note){const r=S.R.find(x=>x.id===id);const d=note!==undefined?{...r.d,note}:r.d;run(async()=>{await API.patch('reports',id,{status:s,data:d});r.status=s;r.d=d;await API.log({doing:'开始处理举报',done:'举报已处理',open:'重新打开举报'}[s],'report:'+id,{type:r.d.type});closeModal()},'已更新')}
+function repDone(id){openModal(`<div class="ch">处理结果</div><div class="fld"><label>处理备注</label><textarea class="inp" id="rn" placeholder="例如：已核实，下架相关岗位并警告企业"></textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="repStatus(${id},'done',$('#rn').value)">确认</button></div>`)}
+
+/* ---------- logs ---------- */
+V.logs=()=>{const qq=S.lq.toLowerCase();const l=S.L.filter(x=>!qq||JSON.stringify(x).toLowerCase().includes(qq));
+  return `<div class="filters"><div class="search" style="min-width:300px">${ic('search')}<input placeholder="搜索操作人、动作、对象" value="${esc(S.lq)}" oninput="S.lq=this.value;clearTimeout(window._lq);window._lq=setTimeout(()=>{render();const i=document.querySelector('#page input');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div><span style="flex:1"></span><button class="btn" onclick="exportCSV('logs',S.L)">${ic('dl')}导出</button></div>
+  <div class="card" style="padding:6px 12px;overflow-x:auto"><table class="tbl"><tr><th>时间</th><th>操作人</th><th>动作</th><th>对象</th><th>详情</th></tr>
+  ${l.slice(0,300).map(x=>`<tr><td style="white-space:nowrap">${fmt(x.created_at)}</td><td>${esc(x.admin)}</td><td><b>${esc(x.action)}</b></td><td class="mono">${esc(x.target)}</td><td style="color:var(--ink2)">${esc(Object.entries(x.detail||{}).filter(e=>e[1]!==undefined).map(e=>e[0]+': '+e[1]).join(' · '))}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">暂无记录</td></tr>'}</table></div>`};
+
+/* ---------- settings ---------- */
+V.settings=()=>`<div class="grid row2" style="margin-top:0"><div class="card"><div class="ch">数据库连接</div>
+  <div class="kv"><div><div class="l">状态</div><div class="v">${LIVE?'✅ 已连接 Supabase':'⚠️ 未连接（演示模式）'}</div></div><div><div class="l">项目地址</div><div class="v mono">${esc(U||'—')}</div></div></div>
+  <div class="note" style="margin-top:14px;line-height:1.8"><b>连接步骤</b><br>1. 在 Supabase 的 SQL Editor 运行 <span class="mono">supabase-admin.sql</span><br>2. Authentication → Users → Add user，创建管理员邮箱和密码<br>3. 在 SQL Editor 运行：<br><span class="mono">insert into admins(user_id,email) select id,email from auth.users where email='你的邮箱';</span><br>4. 在本页面和 App 的 HIREGH_CONFIG 中填入相同的 Project URL 与 anon key</div></div>
+ <div class="card"><div class="ch">管理员</div><div class="list">${S.A.map(a=>`<div class="it" style="cursor:default"><div class="av" style="background:var(--lime)">${esc(String(a.email||'?')[0].toUpperCase())}</div><div style="flex:1"><b>${esc(a.email)}</b><br><small style="color:var(--muted)">${esc(a.role||'管理员')}</small></div></div>`).join('')}</div>
+  <div class="note" style="margin-top:12px">新增管理员：先在 Supabase 创建用户，再把他加入 admins 表（见左侧第 3 步）。</div></div></div>
+ <div class="grid row3"><div class="card"><div class="ch">审核规则</div><div class="note" style="line-height:1.8">• 新注册工人默认“待审核”，通过后才对企业可见<br>• 企业发布的新岗位默认“待审核”，上架后工人才能看到<br>• 证件照片和电话只有管理员能查看<br>• 所有后台操作都会记入操作日志</div></div>
+  <div class="card"><div class="ch">数据导出</div><div style="display:flex;flex-direction:column;gap:8px"><button class="btn" onclick="exportCSV('workers',S.W)">${ic('dl')}全部工人 CSV</button><button class="btn" onclick="exportCSV('jobs',S.J)">${ic('dl')}全部岗位 CSV</button><button class="btn" onclick="exportCSV('logs',S.L)">${ic('dl')}操作日志 CSV</button></div><div class="note" style="margin-top:10px">导出文件不含证件照片。</div></div>
+  <div class="card"><div class="ch">合规提醒</div><div class="note" style="line-height:1.8">工人个人资料受加纳《2012年数据保护法》(Act 843) 保护：仅为招聘目的使用；工人要求删除时应在后台删除档案；建议向加纳数据保护委员会登记。</div></div></div>`;
+
+/* ---------- modal / confirm / csv ---------- */
+function openModal(h){$('#modal').innerHTML=h;$('#modal').classList.add('on');$('#mask2').classList.add('on')}
+function closeModal(){$('#modal').classList.remove('on');$('#mask2').classList.remove('on')}
+let _cb=null;function confirmBox(msg,cb,label='确定'){_cb=cb;openModal(`<div class="ch">${ic('alert')}请确认</div><p style="line-height:1.6">${msg}</p><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px"><button class="btn" onclick="closeModal()">取消</button><button class="btn ${label==='永久删除'?'red':'dark'}" onclick="closeModal();_cb&&_cb()">${label}</button></div>`)}
+function exportCSV(kind,rows){
+  const cols={workers:[['id','ID'],['created_at','注册时间'],['status','状态'],[w=>w.d.name,'姓名'],[w=>natName(w.d.nat),'国籍'],[w=>w.d.female?'女':'男','性别'],[w=>w.d.age,'年龄'],[w=>indName(w.d.ind),'行业'],[w=>w.d.role,'工种'],[w=>w.d.exp,'经验'],[w=>w.d.sal,'期望月薪'],[w=>w.d.city,'城市'],[w=>w.d.zh,'中文'],[w=>((S.docs[w.id]||{}).data||{}).phone||'','电话']],
+    jobs:[['id','ID'],['created_at','发布时间'],['status','状态'],[j=>j.d.title,'岗位'],[j=>j.d.company,'企业'],[j=>j.d.sal,'月薪'],[j=>j.d.city,'地点'],[j=>j.d.n,'人数'],[j=>j.d.apps,'申请']],
+    logs:[['created_at','时间'],['admin','操作人'],['action','动作'],['target','对象'],[x=>JSON.stringify(x.detail||{}),'详情']]}[kind];
+  const val=(r,c)=>typeof c[0]==='function'?c[0](r):r[c[0]];const cell=v=>{let s=String(v??'');if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
+  const csv='﻿'+[cols.map(c=>c[1]).join(','),...rows.map(r=>cols.map(c=>cell(val(r,c))).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`hiregh-${kind}-${day(Date.now())}.csv`;document.body.appendChild(a);a.click();a.remove();toast('已导出 '+rows.length+' 条')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();$('#lb').style.display='none'}});
+render();
+</script>
+</body>
+</html>
