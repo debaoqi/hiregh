@@ -140,7 +140,7 @@ const money=n=>'GH₵'+(+n||0).toLocaleString('en-US');
 
 /* ---------- reference data (same as App) ---------- */
 const NATS={GH:['加纳','linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)','#000'],CN:['中国','#DE2910','#FFDE00']};
-const flag=c=>{const n=NATS[c];if(!n)return '';return `<span class="flag" style="background:${n[1]}">${n[2]?`<i style="color:${n[2]}">★</i>`:''}</span>`};
+const flag=c=>{const n=NATS[c];if(!n){const e=c&&/^[A-Z]{2}$/.test(c)?String.fromCodePoint(...[...c].map(x=>0x1F1E6+x.charCodeAt(0)-65)):'';return e?`<span title="${c}" style="font-size:15px">${e}</span>`:''}return `<span class="flag" style="background:${n[1]}">${n[2]?`<i style="color:${n[2]}">★</i>`:''}</span>`};
 const natName=c=>NATS[c]?NATS[c][0]:esc(c||'—');
 const IND={ind:['工业制造',['焊工','电工','机修工','叉车司机','CNC操作工','质检员','普工']],agr:['农业种植',['种植工','农机手','养殖工','采摘工','灌溉技工','农场主管']],svc:['服务业',['中餐厨师','司机','保安','保洁','中英翻译','家政保姆','会计文员']],con:['建筑工程',['泥瓦工','钢筋工','木工','水电工','挖掘机司机','测量员']],min:['矿业能源',['矿工','爆破员','重卡司机','设备维修','选矿工']],log:['物流仓储',['仓管员','装卸工','货车司机','报关员']]};
 const indName=i=>IND[i]?IND[i][0]:esc(i||'—');
@@ -368,7 +368,7 @@ async function editWorker(id){const w=S.W.find(x=>x.id===id);let doc=null;try{do
   const o=(arr,v)=>arr.map(x=>Array.isArray(x)?`<option value="${x[0]}" ${x[0]===v?'selected':''}>${x[1]}</option>`:`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');
   openModal(`<div class="ch">编辑工人资料 #${id}<div class="r"><button class="btn sm" onclick="closeModal()">${ic('x')}</button></div></div>
   <div class="f2"><div class="fld"><label>姓名</label><input class="inp" id="e_name" value="${esc(w.d.name)}"></div><div class="fld"><label>电话</label><input class="inp" id="e_phone" value="${esc(ph)}" ${doc?'':'disabled'}></div>
-   <div class="fld"><label>国籍</label><select class="inp" id="e_nat">${o(Object.keys(NATS).map(c=>[c,NATS[c][0]]),w.d.nat)}</select></div><div class="fld"><label>性别</label><select class="inp" id="e_sex">${o([['m','男'],['f','女']],w.d.female?'f':'m')}</select></div>
+   <div class="fld"><label>国籍</label><select class="inp" id="e_nat">${o([...new Set([...Object.keys(NATS),w.d.nat].filter(Boolean))].map(c=>[c,NATS[c]?NATS[c][0]:c]),w.d.nat)}</select></div><div class="fld"><label>性别</label><select class="inp" id="e_sex">${o([['m','男'],['f','女']],w.d.female?'f':'m')}</select></div>
    <div class="fld"><label>年龄</label><input class="inp" id="e_age" type="number" value="${esc(w.d.age||'')}"></div><div class="fld"><label>城市</label><select class="inp" id="e_city">${o(CITIES,w.d.city)}</select></div>
    <div class="fld"><label>行业</label><select class="inp" id="e_ind" onchange="$('#e_role').innerHTML=IND[this.value][1].map(r=>'<option>'+r+'</option>').join('')">${o(Object.keys(IND).map(i=>[i,IND[i][0]]),w.d.ind)}</select></div><div class="fld"><label>工种</label><select class="inp" id="e_role">${o((IND[w.d.ind]||IND.ind)[1],w.d.role)}</select></div>
    <div class="fld"><label>经验（年）</label><input class="inp" id="e_exp" type="number" value="${esc(w.d.exp)}"></div><div class="fld"><label>期望月薪 GH₵</label><input class="inp" id="e_sal" type="number" value="${esc(w.d.sal)}"></div>
@@ -448,6 +448,61 @@ function exportCSV(kind,rows){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`hiregh-${kind}-${day(Date.now())}.csv`;document.body.appendChild(a);a.click();a.remove();toast('已导出 '+rows.length+' 条')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();$('#lb').style.display='none'}});
 render();
+</script>
+<script>
+/* ================= 自动刷新 + 新提交提醒 ================= */
+const AR={sec:+(localStorage.getItem('hg_ar')??10),timer:null,seen:null,last:0,fresh:{W:0,E:0,J:0,R:0},busy:false,baseTitle:document.title};
+const arSnap=()=>({W:new Set(S.W.map(x=>x.id)),E:new Set(S.E.map(x=>x.id)),J:new Set(S.J.map(x=>x.id)),R:new Set(S.R.map(x=>x.id))});
+/* 登录令牌快到期时自动续期，避免自动刷新中途掉线 */
+const _login0=API.login;
+API.login=async function(email,pw){
+  if(!LIVE){await _login0.call(API,email,pw);AR.seen=null;setTimeout(arStart,300);return}
+  const r=await fetch(U+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error_description||j.msg||'登录失败');
+  S.session={token:j.access_token,refresh:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000,email:j.user.email,uid:j.user.id};
+  AR.seen=null;setTimeout(arStart,300)};
+async function arRenew(){const s=S.session;if(!LIVE||!s||!s.refresh||Date.now()<s.exp-5*60e3)return;
+  try{const r=await fetch(U+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:s.refresh})});
+    const j=await r.json();if(r.ok){s.token=j.access_token;s.refresh=j.refresh_token;s.exp=Date.now()+(j.expires_in||3600)*1000}}catch(e){}}
+function arBeep(){try{const c=new (window.AudioContext||window.webkitAudioContext)();[0,.18].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.15,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.15);o.start(c.currentTime+t);o.stop(c.currentTime+t+.16)})}catch(e){}}
+async function arTick(manual){
+  if(!S.session||AR.busy)return;AR.busy=true;
+  const ui=document.querySelector('#modal.on,#drawer.on')||(document.activeElement&&['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)&&document.activeElement.id!=='arSel');
+  try{await arRenew();const first=!AR.seen;const before=AR.seen||arSnap();await API.load();const now=arSnap();AR.seen=now;AR.last=Date.now();
+    const add={W:0,E:0,J:0,R:0};for(const k in add)now[k].forEach(id=>{if(!before[k].has(id))add[k]++});
+    const n=first?0:add.W+add.E+add.J+add.R;
+    if(n){for(const k in add)AR.fresh[k]+=add[k];arBeep();
+      const msg=[add.W&&`工人 ${add.W}`,add.E&&`招聘方 ${add.E}`,add.J&&`岗位 ${add.J}`,add.R&&`举报/反馈 ${add.R}`].filter(Boolean).join('、');
+      toast('新提交：'+msg);
+      try{if('Notification' in window&&Notification.permission==='granted')new Notification('HireGH 新提交',{body:msg})}catch(e){}}
+    arTitle();if(!ui)render();else arBar()}
+  catch(e){console.error(e)}finally{AR.busy=false}}
+function arTitle(){const t=AR.fresh.W+AR.fresh.E+AR.fresh.J+AR.fresh.R;document.title=t?`(${t}) 新提交 · ${AR.baseTitle}`:AR.baseTitle}
+function arStart(){clearInterval(AR.timer);if(AR.sec>0)AR.timer=setInterval(()=>{if(!document.hidden||AR.sec<=10)arTick()},AR.sec*1000);arBar()}
+function arSet(v){AR.sec=+v;localStorage.setItem('hg_ar',AR.sec);
+  if(AR.sec>0&&'Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});
+  arStart();toast(AR.sec?`已开启自动刷新：每 ${AR.sec} 秒`:'已关闭自动刷新')}
+function arSeen(page){const map={review:'W',workers:'W',employers:'E',jobs:'J',reports:'R'};const k=map[page];if(k)AR.fresh[k]=0;if(page==='dash')AR.fresh={W:0,E:0,J:0,R:0};arTitle()}
+function arAgo(){if(!AR.last)return '尚未刷新';const s=Math.round((Date.now()-AR.last)/1000);return s<5?'刚刚':s+' 秒前'}
+/* 顶部：自动刷新开关 + 新提交提醒条 */
+function arBar(){const top=document.querySelector('.main .top');if(!top)return;
+  let el=document.getElementById('arBox');if(!el){el=document.createElement('div');el.id='arBox';el.style.cssText='display:flex;align-items:center;gap:8px;font-size:13px';const rb=top.querySelector('button[onclick="reload()"]');top.insertBefore(el,rb||null)}
+  el.innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:${AR.sec?'#3BB273':'#bbb'};${AR.sec?'box-shadow:0 0 0 4px rgba(59,178,115,.18)':''}"></span>
+   <select id="arSel" class="btn" style="padding:7px 10px" onchange="arSet(this.value)">${[[0,'自动刷新：关'],[5,'自动刷新：5 秒'],[10,'自动刷新：10 秒'],[30,'自动刷新：30 秒']].map(o=>`<option value="${o[0]}" ${AR.sec===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>
+   <span id="arAgo" style="color:var(--muted);min-width:56px">${arAgo()}</span>`;
+  const f=AR.fresh,t=f.W+f.E+f.J+f.R;let bn=document.getElementById('arNew');
+  if(t){const page=f.W?'review':f.E?'employers':f.J?'jobs':'reports';
+    if(!bn){bn=document.createElement('div');bn.id='arNew';top.after(bn)}
+    bn.innerHTML=`<div style="display:flex;align-items:center;gap:10px;background:#161616;color:#fff;border-radius:14px;padding:12px 16px;margin:-6px 0 16px;font-size:14px">
+     <span style="width:10px;height:10px;border-radius:50%;background:#EE5A47"></span><b>手机端有 ${t} 条新提交</b><span style="opacity:.75">${[f.W&&`工人 ${f.W}`,f.E&&`招聘方 ${f.E}`,f.J&&`岗位 ${f.J}`,f.R&&`举报/反馈 ${f.R}`].filter(Boolean).join(' · ')}</span>
+     <button class="btn sm lime" style="margin-left:auto" onclick="go('${page}')">立即查看</button><button class="btn sm" style="color:#161616" onclick="AR.fresh={W:0,E:0,J:0,R:0};arTitle();document.getElementById('arNew').remove()">知道了</button></div>`}
+  else if(bn)bn.remove()}
+setInterval(()=>{const a=document.getElementById('arAgo');if(a)a.textContent=arAgo()},1000);
+const _render0=render;render=function(){_render0();if(S.session){if(!AR.seen&&(S.W.length||S.J.length||S.E.length||LIVE))AR.seen=arSnap();arBar()}};
+const _go0=go;go=function(p){arSeen(p);return _go0(p)};
+window.addEventListener('focus',()=>{if(AR.sec)arTick()});
+if(S.session){AR.seen=arSnap();arStart()}
+
 </script>
 </body>
 </html>
