@@ -1,6 +1,6 @@
 {
-  "version": "2.0.0",
-  "build": 24,
+  "version": "2.0.1",
+  "build": 25,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,18 +8,11 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "全非洲 54 国通用：自动识别所在国家，显示对应国旗",
-      "工人端语言自动切换为该国官方语言（法语、葡萄牙语、阿拉伯语、斯瓦希里语等）",
-      "货币、手机区号、城市随国家自动切换",
-      "可随时手动切换国家（首页国旗按钮）",
-      "各国只显示本国的工人和岗位",
-      "欢迎页重新设计，两个入口卡片更大更清晰"
+      "首页“靠谱”二字加粗",
+      "欢迎页按手机屏幕高度自动排版：不用滑动就能完整看到两张卡片，黑色卡片下方留出空间"
     ],
     "en": [
-      "Works in all 54 African countries",
-      "Your country is detected automatically, with its flag, currency and cities",
-      "The app uses your country’s official language",
-      "Switch country any time from the flag button"
+      "The welcome page now fits your screen"
     ]
   }
 }
