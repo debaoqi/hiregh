@@ -1118,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.0.1',APP_BUILD=25;
+const APP_VER='2.0.2',APP_BUILD=26;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1911,53 +1911,11 @@ const _vh12b=V.home;V.home=()=>{let h=_vh12b();const n=WORKERS.filter(w=>visW(w)
 render(false);
 </script>
 <script>
-/* ================= v2.0.1 · 欢迎页首屏完整显示两张卡片 + “靠谱”加粗 ================= */
-(function(){const st=document.createElement('style');st.textContent=`
-.hero .hl{font-weight:900;-webkit-text-stroke:.8px currentColor;letter-spacing:0}
-#welTop{display:flex;flex-direction:column;box-sizing:border-box;padding:14px 20px 20px}
-#welTop .wh{font-size:clamp(26px,4.4vh,36px);line-height:1.15;margin:clamp(10px,2.4vh,22px) 0 8px}
-#welTop .wcards{flex:1;display:flex;flex-direction:column;gap:clamp(10px,1.6vh,14px);margin-top:clamp(12px,2vh,20px);min-height:0}
-#welTop .wcard{flex:1;min-height:112px;margin:0;border-radius:30px;padding:clamp(14px,2.2vh,22px) 20px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;overflow:hidden}
-#welTop .wcard .ic{width:clamp(40px,5.6vh,52px);height:clamp(40px,5.6vh,52px)}
-#welTop .wcard .go{width:clamp(38px,5vh,46px);height:clamp(38px,5vh,46px)}
-#welTop .wcard .t{font-size:clamp(21px,3.2vh,26px);line-height:1.15;font-weight:800}
-#welTop .wcard .roles{font-size:14px;margin-top:4px;opacity:.75}
-#welTop .wtags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-#welTop .wtags span{font-size:12px;font-weight:600;padding:5px 10px;border-radius:14px}
-#welTop.compact .wtags{display:none}
-#welTop.tiny .roles{display:none}
-`;document.head.appendChild(st)})();
-V.welcome=()=>{const c=C();const zhUI=S.lang==='zh';const top=['GH','NG','KE','ZA','ET','TZ','EG','CI','CM','UG','SN','AO','ZM','MA'];
- return `<div id="welTop">
- <div class="row between"><div class="row gap6"><div class="logo">H</div><b style="font-size:18px">HireGH</b></div>${countryPill()}</div>
- <h1 class="hero wh">${t('welcome_title')}</h1>
- <div class="sm muted row gap6" style="flex-wrap:wrap">${ic('pin',14)} ${zhUI?c.zh:c.en} · ${t('detected')}: <b style="color:var(--ink)">${(LANG_LIST.find(l=>l[0]===S.detected)||LANG_LIST[0])[1]}</b></div>
- <div class="chips wrap" style="margin-top:10px">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div>
- <div class="wcards">
-  <div class="sc wcard" style="background:var(--lime)" onclick="startWorker()">
-   <div class="row between" style="align-items:flex-start"><div class="ic">${ic('user',24)}</div><div class="go">${ic('arrow',20)}</div></div>
-   <div><div class="t">${t('find_job')}</div><div class="roles">${t('find_job_sub')}</div>
-    <div class="wtags">${['f_free','f_lang','f_near'].map(k=>`<span style="background:rgba(255,255,255,.6)">${t(k)}</span>`).join('')}</div></div></div>
-  <div class="sc wcard" style="background:#161616;color:#fff" onclick="startEmployer()">
-   <div class="row between" style="align-items:flex-start"><div class="ic">${ic('brief',24)}</div><div class="go">${ic('arrow',20)}</div></div>
-   <div><div class="t">我要招人 <span style="font-size:14px;opacity:.6;font-weight:600">I'm hiring</span></div><div class="roles">${S.company.registered?'已注册：'+esc(S.company.name):'企业 / 个人雇主 · 先注册，再找人'}</div>
-    <div class="wtags">${['企业 / 个人','平台认证',IND.reduce((a,i)=>a+i.roles.length,0)+' 个工种'].map(x=>`<span style="background:rgba(255,255,255,.14)">${x}</span>`).join('')}</div></div></div>
- </div></div>
- <div class="pad" style="padding-top:0">
- <div class="box row gap" style="margin-top:0"><span class="qi" style="width:40px;height:40px;border-radius:14px;background:var(--gold);display:grid;place-items:center;flex:none">${ic('shield')}</span><span class="sm">${t('safety')}</span></div>
- <div style="margin-top:14px;padding:14px 16px;border-radius:22px;background:var(--card);cursor:pointer" onclick="openCountry()" data-noloc>
-  <div class="row between"><b class="sm">${t('available_in')}</b><span class="sm" style="text-decoration:underline">${t('choose_country')} ›</span></div>
-  <div style="display:flex;gap:6px;margin-top:10px;font-size:22px;line-height:1;overflow:hidden">${top.map(x=>`<span style="${x===S.country?'outline:2px solid #161616;outline-offset:2px;border-radius:4px':''}">${flagE(x)}</span>`).join('')}</div></div>
- </div>`};
-/* 首屏高度 = 屏幕可见高度：两张卡片自动伸缩填满，黑色卡片下方留出空间 */
-function fitWelcome(){const el=document.getElementById('welTop');if(!el)return;const sc=$('#screen');
-  const pt=parseFloat(getComputedStyle(sc).paddingTop)||0;const h=sc.clientHeight-pt;el.style.height=h+'px';el.classList.remove('compact','tiny');
-  const cards=el.querySelector('.wcards');const ch=cards?cards.clientHeight:999;
-  if(ch<330)el.classList.add('compact');if(ch<250)el.classList.add('tiny')}
-const _render13=render;render=function(top){_render13(top);if(S.view==='welcome')fitWelcome()};
-window.addEventListener('resize',()=>{if(S.view==='welcome')fitWelcome()});
-render(false);
-
+/* ================= v2.0.2 · “靠谱”加粗 ================= */
+(function(){const st=document.createElement('style');st.textContent=`.hero .hl{font-weight:900;-webkit-text-stroke:.8px currentColor;letter-spacing:0}
+html:not([lang=zh]) h1.hero[style*="font-size:36px"]{font-size:min(36px,8.4vw)!important;white-space:nowrap;letter-spacing:-1.2px}
+html:not([lang=zh]) .sc .row.gap6.wrap{gap:4px!important;flex-wrap:nowrap!important;margin-top:10px!important}
+html:not([lang=zh]) .sc .row.gap6.wrap span{font-size:min(11px,3vw)!important;padding:4px 7px!important;white-space:nowrap}`;document.head.appendChild(st)})();
 </script>
 </body>
 </html>

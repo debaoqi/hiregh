@@ -1,6 +1,6 @@
 {
-  "version": "2.0.1",
-  "build": 25,
+  "version": "2.0.2",
+  "build": 26,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,11 +8,11 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "首页“靠谱”二字加粗",
-      "欢迎页按手机屏幕高度自动排版：不用滑动就能完整看到两张卡片，黑色卡片下方留出空间"
+      "欢迎页恢复原来的设计",
+      "英文状态下调整间距：标题保持一行、标签保持一行，黑色卡片上移"
     ],
     "en": [
-      "The welcome page now fits your screen"
+      "Tidier welcome page in English"
     ]
   }
 }
