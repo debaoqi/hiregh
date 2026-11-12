@@ -231,9 +231,9 @@ textarea.fi{border-radius:24px;min-height:90px;resize:none}
 <script>
 /* ==== 云端配置：填入 Supabase 项目信息即可让数据真实保存（留空=本地演示模式） ==== */
 window.HIREGH_CONFIG = window.HIREGH_CONFIG || {
-  supabaseUrl: '',        // 例如 https://xxxx.supabase.co
-  supabaseAnonKey: '',    // Project Settings → API → anon public key
-  showDemoData: true      // 正式测试时改为 false，只显示真实注册的数据
+  supabaseUrl: 'https://vctokfjzgjtvsqftadeh.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjdG9rZmp6Z2p0dnNxZnRhZGVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0ODU3NjAsImV4cCI6MjExMDA2MTc2MH0.4yA4ijyvz9F60W2yOCaVLi-tJmCLHHLslx5TbYo-ASA',  // 公开 anon key（受数据库权限规则保护）
+  showDemoData: true      // true = 企业端同时显示示例工人；改为 false 只显示真实注册且审核通过的工人
 };
 </script>
 <script>
@@ -285,10 +285,6 @@ const pick=a=>a[Math.floor(rnd()*a.length)];const ri=(a,b)=>a+Math.floor(rnd()*(
 const NATS={
  GH:{zh:'加纳',en:'Ghana',flag:'linear-gradient(#CE1126 0 33%,#FCD116 33% 66%,#006B3F 66%)',star:'#000'},
  VN:{zh:'越南',en:'Vietnam',flag:'#DA251D',star:'#FFCD00'},
- IN:{zh:'印度',en:'India',flag:'linear-gradient(#FF9933 0 33%,#fff 33% 66%,#138808 66%)'},
- NG:{zh:'尼日利亚',en:'Nigeria',flag:'linear-gradient(90deg,#008751 0 33%,#fff 33% 66%,#008751 66%)'},
- TG:{zh:'多哥',en:'Togo',flag:'repeating-linear-gradient(#006A4E 0 3px,#FFCE00 3px 6px)'},
- BF:{zh:'布基纳法索',en:'Burkina Faso',flag:'linear-gradient(#EF2B2D 0 50%,#009E49 50%)',star:'#FCD116'},
  CN:{zh:'中国',en:'China',flag:'#DE2910',star:'#FFDE00'},
 };
 const flag=c=>{const n=NATS[c];return `<span class="flag" style="background:${n.flag}">${n.star?`<i style="color:${n.star}">★</i>`:''}</span>`};
@@ -323,26 +319,22 @@ const IND=[
 const ROLE_MAP={};IND.forEach(i=>i.roles.forEach(r=>ROLE_MAP[r[0]]={ind:i,r}));
 
 const NAMES={
- GH:{m:['Kwame Mensah','Kofi Boateng','Yaw Darko','Kwabena Ofori','Kojo Asare','Kwesi Amoah','Fiifi Quaye','Nana Agyeman','Samuel Tetteh','Isaac Owusu','Emmanuel Addo','Joseph Ansah'],
-     f:['Ama Owusu','Akosua Asante','Efua Appiah','Abena Osei','Adwoa Badu','Esi Mensah','Akua Sarpong','Grace Nyarko']},
- VN:{m:['Nguyễn Văn An','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam','Vũ Quang Huy'],f:['Trần Thị Hoa','Đỗ Thị Lan']},
- IN:{m:['Rajesh Kumar','Arjun Patel','Suresh Reddy','Vikram Singh','Anil Sharma'],f:['Priya Sharma','Anjali Nair']},
- NG:{m:['Chinedu Okafor','Emeka Eze','Tunde Bello'],f:['Ngozi Obi']},
- TG:{m:['Komlan Agbeko','Kossi Amegah'],f:['Afi Mensah']},
- BF:{m:['Issa Ouédraogo','Moussa Sawadogo'],f:['Awa Kaboré']},
- CN:{m:['张伟','李强'],f:['王芳','刘洋']},
+ GH:{m:['Kwame Mensah','Kofi Boateng','Yaw Darko','Kwabena Ofori','Kojo Asare','Kwesi Amoah','Fiifi Quaye','Nana Agyeman','Samuel Tetteh','Isaac Owusu','Emmanuel Addo','Joseph Ansah','Daniel Ofori','Michael Asante','Prince Adjei','Richard Ampofo'],
+     f:['Ama Owusu','Akosua Asante','Efua Appiah','Abena Osei','Adwoa Badu','Esi Mensah','Akua Sarpong','Grace Nyarko','Gifty Agyei','Mercy Boadu']},
+ VN:{m:['Nguyễn Văn An','Lê Minh Tuấn','Phạm Đức Long','Hoàng Văn Nam','Vũ Quang Huy','Đặng Văn Hải','Bùi Thanh Sơn','Ngô Văn Phúc'],f:['Trần Thị Hoa','Đỗ Thị Lan','Nguyễn Thị Mai','Phạm Thị Thu']},
+ CN:{m:['张伟','李强','陈明','赵磊','黄海','周杰','吴涛','孙建国'],f:['王芳','刘洋','杨丽','林静']},
 };
 const CITIES=[['阿克拉','Accra'],['特马','Tema'],['库马西','Kumasi'],['塔科拉迪','Takoradi'],['卡索阿','Kasoa'],['塔马利','Tamale'],['奥布阿西','Obuasi'],['科福里杜阿','Koforidua']];
 const AV_COL=['#F8C94A','#CFE36B','#E2B2FA','#FFB59E','#A9D3FF','#FFD7A8','#C9F0D5'];
-const LANGS={GH:['English','Twi'],VN:['Tiếng Việt'],IN:['Hindi','English'],NG:['English','Igbo'],TG:['Français','Ewe'],BF:['Français','Mooré'],CN:['中文','English']};
+const LANGS={GH:['English','Twi'],VN:['Tiếng Việt'],CN:['中文','English']};
 
 const WORKERS=[];let wid=1;const used=new Set();
 IND.forEach(ind=>ind.roles.forEach(r=>{
   const n=ri(2,4);
   for(let k=0;k<n;k++){
-    let nat=rnd()<.55?'GH':pick(['VN','IN','NG','TG','BF','GH','VN','IN']);
-    if(r[0]==='中英翻译'||r[0]==='报关员') nat=rnd()<.7?'GH':'CN';
-    if(ind.id==='min'&&nat==='VN'&&rnd()<.5) nat='GH';
+    let nat=rnd()<.62?'GH':(rnd()<.7?'VN':'CN');
+    if(['中英翻译','报关员'].includes(r[0])) nat=rnd()<.7?'GH':'CN';
+    if(['中餐厨师','农场主管','测量员','设备维修','电工'].includes(r[0])&&rnd()<.3) nat='CN';
     const female=rnd()<(['保洁','家政保姆','会计文员','质检员','采摘工','种植工','中英翻译'].includes(r[0])?.6:.12);
     const pool=NAMES[nat][female?'f':'m'];let name=pick(pool),tries=0;
     while(used.has(name)&&tries++<8) name=pick(pool);used.add(name);
@@ -369,8 +361,8 @@ const S={view:'home',params:{},hist:[],saved:new Set([3,8,15]),
   jobs:[
    {id:1,title:'焊工',en:'Welder',ind:'ind',exp:'3+ 年',sal:'3,500–4,500',city:'特马',n:5,apps:42,status:'open',nats:['GH','VN'],zh:false,stay:true,desc:'钢结构厂房焊接，需会看图纸，包住宿和午餐。'},
    {id:2,title:'中餐厨师',en:'Chinese Cook',ind:'svc',exp:'5+ 年',sal:'4,000–6,000',city:'阿克拉',n:2,apps:18,status:'open',nats:['GH','CN'],zh:true,stay:true,desc:'公司食堂约60人，川菜、面点优先。'},
-   {id:3,title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,800–2,200',city:'库马西',n:20,apps:126,status:'open',nats:['GH','BF','TG'],zh:false,stay:false,desc:'腰果季节性采收，计件+底薪。'},
-   {id:4,title:'挖掘机司机',en:'Excavator Operator',ind:'con',exp:'4+ 年',sal:'4,500–5,800',city:'塔科拉迪',n:3,apps:33,status:'pause',nats:['GH','IN'],zh:false,stay:true,desc:'道路项目土方作业，熟悉卡特/三一机型。'},
+   {id:3,title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,800–2,200',city:'库马西',n:20,apps:126,status:'open',nats:['GH'],zh:false,stay:false,desc:'腰果季节性采收，计件+底薪。'},
+   {id:4,title:'挖掘机司机',en:'Excavator Operator',ind:'con',exp:'4+ 年',sal:'4,500–5,800',city:'塔科拉迪',n:3,apps:33,status:'pause',nats:['GH','CN'],zh:false,stay:true,desc:'道路项目土方作业，熟悉卡特/三一机型。'},
   ],
   chats:[],interviews:[],
 };
@@ -568,12 +560,12 @@ function savePost(id){
   data.descEn=null;
   if(id){const j=S.jobs.find(j=>j.id===id);Object.assign(j,data);if(j.dbid)dbSafe(()=>DB.q('jobs?id=eq.'+j.dbid,{method:'PATCH',body:JSON.stringify(jobRow(j))}));toast('岗位已更新')}
   else{const j={id:Date.now(),apps:0,status:'open',owner:'me',company:MYCO,...data};S.jobs.unshift(j);toast('发布成功，已推送给匹配工人');
-    dbSafe(async()=>{const r=await DB.q('jobs',{method:'POST',body:JSON.stringify(jobRow(j))});j.dbid=r[0].id})}
+    dbSafe(async()=>{const r=await DB.q('rpc/post_job',{method:'POST',body:JSON.stringify({p_data:jobRow(j).data})});j.dbid=r;toast('已提交，平台审核通过后工人可见')})}
   S.jobFilter='all';tab('jobs');
 }
 
 V.chats=()=>`<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">消息</div><div class="row gap6"><span class="muted sm">${S.chats.length} 个对话</span><button class="icbtn" onclick="S.translate=!S.translate;toast(S.translate?'自动翻译已开启':'自动翻译已关闭');render(false)" style="${S.translate?'background:var(--lime)':''}">${ic('tr')}</button></div></div>
-  <div class="sm muted" style="margin:6px 0 18px">${S.translate?'自动翻译已开启：英语 / 越南语 / 法语 ⇄ 中文':'自动翻译已关闭'}</div>
+  <div class="sm muted" style="margin:6px 0 18px">${S.translate?'自动翻译已开启：英语 / 越南语 ⇄ 中文':'自动翻译已关闭'}</div>
   ${S.chats.length?S.chats.map((c,k)=>{const w=W(c.wid);const m=c.msgs[c.msgs.length-1];const dark=['#5B8CFF'].includes(c.color);
    return `<div class="cb" style="background:${c.color};color:${dark?'#fff':'#161616'};z-index:${20-k}" onclick="openChat(${w.id})">${avatar(w)}<div style="flex:1;min-width:0;padding-right:26px"><div class="row gap6"><b>${w.name}</b>${flag(w.nat)}<span class="xs" style="opacity:.6">${m.tm}</span></div>
    <div class="xs" style="opacity:.7">${w.role}</div><div class="msg">${S.translate&&!m.me?m.t:m.o}</div></div>${c.unread?`<span class="un">${c.unread}</span>`:''}<span class="tail" style="background:${c.color};${k%2?'right':'left'}:46px"></span></div>`}).join(''):'<div class="empty">暂无消息</div>'}
@@ -643,92 +635,90 @@ function openNotifs(){openSheet(`<div class="b" style="font-size:20px;margin-bot
 </script>
 <script>
 /* ================= I18N (worker side) ================= */
-const LANG_LIST=[['en','English'],['vi','Tiếng Việt'],['fr','Français'],['hi','हिन्दी'],['zh','中文']];
-const LI={en:0,vi:1,fr:2,hi:3,zh:4};
+const LANG_LIST=[['en','English'],['vi','Tiếng Việt'],['zh','中文']];
+const LI={en:0,vi:1,zh:2};
 function detectLang(){const ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];for(const l of ls){const c=(l||'').slice(0,2).toLowerCase();if(c in LI)return c}return 'en'}
-const T={
-welcome_title:['Find work with Chinese companies in Ghana','Việc làm tại các công ty Trung Quốc ở Ghana','Trouvez un emploi dans les entreprises chinoises au Ghana','घाना में चीनी कंपनियों में काम पाएँ','在加纳中企找工作'],
-detected:['Phone language detected','Đã nhận diện ngôn ngữ điện thoại','Langue du téléphone détectée','फ़ोन की भाषा पहचानी गई','已识别手机语言'],
-find_job:["I'm looking for work",'Tôi đang tìm việc','Je cherche du travail','मुझे काम चाहिए','我要找工作'],
-find_job_sub:['Create your profile in 3 steps','Tạo hồ sơ trong 3 bước','Créez votre profil en 3 étapes','3 चरणों में प्रोफ़ाइल बनाएँ','3 步创建求职档案'],
-s1:['About you','Thông tin cá nhân','Vos informations','आपके बारे में','基本信息'],
-s2:['Your work','Công việc mong muốn','Votre métier','आपका काम','工作意向'],
-s3:['Documents','Giấy tờ','Documents','दस्तावेज़','证件上传'],
-full_name:['Full name','Họ và tên','Nom complet','पूरा नाम','姓名'],
-phone:['Phone / WhatsApp','Điện thoại / WhatsApp','Téléphone / WhatsApp','फ़ोन / WhatsApp','电话 / WhatsApp'],
-phone_note:['Only visible to verified employers after you accept an interview','Chỉ hiển thị cho nhà tuyển dụng đã xác minh khi bạn nhận phỏng vấn','Visible uniquement par les employeurs vérifiés après acceptation d’un entretien','इंटरव्यू स्वीकार करने के बाद ही सत्यापित नियोक्ता देख सकेंगे','仅在你接受面试后对认证雇主可见'],
-nationality:['Nationality','Quốc tịch','Nationalité','राष्ट्रीयता','国籍'],
-gender:['Gender','Giới tính','Sexe','लिंग','性别'],
-male:['Male','Nam','Homme','पुरुष','男'],female:['Female','Nữ','Femme','महिला','女'],
-age:['Age','Tuổi','Âge','आयु','年龄'],
-city:['Where do you live?','Bạn sống ở đâu?','Où habitez-vous ?','आप कहाँ रहते हैं?','现居城市'],
-photo:['Profile photo','Ảnh đại diện','Photo de profil','प्रोफ़ाइल फ़ोटो','个人照片'],
-tap_upload:['Tap to take or upload a photo','Chạm để chụp hoặc tải ảnh lên','Touchez pour prendre ou importer une photo','फ़ोटो लेने या अपलोड करने के लिए टैप करें','点击拍照或上传'],
-industry:['Industry','Ngành nghề','Secteur','उद्योग','行业'],
-job_type:['Job type','Loại công việc','Métier','काम का प्रकार','工种'],
-experience:['Years of experience','Số năm kinh nghiệm','Années d’expérience','अनुभव (वर्ष)','工作经验（年）'],
-salary:['Expected monthly salary (GH₵)','Lương mong muốn mỗi tháng (GH₵)','Salaire mensuel souhaité (GH₵)','अपेक्षित मासिक वेतन (GH₵)','期望月薪 (GH₵)'],
-minwage:['Ghana minimum wage 2026: GH₵21.77 per day','Lương tối thiểu Ghana 2026: 21,77 GH₵/ngày','Salaire minimum au Ghana 2026 : 21,77 GH₵/jour','घाना न्यूनतम वेतन 2026: GH₵21.77 प्रतिदिन','加纳2026年最低工资：GH₵21.77/天'],
-start:['When can you start?','Khi nào bạn có thể bắt đầu?','Quand pouvez-vous commencer ?','आप कब शुरू कर सकते हैं?','到岗时间'],
-now:['Immediately','Ngay lập tức','Immédiatement','तुरंत','可立即上岗'],
-w1:['Within 1 week','Trong 1 tuần','Sous 1 semaine','1 सप्ताह में','1周内到岗'],
-w2:['Within 2 weeks','Trong 2 tuần','Sous 2 semaines','2 सप्ताह में','2周内到岗'],
-zh_level:['Chinese language level','Trình độ tiếng Trung','Niveau de chinois','चीनी भाषा का स्तर','中文水平'],
-none:['None','Không biết','Aucun','नहीं आती','不会'],basic:['Basic','Cơ bản','Basique','बुनियादी','基础'],fluent:['Fluent','Thành thạo','Courant','धाराप्रवाह','流利'],
-id_type:['ID document','Giấy tờ tùy thân','Pièce d’identité','पहचान पत्र','身份证件'],
-passport:['Passport','Hộ chiếu','Passeport','पासपोर्ट','护照'],
-id_photo:['Photo of your ID','Ảnh giấy tờ tùy thân','Photo de votre pièce','पहचान पत्र की फ़ोटो','证件照片'],
-id_note:['Kept private. Only the HireGH review team can see it.','Được bảo mật. Chỉ đội xét duyệt HireGH xem được.','Confidentiel. Seule l’équipe de vérification HireGH y a accès.','निजी रखा जाता है। केवल HireGH समीक्षा टीम देख सकती है।','仅平台审核人员可见，不对雇主公开'],
-permit:['Do you have a Ghana work permit?','Bạn có giấy phép lao động Ghana không?','Avez-vous un permis de travail ghanéen ?','क्या आपके पास घाना वर्क परमिट है?','是否持有加纳工作许可？'],
-health:['Do you have a health certificate?','Bạn có giấy khám sức khỏe không?','Avez-vous un certificat médical ?','क्या आपके पास स्वास्थ्य प्रमाणपत्र है?','是否有健康证明？'],
-yes:['Yes','Có','Oui','हाँ','有'],no:['No','Không','Non','नहीं','没有'],
-consent:['I agree that HireGH shares my profile with verified employers, as described under Ghana’s Data Protection Act, 2012 (Act 843). I can ask for it to be deleted at any time.','Tôi đồng ý để HireGH chia sẻ hồ sơ với nhà tuyển dụng đã xác minh, theo Luật Bảo vệ Dữ liệu Ghana 2012 (Act 843). Tôi có thể yêu cầu xóa bất cứ lúc nào.','J’accepte que HireGH partage mon profil avec des employeurs vérifiés, conformément à la loi ghanéenne sur la protection des données de 2012 (Act 843). Je peux demander sa suppression à tout moment.','मैं सहमत हूँ कि HireGH मेरी प्रोफ़ाइल सत्यापित नियोक्ताओं से साझा करे, घाना डेटा संरक्षण अधिनियम 2012 (Act 843) के अनुसार। मैं कभी भी इसे हटाने का अनुरोध कर सकता/सकती हूँ।','我同意 HireGH 按加纳《2012年数据保护法》(Act 843) 将我的档案提供给已认证雇主，并可随时要求删除。'],
-next:['Next','Tiếp theo','Suivant','आगे','下一步'],
-submit:['Create my profile','Tạo hồ sơ','Créer mon profil','प्रोफ़ाइल बनाएँ','提交档案'],
-required:['Please fill in the required fields','Vui lòng điền các mục bắt buộc','Veuillez remplir les champs obligatoires','कृपया आवश्यक जानकारी भरें','请填写必填项'],
-need_consent:['Please tick the consent box','Vui lòng đánh dấu đồng ý','Veuillez cocher la case de consentement','कृपया सहमति बॉक्स पर टिक करें','请勾选同意条款'],
-profile_done:['Profile created! Employers can now find you.','Đã tạo hồ sơ! Nhà tuyển dụng có thể tìm thấy bạn.','Profil créé ! Les employeurs peuvent vous trouver.','प्रोफ़ाइल बन गई! अब नियोक्ता आपको ढूँढ सकते हैं।','档案已提交，雇主现在可以找到你'],
-hello:['Hello','Xin chào','Bonjour','नमस्ते','你好'],
-jobs_for_you:['Jobs for you','Việc làm phù hợp với bạn','Offres pour vous','आपके लिए नौकरियाँ','为你推荐'],
-all_jobs:['More jobs','Việc làm khác','Autres offres','और नौकरियाँ','更多岗位'],
-per_month:['/month','/tháng','/mois','/माह','/月'],
-openings:['openings','vị trí','postes','पद','人'],
-apply:['Apply now','Ứng tuyển ngay','Postuler','अभी आवेदन करें','立即申请'],
-applied:['Applied','Đã ứng tuyển','Postulé','आवेदन किया','已申请'],
-apply_ok:['Application sent','Đã gửi đơn ứng tuyển','Candidature envoyée','आवेदन भेजा गया','申请已发送'],
-exp_req:['Experience','Kinh nghiệm','Expérience','अनुभव','经验'],
-location:['Location','Địa điểm','Lieu','स्थान','地点'],
-accommodation:['Accommodation','Có chỗ ở','Logement fourni','आवास','包住宿'],
-need_zh:['Chinese needed','Cần tiếng Trung','Chinois requis','चीनी ज़रूरी','需会中文'],
-desc:['Job description','Mô tả công việc','Description du poste','नौकरी का विवरण','岗位描述'],
-auto_tr:['Auto-translated from Chinese','Tự động dịch từ tiếng Trung','Traduit automatiquement du chinois','चीनी से स्वचालित अनुवाद','原文'],
-no_tr:['Chinese original. Translation will be added once the translation service is connected.','Bản gốc tiếng Trung. Bản dịch sẽ có khi kết nối dịch vụ dịch.','Original en chinois. La traduction sera ajoutée une fois le service connecté.','मूल चीनी पाठ। अनुवाद सेवा जुड़ने पर अनुवाद जोड़ा जाएगा।','原文'],
-my_apps:['My applications','Đơn ứng tuyển của tôi','Mes candidatures','मेरे आवेदन','我的申请'],
-no_apps:['No applications yet','Chưa có đơn ứng tuyển','Aucune candidature pour l’instant','अभी कोई आवेदन नहीं','还没有申请'],
-status_sent:['Sent · waiting for the employer','Đã gửi · chờ nhà tuyển dụng','Envoyée · en attente de l’employeur','भेजा गया · नियोक्ता की प्रतीक्षा','已投递 · 等待雇主回复'],
-me:['My profile','Hồ sơ của tôi','Mon profil','मेरी प्रोफ़ाइल','我的档案'],
-language:['Language','Ngôn ngữ','Langue','भाषा','语言'],
-switch_role:['Switch role','Đổi vai trò','Changer de rôle','भूमिका बदलें','切换身份'],
-verify_pending:['Documents under review','Giấy tờ đang được xét duyệt','Documents en cours de vérification','दस्तावेज़ समीक्षा में','证件审核中'],
-safety:['Never pay money to get a job. Report anyone who asks you to pay.','Không bao giờ trả tiền để có việc. Hãy báo cáo nếu ai đó đòi tiền.','Ne payez jamais pour obtenir un emploi. Signalez toute demande d’argent.','नौकरी पाने के लिए कभी पैसे न दें। पैसे माँगने वाले की शिकायत करें।','找工作无需付费，遇到收费请举报'],
-search_jobs:['Search jobs, companies, cities','Tìm việc, công ty, thành phố','Rechercher un métier, une entreprise, une ville','नौकरी, कंपनी, शहर खोजें','搜索岗位、公司、城市'],
-verified:['Verified employer','Nhà tuyển dụng đã xác minh','Employeur vérifié','सत्यापित नियोक्ता','已认证企业'],
-optional:['(optional)','(không bắt buộc)','(facultatif)','(वैकल्पिक)','（选填）'],
-yrs:['yrs','năm','ans','वर्ष','年'],any:['Any','Không yêu cầu','Indifférent','कोई भी','不限'],
-jobs:['Jobs','Việc làm','Offres','नौकरियाँ','岗位'],
-nationality_lang:['Nationalities wanted','Quốc tịch tuyển','Nationalités recherchées','वांछित राष्ट्रीयता','国籍偏好'],
-nothing:['No jobs match your search','Không có việc phù hợp','Aucune offre ne correspond','कोई नौकरी नहीं मिली','没有匹配的岗位'],
-edit_profile:['Edit profile','Sửa hồ sơ','Modifier le profil','प्रोफ़ाइल बदलें','修改档案'],
-};
+const T={"welcome_title":["Find work with Chinese companies in Ghana","Việc làm tại các công ty Trung Quốc ở Ghana","在加纳中企找工作"],
+"detected":["Phone language detected","Đã nhận diện ngôn ngữ điện thoại","已识别手机语言"],
+"find_job":["I'm looking for work","Tôi đang tìm việc","我要找工作"],
+"find_job_sub":["Create your profile in 3 steps","Tạo hồ sơ trong 3 bước","3 步创建求职档案"],
+"s1":["About you","Thông tin cá nhân","基本信息"],
+"s2":["Your work","Công việc mong muốn","工作意向"],
+"s3":["Documents","Giấy tờ","证件上传"],
+"full_name":["Full name","Họ và tên","姓名"],
+"phone":["Phone / WhatsApp","Điện thoại / WhatsApp","电话 / WhatsApp"],
+"phone_note":["Only visible to verified employers after you accept an interview","Chỉ hiển thị cho nhà tuyển dụng đã xác minh khi bạn nhận phỏng vấn","仅在你接受面试后对认证雇主可见"],
+"nationality":["Nationality","Quốc tịch","国籍"],
+"gender":["Gender","Giới tính","性别"],
+"male":["Male","Nam","男"],
+"female":["Female","Nữ","女"],
+"age":["Age","Tuổi","年龄"],
+"city":["Where do you live?","Bạn sống ở đâu?","现居城市"],
+"photo":["Profile photo","Ảnh đại diện","个人照片"],
+"tap_upload":["Tap to take or upload a photo","Chạm để chụp hoặc tải ảnh lên","点击拍照或上传"],
+"industry":["Industry","Ngành nghề","行业"],
+"job_type":["Job type","Loại công việc","工种"],
+"experience":["Years of experience","Số năm kinh nghiệm","工作经验（年）"],
+"salary":["Expected monthly salary (GH₵)","Lương mong muốn mỗi tháng (GH₵)","期望月薪 (GH₵)"],
+"minwage":["Ghana minimum wage 2026: GH₵21.77 per day","Lương tối thiểu Ghana 2026: 21,77 GH₵/ngày","加纳2026年最低工资：GH₵21.77/天"],
+"start":["When can you start?","Khi nào bạn có thể bắt đầu?","到岗时间"],
+"now":["Immediately","Ngay lập tức","可立即上岗"],
+"w1":["Within 1 week","Trong 1 tuần","1周内到岗"],
+"w2":["Within 2 weeks","Trong 2 tuần","2周内到岗"],
+"zh_level":["Chinese language level","Trình độ tiếng Trung","中文水平"],
+"none":["None","Không biết","不会"],
+"basic":["Basic","Cơ bản","基础"],
+"fluent":["Fluent","Thành thạo","流利"],
+"id_type":["ID document","Giấy tờ tùy thân","身份证件"],
+"passport":["Passport","Hộ chiếu","护照"],
+"id_photo":["Photo of your ID","Ảnh giấy tờ tùy thân","证件照片"],
+"id_note":["Kept private. Only the HireGH review team can see it.","Được bảo mật. Chỉ đội xét duyệt HireGH xem được.","仅平台审核人员可见，不对雇主公开"],
+"permit":["Do you have a Ghana work permit?","Bạn có giấy phép lao động Ghana không?","是否持有加纳工作许可？"],
+"health":["Do you have a health certificate?","Bạn có giấy khám sức khỏe không?","是否有健康证明？"],
+"yes":["Yes","Có","有"],
+"no":["No","Không","没有"],
+"consent":["I agree that HireGH shares my profile with verified employers, as described under Ghana’s Data Protection Act, 2012 (Act 843). I can ask for it to be deleted at any time.","Tôi đồng ý để HireGH chia sẻ hồ sơ với nhà tuyển dụng đã xác minh, theo Luật Bảo vệ Dữ liệu Ghana 2012 (Act 843). Tôi có thể yêu cầu xóa bất cứ lúc nào.","我同意 HireGH 按加纳《2012年数据保护法》(Act 843) 将我的档案提供给已认证雇主，并可随时要求删除。"],
+"next":["Next","Tiếp theo","下一步"],
+"submit":["Create my profile","Tạo hồ sơ","提交档案"],
+"required":["Please fill in the required fields","Vui lòng điền các mục bắt buộc","请填写必填项"],
+"need_consent":["Please tick the consent box","Vui lòng đánh dấu đồng ý","请勾选同意条款"],
+"profile_done":["Profile created! Employers can now find you.","Đã tạo hồ sơ! Nhà tuyển dụng có thể tìm thấy bạn.","档案已提交，雇主现在可以找到你"],
+"hello":["Hello","Xin chào","你好"],
+"jobs_for_you":["Jobs for you","Việc làm phù hợp với bạn","为你推荐"],
+"all_jobs":["More jobs","Việc làm khác","更多岗位"],
+"per_month":["/month","/tháng","/月"],
+"openings":["openings","vị trí","人"],
+"apply":["Apply now","Ứng tuyển ngay","立即申请"],
+"applied":["Applied","Đã ứng tuyển","已申请"],
+"apply_ok":["Application sent","Đã gửi đơn ứng tuyển","申请已发送"],
+"exp_req":["Experience","Kinh nghiệm","经验"],
+"location":["Location","Địa điểm","地点"],
+"accommodation":["Accommodation","Có chỗ ở","包住宿"],
+"need_zh":["Chinese needed","Cần tiếng Trung","需会中文"],
+"desc":["Job description","Mô tả công việc","岗位描述"],
+"auto_tr":["Auto-translated from Chinese","Tự động dịch từ tiếng Trung","原文"],
+"no_tr":["Chinese original. Translation will be added once the translation service is connected.","Bản gốc tiếng Trung. Bản dịch sẽ có khi kết nối dịch vụ dịch.","原文"],
+"my_apps":["My applications","Đơn ứng tuyển của tôi","我的申请"],
+"no_apps":["No applications yet","Chưa có đơn ứng tuyển","还没有申请"],
+"status_sent":["Sent · waiting for the employer","Đã gửi · chờ nhà tuyển dụng","已投递 · 等待雇主回复"],
+"me":["My profile","Hồ sơ của tôi","我的档案"],
+"language":["Language","Ngôn ngữ","语言"],
+"switch_role":["Switch role","Đổi vai trò","切换身份"],
+"verify_pending":["Documents under review","Giấy tờ đang được xét duyệt","证件审核中"],
+"safety":["Never pay money to get a job. Report anyone who asks you to pay.","Không bao giờ trả tiền để có việc. Hãy báo cáo nếu ai đó đòi tiền.","找工作无需付费，遇到收费请举报"],
+"search_jobs":["Search jobs, companies, cities","Tìm việc, công ty, thành phố","搜索岗位、公司、城市"],
+"verified":["Verified employer","Nhà tuyển dụng đã xác minh","已认证企业"],
+"optional":["(optional)","(không bắt buộc)","（选填）"],
+"yrs":["yrs","năm","年"],
+"any":["Any","Không yêu cầu","不限"],
+"jobs":["Jobs","Việc làm","岗位"],
+"nationality_lang":["Nationalities wanted","Quốc tịch tuyển","国籍偏好"],
+"nothing":["No jobs match your search","Không có việc phù hợp","没有匹配的岗位"],
+"edit_profile":["Edit profile","Sửa hồ sơ","修改档案"]};
 const t=k=>{const r=T[k];if(!r)return k;return r[LI[S.lang]]??r[0]};
-const RT={'焊工':['Thợ hàn','Soudeur','वेल्डर'],'电工':['Thợ điện','Électricien','इलेक्ट्रीशियन'],'机修工':['Thợ sửa máy','Mécanicien','मैकेनिक'],'叉车司机':['Lái xe nâng','Cariste','फोर्कलिफ्ट चालक'],'CNC操作工':['Thợ vận hành CNC','Opérateur CNC','सीएनसी ऑपरेटर'],'质检员':['Nhân viên QC','Contrôleur qualité','गुणवत्ता निरीक्षक'],'普工':['Lao động phổ thông','Ouvrier polyvalent','सामान्य कामगार'],
-'种植工':['Công nhân trồng trọt','Ouvrier agricole','खेत मज़दूर'],'农机手':['Lái máy cày','Conducteur de tracteur','ट्रैक्टर चालक'],'养殖工':['Công nhân chăn nuôi','Éleveur','पशुपालक'],'采摘工':['Công nhân thu hoạch','Cueilleur','फसल तोड़ने वाला'],'灌溉技工':['Kỹ thuật viên tưới tiêu','Technicien d’irrigation','सिंचाई तकनीशियन'],'农场主管':['Quản lý trang trại','Chef d’exploitation','फार्म पर्यवेक्षक'],
-'中餐厨师':['Đầu bếp món Trung','Cuisinier chinois','चीनी रसोइया'],'司机':['Tài xế','Chauffeur','ड्राइवर'],'保安':['Bảo vệ','Agent de sécurité','सुरक्षा गार्ड'],'保洁':['Nhân viên vệ sinh','Agent d’entretien','सफ़ाईकर्मी'],'中英翻译':['Phiên dịch Trung–Anh','Interprète chinois–anglais','चीनी–अंग्रेज़ी दुभाषिया'],'家政保姆':['Giúp việc gia đình','Employé(e) de maison','घरेलू सहायक'],'会计文员':['Nhân viên kế toán','Aide-comptable','लेखा लिपिक'],
-'泥瓦工':['Thợ nề','Maçon','राजमिस्त्री'],'钢筋工':['Thợ sắt','Ferrailleur','सरिया कारीगर'],'木工':['Thợ mộc','Charpentier','बढ़ई'],'水电工':['Thợ điện nước','Plombier-électricien','प्लंबर'],'挖掘机司机':['Lái máy xúc','Conducteur de pelle','खुदाई मशीन चालक'],'测量员':['Trắc địa viên','Géomètre','सर्वेक्षक'],
-'矿工':['Thợ mỏ','Mineur','खनिक'],'爆破员':['Thợ nổ mìn','Boutefeu','विस्फोटक विशेषज्ञ'],'重卡司机':['Lái xe ben','Conducteur de dumper','डंप ट्रक चालक'],'设备维修':['Thợ sửa thiết bị','Mécanicien d’engins','उपकरण मैकेनिक'],'选矿工':['Công nhân tuyển quặng','Opérateur de traitement','अयस्क प्रसंस्करण कर्मी'],
-'仓管员':['Thủ kho','Magasinier','भंडारपाल'],'装卸工':['Công nhân bốc xếp','Manutentionnaire','लोडर'],'货车司机':['Lái xe tải','Chauffeur poids lourd','ट्रक चालक'],'报关员':['Nhân viên khai hải quan','Déclarant en douane','सीमा शुल्क लिपिक']};
-const IT={ind:['Manufacturing','Sản xuất','Industrie','विनिर्माण'],agr:['Agriculture','Nông nghiệp','Agriculture','कृषि'],svc:['Services','Dịch vụ','Services','सेवाएँ'],con:['Construction','Xây dựng','BTP','निर्माण'],min:['Mining','Khai khoáng','Mines','खनन'],log:['Logistics','Kho vận','Logistique','लॉजिस्टिक्स']};
-const NT={GH:['Ghana','Ghana','Ghana','घाना'],VN:['Vietnam','Việt Nam','Viêt Nam','वियतनाम'],IN:['India','Ấn Độ','Inde','भारत'],NG:['Nigeria','Nigeria','Nigéria','नाइजीरिया'],TG:['Togo','Togo','Togo','टोगो'],BF:['Burkina Faso','Burkina Faso','Burkina Faso','बुर्किना फ़ासो'],CN:['China','Trung Quốc','Chine','चीन']};
+const RT={"焊工":["Thợ hàn"],"电工":["Thợ điện"],"机修工":["Thợ sửa máy"],"叉车司机":["Lái xe nâng"],"CNC操作工":["Thợ vận hành CNC"],"质检员":["Nhân viên QC"],"普工":["Lao động phổ thông"],"种植工":["Công nhân trồng trọt"],"农机手":["Lái máy cày"],"养殖工":["Công nhân chăn nuôi"],"采摘工":["Công nhân thu hoạch"],"灌溉技工":["Kỹ thuật viên tưới tiêu"],"农场主管":["Quản lý trang trại"],"中餐厨师":["Đầu bếp món Trung"],"司机":["Tài xế"],"保安":["Bảo vệ"],"保洁":["Nhân viên vệ sinh"],"中英翻译":["Phiên dịch Trung–Anh"],"家政保姆":["Giúp việc gia đình"],"会计文员":["Nhân viên kế toán"],"泥瓦工":["Thợ nề"],"钢筋工":["Thợ sắt"],"木工":["Thợ mộc"],"水电工":["Thợ điện nước"],"挖掘机司机":["Lái máy xúc"],"测量员":["Trắc địa viên"],"矿工":["Thợ mỏ"],"爆破员":["Thợ nổ mìn"],"重卡司机":["Lái xe ben"],"设备维修":["Thợ sửa thiết bị"],"选矿工":["Công nhân tuyển quặng"],"仓管员":["Thủ kho"],"装卸工":["Công nhân bốc xếp"],"货车司机":["Lái xe tải"],"报关员":["Nhân viên khai hải quan"]};
+const IT={"ind":["Manufacturing","Sản xuất"],"agr":["Agriculture","Nông nghiệp"],"svc":["Services","Dịch vụ"],"con":["Construction","Xây dựng"],"min":["Mining","Khai khoáng"],"log":["Logistics","Kho vận"]};
+const NT={"GH":["Ghana","Ghana"],"VN":["Vietnam","Việt Nam"],"CN":["China","Trung Quốc"]};
 const roleT=zh=>{if(S.lang==='zh')return zh;const m=ROLE_MAP[zh];if(!m)return zh;return S.lang==='en'?m.r[1]:(RT[zh]||[])[LI[S.lang]-1]||m.r[1]};
 const indT=id=>{const i=IND.find(x=>x.id===id);return S.lang==='zh'?i.zh:IT[id][LI[S.lang]]};
 const natT=c=>S.lang==='zh'?NATS[c].zh:NT[c][LI[S.lang]];
@@ -743,7 +733,7 @@ const DB={on:!!(CFG.supabaseUrl&&CFG.supabaseAnonKey),
   async q(path,opt={}){const r=await fetch(CFG.supabaseUrl.replace(/\/$/,'')+'/rest/v1/'+path,{...opt,headers:{apikey:CFG.supabaseAnonKey,Authorization:'Bearer '+CFG.supabaseAnonKey,'Content-Type':'application/json',Prefer:'return=representation'}});
     if(!r.ok)throw new Error(await r.text());const tx=await r.text();return tx?JSON.parse(tx):null}};
 const jobRow=j=>{const {id,dbid,...d}=j;return {data:d}};
-async function dbSafe(fn){if(!DB.on)return null;try{return await fn()}catch(e){console.error(e);toast('云端同步失败 Sync failed');return null}}
+async function dbSafe(fn,silent){if(!DB.on)return null;try{return await fn()}catch(e){console.error(e);if(!silent)toast(S.lang==='zh'||S.mode==='emp'?'网络不稳定，云端同步失败':S.lang==='vi'?'Lỗi mạng, chưa đồng bộ được':'Network error, not synced');return null}}
 
 /* ================= EXTRA DATA ================= */
 S.lang=detectLang();S.detected=S.lang;document.documentElement.lang=S.lang;
@@ -753,22 +743,22 @@ const DESC_EN={1:'Welding for steel-structure factory buildings. Must read drawi
 S.jobs.forEach(j=>{j.owner='me';j.company=MYCO;j.descEn=DESC_EN[j.id]});
 S.jobs.find(j=>j.id===3).sal='1,300–1,800';
 S.jobs.push(
- {id:5,owner:'other',company:'中加农业发展',title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,200–1,600',city:'库马西',n:30,apps:61,status:'open',nats:['GH','BF','TG'],zh:false,stay:true,desc:'腰果园采收与分拣，按时+计件，提供宿舍。',descEn:'Cashew harvesting and sorting. Hourly pay plus piece rate. Dormitory provided.'},
- {id:6,owner:'other',company:'华程路桥',title:'钢筋工',en:'Steel Fixer',ind:'con',exp:'2+ 年',sal:'2,600–3,400',city:'塔科拉迪',n:8,apps:24,status:'open',nats:['GH','NG'],zh:false,stay:true,desc:'路桥项目钢筋绑扎，需能看懂基础图纸。',descEn:'Rebar fixing on a road and bridge project. Must read basic drawings.'},
- {id:7,owner:'other',company:'远航物流',title:'仓管员',en:'Storekeeper',ind:'log',exp:'2+ 年',sal:'2,800–3,500',city:'特马',n:2,apps:15,status:'open',nats:['GH','IN'],zh:false,stay:false,desc:'仓库出入库、盘点，会基础电脑操作。',descEn:'Warehouse goods in/out and stock counts. Basic computer skills needed.'},
+ {id:5,owner:'other',company:'中加农业发展',title:'采摘工',en:'Harvester',ind:'agr',exp:'不限',sal:'1,200–1,600',city:'库马西',n:30,apps:61,status:'open',nats:['GH','VN'],zh:false,stay:true,desc:'腰果园采收与分拣，按时+计件，提供宿舍。',descEn:'Cashew harvesting and sorting. Hourly pay plus piece rate. Dormitory provided.'},
+ {id:6,owner:'other',company:'华程路桥',title:'钢筋工',en:'Steel Fixer',ind:'con',exp:'2+ 年',sal:'2,600–3,400',city:'塔科拉迪',n:8,apps:24,status:'open',nats:['GH'],zh:false,stay:true,desc:'路桥项目钢筋绑扎，需能看懂基础图纸。',descEn:'Rebar fixing on a road and bridge project. Must read basic drawings.'},
+ {id:7,owner:'other',company:'远航物流',title:'仓管员',en:'Storekeeper',ind:'log',exp:'2+ 年',sal:'2,800–3,500',city:'特马',n:2,apps:15,status:'open',nats:['GH','CN'],zh:false,stay:false,desc:'仓库出入库、盘点，会基础电脑操作。',descEn:'Warehouse goods in/out and stock counts. Basic computer skills needed.'},
  {id:8,owner:'other',company:'金泰矿业',title:'重卡司机',en:'Dump Truck Driver',ind:'min',exp:'3+ 年',sal:'4,000–5,200',city:'奥布阿西',n:5,apps:19,status:'open',nats:['GH'],zh:false,stay:true,desc:'矿区自卸车驾驶，白夜班轮换，需重型驾照。',descEn:'Mine dump truck driving, rotating day/night shifts. Valid heavy-vehicle licence required.'},
- {id:9,owner:'other',company:'鸿运餐饮',title:'保洁',en:'Cleaner',ind:'svc',exp:'不限',sal:'1,200–1,500',city:'阿克拉',n:3,apps:40,status:'open',nats:['GH','TG'],zh:false,stay:false,desc:'餐厅及后厨清洁，每周六天，包工作餐。',descEn:'Restaurant and kitchen cleaning, 6 days a week. Meals provided.'},
- {id:10,owner:'other',company:'恒达机械',title:'CNC操作工',en:'CNC Operator',ind:'ind',exp:'2+ 年',sal:'2,800–3,800',city:'特马',n:4,apps:12,status:'open',nats:['GH','VN','IN'],zh:false,stay:true,desc:'操作数控车床，首件检验，熟练使用量具。',descEn:'Operate CNC lathes, first-piece inspection, confident with measuring tools.'}
+ {id:9,owner:'other',company:'鸿运餐饮',title:'保洁',en:'Cleaner',ind:'svc',exp:'不限',sal:'1,200–1,500',city:'阿克拉',n:3,apps:40,status:'open',nats:['GH'],zh:false,stay:false,desc:'餐厅及后厨清洁，每周六天，包工作餐。',descEn:'Restaurant and kitchen cleaning, 6 days a week. Meals provided.'},
+ {id:10,owner:'other',company:'恒达机械',title:'CNC操作工',en:'CNC Operator',ind:'ind',exp:'2+ 年',sal:'2,800–3,800',city:'特马',n:4,apps:12,status:'open',nats:['GH','VN','CN'],zh:false,stay:true,desc:'操作数控车床，首件检验，熟练使用量具。',descEn:'Operate CNC lathes, first-piece inspection, confident with measuring tools.'}
 );
 if(CFG.showDemoData===false){WORKERS.length=0;S.jobs=[];S.chats=[];S.interviews=[]}
 
 /* ================= WORKER VIEWS ================= */
-const NAT_FROM_LANG={vi:'VN',hi:'IN',fr:'TG',zh:'CN',en:'GH'};
-function newReg(){return {step:1,name:'',phone:'',nat:NAT_FROM_LANG[S.lang]||'GH',gender:'m',age:'',city:0,ind:'ind',role:'焊工',exp:2,sal:'',avail:'now',zh:'none',idType:'Ghana Card',idPhoto:null,photo:null,permit:null,health:null,consent:false}}
+const NAT_FROM_LANG={vi:'VN',zh:'CN',en:'GH'};
+function newReg(){return {step:1,name:'',phone:'',nat:NAT_FROM_LANG[S.lang]||'GH',gender:'m',age:'',city:0,ind:'ind',role:'焊工',exp:2,sal:'',avail:'now',zh:'none',idType:(NAT_FROM_LANG[S.lang]||'GH')==='GH'?'Ghana Card':'passport',idPhoto:null,photo:null,permit:null,health:null,consent:false}}
 function startWorker(){S.mode='wk';S.hist=[];if(S.me){S.view='w_home'}else{S.reg=S.reg||newReg();S.view='w_reg'}render(true)}
 function startEmployer(){S.mode='emp';tab('home')}
 function toWelcome(){S.mode=null;S.hist=[];S.view='welcome';render(true)}
-function rs(k,v){S.reg[k]=v;if(k==='ind')S.reg.role=IND.find(i=>i.id===v).roles[0][0];if(k==='nat'){S.reg.idType=v==='GH'?'Ghana Card':v==='NG'||v==='TG'||v==='BF'?'ECOWAS ID':'passport'}render(false)}
+function rs(k,v){S.reg[k]=v;if(k==='ind')S.reg.role=IND.find(i=>i.id===v).roles[0][0];if(k==='nat'){S.reg.idType=v==='GH'?'Ghana Card':'passport'}render(false)}
 function resizeImg(f,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.8))};im.src=r.result};r.readAsDataURL(f)})}
 function pickPhoto(k){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;S.reg[k]=await resizeImg(f,k==='photo'?360:1000);render(false)};i.click()}
 
@@ -797,7 +787,7 @@ V.w_reg=()=>{
    <div class="fl">${t('full_name')} *</div><input class="fi" value="${r.name.replace(/"/g,'&quot;')}" oninput="S.reg.name=this.value" autocomplete="name">
    <div class="fl">${t('phone')} *</div><div class="row gap6"><span class="fi" style="width:auto;flex:none">+233</span><input class="fi" inputmode="tel" value="${r.phone}" oninput="S.reg.phone=this.value" placeholder="24 123 4567"></div>
    <div class="xs muted" style="margin-top:6px">${ic('shield',12)} ${t('phone_note')}</div>
-   <div class="fl">${t('nationality')}</div><div class="chips wrap">${Object.keys(NATS).filter(c=>c!=='CN').map(c=>`<span class="chip sm ${r.nat===c?'on':''}" onclick="rs('nat','${c}')">${flag(c)}${natT(c)}</span>`).join('')}</div>
+   <div class="fl">${t('nationality')}</div><div class="chips wrap">${Object.keys(NATS).map(c=>`<span class="chip sm ${r.nat===c?'on':''}" onclick="rs('nat','${c}')">${flag(c)}${natT(c)}</span>`).join('')}</div>
    <div class="two"><div><div class="fl">${t('gender')}</div><div class="chips wrap">${ch('gender','m',t('male'))}${ch('gender','f',t('female'))}</div></div>
     <div><div class="fl">${t('age')}</div><input class="fi" inputmode="numeric" value="${r.age}" oninput="S.reg.age=this.value.replace(/\\D/g,'')"></div></div>
    <div class="fl">${t('city')}</div><div class="chips wrap">${CITIES.map((c,k)=>ch('city',k,S.lang==='zh'?c[0]:c[1])).join('')}</div>`;
@@ -810,7 +800,7 @@ V.w_reg=()=>{
    <div class="fl">${t('start')}</div><div class="chips wrap">${ch('avail','now',t('now'))}${ch('avail','w1',t('w1'))}${ch('avail','w2',t('w2'))}</div>
    <div class="fl">${t('zh_level')}</div><div class="chips wrap">${ch('zh','none',t('none'))}${ch('zh','basic',t('basic'))}${ch('zh','fluent',t('fluent'))}</div>`;
   if(st===3)body=`
-   <div class="fl">${t('id_type')}</div><div class="chips wrap">${ch('idType','Ghana Card','Ghana Card')}${ch('idType','passport',t('passport'))}${ch('idType','ECOWAS ID','ECOWAS ID')}</div>
+   <div class="fl">${t('id_type')}</div><div class="chips wrap">${ch('idType','Ghana Card','Ghana Card')}${ch('idType','passport',t('passport'))}</div>
    <div class="fl">${t('id_photo')} <span class="muted sm">${t('optional')}</span></div>
    <div class="up" onclick="pickPhoto('idPhoto')" style="${r.idPhoto?`background-image:url('${r.idPhoto}')`:''}">${r.idPhoto?'':`<div style="text-align:center">${ic('doc',28)}<div class="sm" style="margin-top:6px">${t('tap_upload')}</div></div>`}</div>
    <div class="xs muted" style="margin-top:6px">${ic('shield',12)} ${t('id_note')}</div>
@@ -832,8 +822,7 @@ async function submitReg(){
     card:false,permit:r.nat==='GH'?null:false,health:false,police:false,pending:true,selfPermit:r.permit,selfHealth:r.health,
     avail:{now:'可立即上岗',w1:'1周内到岗',w2:'2周内到岗'}[r.avail],stay:'—',shift:'—',col:AV_COL[Math.floor(Math.random()*AV_COL.length)],isNew:true,photo:r.photo,lang:S.lang,self:true};
   WORKERS.unshift(w);S.me=w;
-  const saved=await dbSafe(async()=>{const {id,...d}=w;const res=await DB.q('workers',{method:'POST',body:JSON.stringify({data:d})});const dbid=res[0].id;
-    await DB.q('worker_docs',{method:'POST',body:JSON.stringify({worker_id:dbid,data:{phone:'+233 '+r.phone,idType:r.idType,idPhoto:r.idPhoto,permit:r.permit,health:r.health,consentAt:new Date().toISOString(),lang:S.lang}})});
+  const saved=await dbSafe(async()=>{const {id,...d}=w;const dbid=await DB.q('rpc/register_worker',{method:'POST',body:JSON.stringify({p_data:d,p_docs:{phone:'+233 '+r.phone,idType:r.idType,idPhoto:r.idPhoto,permit:r.permit,health:r.health,consentAt:new Date().toISOString(),lang:S.lang}})});
     w.id=100000+dbid;w.dbid=dbid;return true});
   toast(t('profile_done'));S.view='w_home';S.hist=[];render(true);
 }
@@ -902,9 +891,9 @@ function wnav(){const b=(v,i)=>`<button class="${S.view===v?'on':''}" onclick="S
 async function boot(){
   S.view='welcome';render(true);
   if(!DB.on)return;
-  const ws=await dbSafe(()=>DB.q('workers?select=id,data&order=id.asc&limit=2000'));
+  const ws=await dbSafe(()=>DB.q('workers?select=id,data&order=id.asc&limit=2000'),true);
   (ws||[]).forEach(r=>WORKERS.unshift({...r.data,id:100000+r.id,dbid:r.id}));
-  const js=await dbSafe(()=>DB.q('jobs?select=id,data&order=id.asc&limit=1000'));
+  const js=await dbSafe(()=>DB.q('jobs?select=id,data&order=id.asc&limit=1000'),true);
   (js||[]).forEach(r=>S.jobs.unshift({...r.data,id:100000+r.id,dbid:r.id}));
   render(false);
 }
