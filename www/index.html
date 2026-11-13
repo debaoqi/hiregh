@@ -717,6 +717,7 @@ const T={"welcome_title":["Finding work is easy","Tìm việc thật dễ dàng"
 "nothing":["No jobs match your search","Không có việc phù hợp","没有匹配的岗位"],
 "edit_profile":["Edit profile","Sửa hồ sơ","修改档案"]};
 const t=k=>{const r=T[k];if(!r)return k;return r[LI[S.lang]]??r[0]};
+Object.assign(T,{"msgs": ["Messages", "Messages", "消息"], "no_msgs": ["No messages yet. Messages and interview invitations from employers will appear here.", "No messages yet. Messages and interview invitations from employers will appear here.", "暂无消息。雇主发来的消息和面试邀请会显示在这里。"], "type_msg": ["Type a message…", "Type a message…", "输入消息…"], "iv_title": ["Interview invitation", "Interview invitation", "面试邀请"], "iv_accept": ["Accept", "Accept", "接受"], "iv_decline": ["Decline", "Decline", "拒绝"], "iv_accepted": ["Accepted", "Accepted", "已接受"], "iv_declined": ["Declined", "Declined", "已拒绝"], "iv_cancelled": ["Cancelled by employer", "Cancelled by employer", "雇主已取消"], "iv_new": ["New interview invitation", "New interview invitation", "新的面试邀请"], "iv_view": ["Tap to view and reply", "Tap to view and reply", "点击查看并回复"], "msg_employer": ["Message employer", "Message employer", "联系雇主"], "new_msg": ["New message", "New message", "新消息"], "emp_verified": ["Verified employer", "Verified employer", "已认证雇主"], "emp_pending": ["Employer under review", "Employer under review", "雇主认证中"], "msg_need_reg": ["Submit your profile first, then you can chat with employers.", "Submit your profile first, then you can chat with employers.", "请先提交个人资料，才能和雇主沟通。"], "msg_fail": ["Send failed, tap to retry", "Send failed, tap to retry", "发送失败，点此重试"], "tr_note": ["Messages are translated automatically between you and the employer", "Messages are translated automatically between you and the employer", "你和雇主的消息会自动翻译"], "iv_phone": ["Employer phone", "Employer phone", "雇主电话"], "iv_acc_msg": ["I accept the interview invitation and will be there on time.", "I accept the interview invitation and will be there on time.", "我接受面试邀请，会准时参加。"], "iv_dec_msg": ["Sorry, I cannot attend this interview. Thank you for the invitation.", "Sorry, I cannot attend this interview. Thank you for the invitation.", "抱歉，这次面试我不能参加，谢谢邀请。"]});
 const RT={"焊工":["Thợ hàn"],"电工":["Thợ điện"],"机修工":["Thợ sửa máy"],"叉车司机":["Lái xe nâng"],"CNC操作工":["Thợ vận hành CNC"],"质检员":["Nhân viên QC"],"普工":["Lao động phổ thông"],"种植工":["Công nhân trồng trọt"],"农机手":["Lái máy cày"],"养殖工":["Công nhân chăn nuôi"],"采摘工":["Công nhân thu hoạch"],"灌溉技工":["Kỹ thuật viên tưới tiêu"],"农场主管":["Quản lý trang trại"],"中餐厨师":["Đầu bếp món Trung"],"司机":["Tài xế"],"保安":["Bảo vệ"],"保洁":["Nhân viên vệ sinh"],"中英翻译":["Phiên dịch Trung–Anh"],"家政保姆":["Giúp việc gia đình"],"会计文员":["Nhân viên kế toán"],"泥瓦工":["Thợ nề"],"钢筋工":["Thợ sắt"],"木工":["Thợ mộc"],"水电工":["Thợ điện nước"],"挖掘机司机":["Lái máy xúc"],"测量员":["Trắc địa viên"],"矿工":["Thợ mỏ"],"爆破员":["Thợ nổ mìn"],"重卡司机":["Lái xe ben"],"设备维修":["Thợ sửa thiết bị"],"选矿工":["Công nhân tuyển quặng"],"仓管员":["Thủ kho"],"装卸工":["Công nhân bốc xếp"],"货车司机":["Lái xe tải"],"报关员":["Nhân viên khai hải quan"]};
 const IT={"ind":["Manufacturing","Sản xuất"],"agr":["Agriculture","Nông nghiệp"],"svc":["Services","Dịch vụ"],"con":["Construction","Xây dựng"],"min":["Mining","Khai khoáng"],"log":["Logistics","Kho vận"]};
 const NT={"GH":["Ghana","Ghana"],"CN":["China","Trung Quốc"]};
@@ -1119,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.1.0',APP_BUILD=32;
+const APP_VER='2.2.0',APP_BUILD=33;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1934,6 +1935,249 @@ function fitWelTags(){if(S.view!=='welcome')return;document.querySelectorAll('.s
 const _render14=render;render=function(top){_render14(top);fitWelTitle();fitWelTags()};
 window.addEventListener('resize',()=>{fitWelTitle();fitWelTags()});document.fonts&&document.fonts.ready.then(()=>{fitWelTitle();fitWelTags()});
 render(false);
+</script>
+<script>
+/* ================= v2.2 真实消息：工人 ⇄ 招聘方（云端即时对话 + 面试邀请回复） ================= */
+const MSG={};
+function msgCred(role){role=role||(S.mode==='wk'?'w':S.mode==='emp'?'e':null);
+  if(role==='w'&&S.me&&S.me.dbid&&S.myToken)return {role,id:S.me.dbid,token:S.myToken};
+  if(role==='e'&&S.company&&S.company.registered&&S.company.dbid&&S.company.token)return {role,id:S.company.dbid,token:S.company.token};
+  return null}
+function mstore(c){if(!c)return null;const key='msg_'+c.role+c.id;let m=MSG[c.role];
+  if(!m||m.key!==key){m=MSG[c.role]={rows:[],peers:{},seen:{},last:0,...(LS.get(key,null)||{}),key}}return m}
+function msave(m){m.rows=m.rows.filter(r=>!r.pending);if(m.rows.length>1500)m.rows=m.rows.slice(-1500);const {key,...d}=m;LS.set(key,d)}
+const mrpc=(fn,b)=>DB.q('rpc/'+fn,{method:'POST',body:JSON.stringify(b)});
+const peerOf=(c,r)=>c.role==='w'?r.employer_id:r.worker_id;
+function mtime(r){const d=new Date(r.created_at||Date.now()),n=new Date();const hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  return d.toDateString()===n.toDateString()?hm:(d.getMonth()+1)+'/'+d.getDate()+' '+hm}
+function threads(c){const m=mstore(c);if(!m)return [];const by={};
+  m.rows.forEach(r=>{const p=peerOf(c,r);if(m.loaded&&!m.peers[p])return;const t=by[p]||(by[p]={peer:p,last:r,unread:0,inv:0});t.last=r;
+    if(r.sender!==c.role&&!r.read_at)t.unread++;if(c.role==='w'&&r.kind==='invite'&&!(r.meta||{}).ans&&!(r.meta||{}).cancel)t.inv++});
+  return Object.values(by).sort((a,b)=>(b.last.id>a.last.id?1:-1))}
+const unreadAll=c=>threads(c).reduce((a,t)=>a+t.unread,0);
+/* 回复/取消 → 更新对应邀请的状态 */
+function applyReplies(c,m){const byId={};m.rows.forEach(r=>byId[r.id]=r);
+  m.rows.forEach(r=>{const mt=r.meta||{};if(!mt.iid||!byId[mt.iid])return;const iv=byId[mt.iid];iv.meta=iv.meta||{};
+    if(r.kind==='invite_reply'){iv.meta.ans=mt.ans;if(mt.phone)iv.meta.wphone=mt.phone}if(r.kind==='cancel')iv.meta.cancel=true;
+    if(c.role==='e'){const x=S.interviews.find(i=>i.mid===mt.iid);if(x){if(r.kind==='invite_reply'){x.ans=mt.ans;x.phone=mt.phone||x.phone}}}})}
+/* 翻译：任意语言 → 中文 / 英文 → 当前语言 */
+async function trTo(text,tl){text=(text||'').trim();if(!text)return '';
+  try{const c=new AbortController();setTimeout(()=>c.abort(),6000);
+    const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='+tl+'&dt=t&q='+encodeURIComponent(text.slice(0,1500)),{signal:c.signal});
+    const j=await r.json();if(j[2]&&String(j[2]).slice(0,2)===tl.slice(0,2))return '';return (j[0]||[]).map(x=>x[0]).join('')}catch(e){return ''}}
+const MTR=LS.get('mtr',{});let _mtrQ={};
+function locText(id,txt){const l=S.lang;if(!txt||['en','zh','vi'].includes(l))return txt;const k=l+id;if(MTR[k])return MTR[k];
+  if(!_mtrQ[k]){_mtrQ[k]=1;trTo(txt,l).then(v=>{if(v){MTR[k]=v;const ks=Object.keys(MTR);if(ks.length>400)delete MTR[ks[0]];LS.set('mtr',MTR);msgRender()}})}return txt}
+
+/* 轮询：聊天页 3 秒，其他页 10 秒；切回前台立即刷新 */
+let _mpBusy=false,_mpT=null;
+async function msgPoll(){const c=msgCred();if(!DB.on||!c||_mpBusy)return;_mpBusy=true;
+  try{const m=mstore(c);const r=await mrpc('get_messages',{p_role:c.role,p_id:c.id,p_token:c.token,p_after:m.last||0});
+    if(r&&r.msgs){const ids=new Set(m.rows.map(x=>x.id));const inc=[];
+      r.msgs.forEach(x=>{if(ids.has(x.id))return;m.rows.push(x);if(x.id>(m.last||0))m.last=x.id;if(x.sender!==c.role&&!x.read_at)inc.push(x)});
+      m.rows.sort((a,b)=>(typeof a.id==='number'?a.id:1e15)-(typeof b.id==='number'?b.id:1e15));
+      const pc=JSON.stringify(r.peers||{})!==JSON.stringify(m.peers),sc=JSON.stringify(r.seen||{})!==JSON.stringify(m.seen);
+      m.peers=r.peers||{};m.seen=r.seen||{};m.loaded=1;m.rows=m.rows.filter(x=>x.pending||m.peers[peerOf(c,x)]);applyReplies(c,m);
+      const open=openPeer(c);if(open&&inc.some(x=>peerOf(c,x)===open))markRead(c,open,true);
+      if(inc.length||pc||sc){msave(m);if(c.role==='e')persist();msgRender();inc.filter(x=>peerOf(c,x)!==open).slice(-1).forEach(x=>msgNotify(c,x))}}
+  }catch(e){}finally{_mpBusy=false}}
+function msgLoop(){clearTimeout(_mpT);const fast=['chat','w_chat','chats','w_msgs'].includes(S.view);
+  _mpT=setTimeout(async()=>{if(!document.hidden)await msgPoll();msgLoop()},fast?3000:10000)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){msgPoll();msgLoop()}});
+function openPeer(c){if(c.role==='w'&&S.view==='w_chat')return S.params.eid;if(c.role==='e'&&S.view==='chat'&&S.params.id>=100000)return S.params.id-100000;return null}
+async function markRead(c,peer,silent){const m=mstore(c);let n=0;m.rows.forEach(r=>{if(peerOf(c,r)===peer&&r.sender!==c.role&&!r.read_at){r.read_at=new Date().toISOString();n++}});
+  if(!n)return;msave(m);if(!silent)msgRender();try{await mrpc('mark_read',{p_role:c.role,p_id:c.id,p_token:c.token,p_peer:peer})}catch(e){}}
+function msgNotify(c,x){try{navigator.vibrate&&navigator.vibrate(150)}catch(e){}
+  const name=c.role==='w'?empName(x.employer_id):(EW(x.worker_id)||{}).name||'';
+  if(c.role==='w')toast((x.kind==='invite'?t('iv_new'):t('new_msg'))+' · '+esc(name));else toast((x.kind==='invite_reply'?((x.meta||{}).ans==='accept'?'对方已接受面试':'对方已回复面试邀请'):'新消息')+' · '+esc(name))}
+/* 重新渲染时保留输入框内容 */
+const MSG_VIEWS=['chat','w_chat','chats','w_msgs','w_home','home','interviews','me','w_me','w_apps'];
+function msgRender(){if(!MSG_VIEWS.includes(S.view)||$('#sheet').classList.contains('on'))return;const mi=$('#mi');const v=mi?mi.value:null,f=mi&&document.activeElement===mi;
+  const sc=$('#screen');const atBottom=sc.scrollHeight-sc.scrollTop-sc.clientHeight<80;const top=sc.scrollTop;render(false);
+  if(['chat','w_chat'].includes(S.view)){if(!atBottom)sc.scrollTop=top}else sc.scrollTop=top;
+  const n=$('#mi');if(n&&v!==null){n.value=v;if(f)n.focus()}}
+/* 发送（乐观显示，失败可重试） */
+let _pid=0;
+async function msgSend(peer,kind,body,trans,meta){const c=msgCred();if(!c)return null;const m=mstore(c);
+  const tmp={id:'p'+(++_pid),pending:true,sender:c.role,kind,body,trans,meta,created_at:new Date().toISOString(),worker_id:c.role==='w'?c.id:peer,employer_id:c.role==='e'?c.id:peer};
+  m.rows.push(tmp);msgRender();
+  try{const r=await mrpc('send_message',{p_role:c.role,p_id:c.id,p_token:c.token,p_peer:peer,p_kind:kind,p_body:body,p_trans:trans||null,p_meta:meta||null});
+    const i=m.rows.indexOf(tmp);if(i>=0)m.rows.splice(i,1);if(!m.rows.some(x=>x.id===r.id))m.rows.push(r);
+    m.peers[peer]=m.peers[peer]||{};msave(m);msgRender();return r}
+  catch(e){tmp.pending=false;tmp.failed=true;tmp.id='f'+_pid;msgRender();toast(c.role==='w'?t('msg_fail'):'发送失败，请检查网络后重试');return null}}
+function msgRetry(id){const c=msgCred();const m=mstore(c);const r=m.rows.find(x=>x.id===id);if(!r)return;m.rows.splice(m.rows.indexOf(r),1);msgSend(peerOf(c,r),r.kind,r.body,r.trans,r.meta)}
+
+/* ---------- 招聘方：工人信息 ---------- */
+function EW(dbid){const w=W(100000+dbid);if(w)return w;const c=msgCred('e');const p=c&&mstore(c).peers[dbid];if(!p)return null;
+  return {...p,id:100000+dbid,dbid,col:'#E2B2FA',langs:p.langs||['English'],nat:p.nat||'GH',role:p.role||'',name:p.name||'工人',city:p.city||''}}
+const realW=id=>id>=100000&&!!msgCred('e');
+const CHCOL=['#E2B2FA','#CFE36B','#FFD9D2','#FCEBB0','#C9E4FF'];
+function chatCard(k,color,av,name,extra,sub,txt,tm,unread,onclick){return `<div class="cb" style="background:${color};color:#161616;z-index:${30-k}" onclick="${onclick}">${av}<div style="flex:1;min-width:0;padding-right:26px"><div class="row gap6"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(name)}</b>${extra||''}<span class="xs" style="opacity:.6;margin-left:auto">${tm}</span></div>
+  <div class="xs" style="opacity:.7">${sub}</div><div class="msg">${txt}</div></div>${unread?`<span class="un">${unread}</span>`:''}<span class="tail" style="background:${color};${k%2?'right':'left'}:46px"></span></div>`}
+function ePreview(r){const mt=r.meta||{};if(r.kind==='invite')return '[面试邀请] '+esc(mt.job||'');if(r.kind==='invite_reply')return mt.ans==='accept'?'[已接受面试邀请]':'[已拒绝面试邀请]';
+  if(r.kind==='cancel')return '[已取消面试]';if(r.kind==='apply')return '[申请岗位] '+esc(mt.job||'');return esc(r.sender==='e'?r.body:(S.translate&&r.trans?r.trans:r.body))}
+
+const _vchats13=V.chats;
+V.chats=()=>{const c=msgCred('e');if(!c)return _vchats13();const th=threads(c).filter(x=>EW(x.peer));const legacy=S.chats.filter(x=>x.wid<100000&&W(x.wid));
+  const n=th.length+legacy.length;let k=0;
+  const cards=th.map(x=>{const w=EW(x.peer);return chatCard(k,CHCOL[k++%5],avatar(w),w.name,flag(w.nat),esc(w.role||''),ePreview(x.last),mtime(x.last),x.unread,`openChat(${w.id})`)}).join('')+
+   legacy.map(x=>{const w=W(x.wid);const m=x.msgs[x.msgs.length-1]||{o:''};return chatCard(k,CHCOL[k++%5],avatar(w),w.name,flag(w.nat)+'<span class="xs" style="opacity:.5">示例</span>',esc(w.role),esc(S.translate&&!m.me?m.t||m.o:m.o),m.tm||'',x.unread,`openChat(${w.id})`)}).join('');
+  return `<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">消息</div><div class="row gap6"><span class="muted sm">${n} 个对话</span><button class="icbtn" onclick="S.translate=!S.translate;toast(S.translate?'自动翻译已开启':'自动翻译已关闭');render(false)" style="${S.translate?'background:var(--lime)':''}">${ic('tr')}</button></div></div>
+  <div class="sm muted" style="margin:6px 0 18px">${S.translate?'自动翻译已开启：工人的消息自动翻成中文':'自动翻译已关闭'} · 实时同步</div>
+  ${n?cards:'<div class="empty">暂无消息<br><span class="sm">在人才详情页点“发消息”或“发起面试邀请”，工人手机会立即收到</span></div>'}
+  <div class="box" style="margin-top:22px;display:flex;gap:12px;align-items:center"><div class="qi" style="width:44px;height:44px;border-radius:14px;background:var(--gold);display:grid;place-items:center">${ic('shield')}</div><div class="sm">为保护双方，平台对话会留存记录。<br><span class="muted">请勿在面试前向工人收取任何费用。</span></div></div></div>`};
+
+const _openChat13=openChat;
+openChat=function(id){if(!realW(id))return _openChat13(id);const c=msgCred('e');go('chat',{id});markRead(c,id-100000);msgPoll()};
+
+function eBubble(r,seen){const me=r.sender==='e';const mt=r.meta||{};const st=r.pending?' · 发送中…':r.failed?` · <a style="color:#FF8A7A;text-decoration:underline" onclick="msgRetry('${r.id}')">发送失败，点此重试</a>`:(me&&seen>=r.id?' · 已读':'');
+  const tm=`<div class="tm">${mtime(r)}${st}</div>`;
+  if(r.kind==='invite'){const a=mt.cancel?['已取消','#E3E0DA']:mt.ans==='accept'?['工人已接受','var(--lime)']:mt.ans==='decline'?['工人已拒绝','#FAD2CB']:['等待工人回复','var(--gold)'];
+    return `<div class="m me"><div class="xs" style="opacity:.7">${ic('cal',13)} 面试邀请</div><div class="b" style="margin:4px 0;font-size:16px">${esc(mt.job)}</div><div class="sm">${esc(mt.m)}月${esc(mt.d)}日 ${esc(mt.time)} · ${esc(mt.way)}</div>${mt.place?`<div class="sm" style="opacity:.8">${ic('pin',13)} ${esc(mt.place)}</div>`:''}
+     <span class="badge" style="background:${a[1]};color:#161616;display:inline-block;margin-top:10px">${a[0]}</span>${S.translate&&r.trans?`<div class="tr">${esc(r.trans)}</div>`:''}${tm}</div>`}
+  if(r.kind==='invite_reply'){const ok=mt.ans==='accept';
+    return `<div class="m them" style="background:${ok?'var(--lime)':'#FAD2CB'}"><div class="b">${ok?ic('check',15)+' 已接受面试邀请':'已拒绝面试邀请'}</div>${ok&&mt.phone?`<div class="sm" style="margin-top:6px">工人电话：<a href="tel:${esc(mt.phone.replace(/\s/g,''))}" style="font-weight:700;text-decoration:underline">${esc(mt.phone)}</a></div>`:''}
+     <div class="sm" style="margin-top:4px;opacity:.8">${esc(r.body)}</div>${r.trans?`<div class="tr">${esc(r.trans)}</div>`:''}${tm}</div>`}
+  if(r.kind==='cancel')return `<div class="m me" style="background:#5c5c5c">${ic('x',14)} ${esc(r.body)}${tm}</div>`;
+  if(r.kind==='apply')return `<div class="m them" style="background:var(--gold)"><div class="xs" style="opacity:.7">${ic('brief',13)} 岗位申请</div><div class="b" style="margin:3px 0">${esc(mt.job||'')}</div><div class="sm">${esc(r.body)}</div>${S.translate&&r.trans?`<div class="tr">${esc(r.trans)}</div>`:''}${tm}</div>`;
+  return `<div class="m ${me?'me':'them'}"${r.failed?' style="opacity:.6"':''}>${esc(r.body)}${S.translate&&r.trans&&r.trans!==r.body?`<div class="tr">${esc(r.trans)}</div>`:''}${tm}</div>`}
+
+const _vchat13=V.chat;
+V.chat=()=>{if(!realW(S.params.id))return _vchat13();const c=msgCred('e');const m=mstore(c);const w=EW(S.params.id-100000);
+  if(!w)return pageHdr('消息')+'<div class="empty">该工人已被平台移除</div>';const rows=m.rows.filter(r=>r.worker_id===w.dbid);const seen=+m.seen[w.dbid]||0;
+  return `<div class="chead"><button class="icbtn" onclick="back()">${ic('back')}</button><div style="cursor:pointer" onclick="${W(w.id)?`go('worker',{id:${w.id}})`:''}">${avatar(w,'sm')}</div><div style="flex:1;min-width:0"><div class="b row gap6" style="white-space:nowrap;overflow:hidden">${esc(w.name)} ${flag(w.nat)}</div><div class="xs muted">${esc(w.role)} · <span style="color:#3a8a3a">● 实时对话</span></div></div>
+   <button class="icbtn" style="${S.translate?'background:var(--lime)':''}" onclick="S.translate=!S.translate;render(false)">${ic('tr')}</button><button class="icbtn" onclick="callSheet(${w.id})">${ic('phone')}</button></div>
+  <div class="msgs"><div class="xs muted" style="text-align:center;margin:6px 0 10px">消息实时送达工人手机 · 中文会自动翻译成英文</div>
+   ${rows.length?'':`<div class="empty sm">打个招呼吧，工人会在手机上实时收到</div>`}
+   ${rows.map(r=>eBubble(r,seen)).join('')}</div>
+  <div class="quick"><span class="chip sm on" onclick="inviteSheet(${w.id})">${ic('cal',14)} 发起面试邀请</span>${QUICK.map((q,k)=>`<span class="chip sm" onclick="sendMsg(${k})">${q[0]}</span>`).join('')}</div>
+  <div class="inputbar"><input id="mi" placeholder="输入中文，自动翻译成英文…" maxlength="1000" onkeydown="if(event.key==='Enter')sendMsg()"><button class="icbtn dark" style="width:50px;height:50px" onclick="sendMsg()">${ic('send')}</button></div>`};
+
+const _sendMsg13=sendMsg;
+sendMsg=async function(k){const id=S.params.id;if(!realW(id))return _sendMsg13(k);let o,tr;
+  if(k!==undefined){[o,tr]=QUICK[k]}else{const i=$('#mi');o=i.value.trim();if(!o)return;i.value='';tr=null}
+  if(tr===null)tr=await zh2en(o);if(tr===o)tr=null;msgSend(id-100000,'text',o,tr,null)};
+
+const _sendInvite13=sendInvite;
+sendInvite=async function(id){if(!realW(id))return _sendInvite13(id);const w=EW(id-100000);
+  const job=$('#iJob .chip.on').textContent,dc=$('#iDate .chip.on'),time=$('#iTime .chip.on').textContent,way=$('#iWay .chip.on').textContent;
+  const mo=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][dc.dataset.m-1];
+  const wayEn={'到厂面试':'on-site interview','视频面试':'video interview','电话面试':'phone interview','直接试工':'trial work'}[way];
+  const co=S.company;const place=co.loc&&co.loc.addr?co.loc.addr:(co.city||w.city||'');
+  const jobEn=(S.jobs.find(j=>j.title===job)||{}).en||(typeof ROLE_MAP!=='undefined'&&ROLE_MAP[job]&&ROLE_MAP[job].r?ROLE_MAP[job].r[1]:'')||job;
+  const meta={job,jobEn,m:+dc.dataset.m,d:+dc.dataset.d,mo,time,way,wayEn,place,co:co.name,coEn:co.en||co.name,contact:co.contact||'',phone:co.phone||'',loc:co.loc&&co.loc.lat?{lat:co.loc.lat,lng:co.loc.lng}:null};
+  const body=`您好 ${w.name}，邀请您 ${meta.m}月${meta.d}日 ${time} 参加「${job}」岗位的${way}，请确认是否能来。`;
+  const tr=`Hello ${w.name}, ${meta.coEn} invites you to a ${wayEn} for the ${jobEn} position on ${mo} ${meta.d} at ${time}. Please accept or decline.`;
+  const iv={wid:id,job,date:`${meta.m}月${meta.d}日`,d:meta.d,mo,time,way,place:place||w.city};S.interviews.unshift(iv);closeSheet();
+  const r=await msgSend(id-100000,'invite',body,tr,meta);if(r){iv.mid=r.id;persist();toast('面试邀请已发送，工人手机会立即收到')}};
+
+let _cancelIid=null;
+const _sendToWorker13=sendToWorker;
+sendToWorker=function(wid,zh,en){if(!realW(wid))return _sendToWorker13(wid,zh,en);msgSend(wid-100000,_cancelIid?'cancel':'text',zh,en,_cancelIid?{iid:_cancelIid}:null)};
+const _ivSet13=ivSet;
+ivSet=function(k,s){const iv=S.interviews[k];_cancelIid=s==='cancel'&&iv&&iv.mid?iv.mid:null;try{_ivSet13(k,s)}finally{_cancelIid=null}};
+
+/* 面试安排：显示工人是否已接受 */
+const _vivs13=V.interviews;
+V.interviews=()=>{let h=_vivs13();S.interviews.forEach(iv=>{if(!iv.ans||iv.status)return;const w=W(iv.wid);if(!w)return;
+  const tag=iv.ans==='accept'?'<span class="badge lime">工人已接受</span>':'<span class="badge" style="background:#FAD2CB">工人已拒绝</span>';
+  const key=`<div class="sm">${ic('clock',13)} ${iv.time} · ${esc(iv.place)}</div></div>\n  <span class="badge gold">待面试</span>`;
+  const i=h.indexOf(`go('worker',{id:${w.id}})`);const j=i<0?-1:h.indexOf(key,i);if(j>=0)h=h.slice(0,j)+key.replace('<span class="badge gold">待面试</span>',tag)+h.slice(j+key.length)});return h};
+
+/* 电话：工人接受面试后显示真实号码 */
+const _callSheet13=callSheet;
+callSheet=function(id){if(!realW(id))return _callSheet13(id);const c=msgCred('e');const m=mstore(c);const dbid=id-100000;
+  const acc=[...m.rows].reverse().find(r=>r.worker_id===dbid&&r.kind==='invite_reply'&&(r.meta||{}).ans==='accept'&&(r.meta||{}).phone);
+  if(!acc)return _callSheet13(id);const w=EW(dbid);const ph=acc.meta.phone;
+  openSheet(`<div class="b" style="font-size:20px">联系 ${esc(w.name)}</div><p class="sm muted" style="margin:8px 0 16px">工人已接受面试邀请，可以直接打电话。</p>
+   <div class="box" style="margin:0 0 14px;text-align:center"><div class="b" style="font-size:24px">${esc(ph)}</div></div>
+   <div class="row gap"><button class="bigbtn" style="background:var(--card);color:#161616" onclick="closeSheet();copyText('${esc(ph)}')">复制号码</button><a class="bigbtn" style="text-decoration:none" href="tel:${esc(ph.replace(/\s/g,''))}">${ic('phone')} 拨打</a></div>`)};
+
+/* 底部导航：未读数包含云端消息 */
+nav=function(){const c=msgCred('e');const un=S.chats.filter(x=>!c||x.wid<100000).reduce((a,x)=>a+x.unread,0)+(c?unreadAll(c):0);
+  const b=(v,i,extra='')=>`<button class="${S.view===v?'on':''}" onclick="tab('${v}')" aria-label="${v}">${ic(i)}${extra}</button>`;
+  return `<div class="nav">${b('home','home')}${b('browse','users')}<button class="add" onclick="go('post')" aria-label="发布">${ic('plus')}</button>${b('chats','chat',un?`<span class="cnt">${un}</span>`:'')}${b('me','user')}</div>`};
+
+/* 发布岗位时带上招聘方编号，工人才能联系 */
+const _q13=DB.q;DB.q=function(path,opt={}){
+  if(S.mode==='emp'&&S.company&&S.company.dbid&&opt.body&&(path==='rpc/post_job'||(/^jobs\?id=eq\./.test(path)&&opt.method==='PATCH'))){try{const b=JSON.parse(opt.body);
+    if(path==='rpc/post_job'&&b.p_data)b.p_data.emp=S.company.dbid;else if(b.data&&b.data.owner==='me'&&!b.data.emp)b.data.emp=S.company.dbid;opt={...opt,body:JSON.stringify(b)}}catch(e){}}
+  return _q13.call(DB,path,opt)};
+const _isRJ13=typeof isRemoteJob==='function'?isRemoteJob:null;
+
+/* ---------- 工人端 ---------- */
+function empName(eid){const c=msgCred('w');const p=c&&mstore(c).peers[eid];if(!p)return S.lang==='zh'?'招聘方':'Employer';return S.lang==='zh'?(p.name||p.en):(p.en||p.name)}
+function empAv(eid,sm){const n=empName(eid);return `<div class="av ${sm?'sm':''}" style="background:#CFE36B;color:#161616">${initials(n)}</div>`}
+function empBadge(eid){const c=msgCred('w');const p=c&&mstore(c).peers[eid];if(!p)return '';return p.status==='approved'?`<span class="xs" style="color:#2e7d32;font-weight:700">${ic('check',12)} ${t('emp_verified')}</span>`:`<span class="xs muted">${t('emp_pending')}</span>`}
+const wTxt=r=>{if(r.sender==='w')return r.body;if(S.lang==='zh')return r.body;return locText(r.id,r.trans||r.body)};
+function wPreview(r){const mt=r.meta||{};if(r.kind==='invite')return '['+t('iv_title')+'] '+esc(roleT(mt.job||''));if(r.kind==='invite_reply')return mt.ans==='accept'?'['+t('iv_accepted')+']':'['+t('iv_declined')+']';
+  if(r.kind==='cancel')return '['+t('iv_cancelled')+']';return esc(wTxt(r))}
+wnav=function(){const c=msgCred('w');const un=c?unreadAll(c):0;const b=(v,i,extra='')=>`<button class="${S.view===v?'on':''}" onclick="S.hist=[];S.view='${v}';render(true)">${ic(i)}${extra}</button>`;
+  return `<div class="nav">${b('w_home','brief')}${b('w_apps','doc')}${b('w_msgs','chat',un?`<span class="cnt">${un}</span>`:'')}${b('w_me','user')}</div>`};
+V.w_msgs=()=>{const c=msgCred('w');const th=c?threads(c):[];let k=0;
+  return `<div class="pad"><div class="title" style="margin-top:6px">${t('msgs')}</div><div class="sm muted" style="margin:6px 0 18px">${ic('tr',13)} ${t('tr_note')}</div>
+  ${!c?`<div class="empty">${t('msg_need_reg')}</div>`:th.length?th.map(x=>chatCard(k,x.inv?'var(--lime)':CHCOL[k%5],empAv(x.peer),empName(x.peer),'',empBadge(x.peer)+(k++,''),wPreview(x.last),mtime(x.last),x.unread,`wOpenChat(${x.peer})`)).join(''):`<div class="empty">${t('no_msgs')}</div>`}
+  <div class="box sm row gap" style="margin-top:22px">${ic('shield')}<span>${t('safety')}</span></div></div>`};
+function wOpenChat(eid){const c=msgCred('w');if(!c){toast(t('msg_need_reg'));return}go('w_chat',{eid:+eid});markRead(c,+eid);msgPoll()}
+function wBubble(r,seen){const me=r.sender==='w';const mt=r.meta||{};const st=r.pending?' · …':r.failed?` · <a style="color:#FF8A7A;text-decoration:underline" onclick="msgRetry('${r.id}')">${t('msg_fail')}</a>`:(me&&seen>=r.id?' · ✓✓':'');
+  const tm=`<div class="tm">${mtime(r)}${st}</div>`;const zh=S.lang==='zh';
+  if(r.kind==='invite'){const way=zh?mt.way:locText('w'+r.id,mt.wayEn||mt.way);const job=roleT(mt.job||'');const date=zh?`${mt.m}月${mt.d}日`:`${mt.mo} ${mt.d}`;
+    const done=mt.cancel?`<span class="badge" style="background:#E3E0DA">${t('iv_cancelled')}</span>`:mt.ans==='accept'?`<span class="badge lime">${ic('check',13)} ${t('iv_accepted')}</span>`:mt.ans==='decline'?`<span class="badge" style="background:#FAD2CB">${t('iv_declined')}</span>`:'';
+    return `<div class="m them" style="background:var(--lime);max-width:88%"><div class="xs" style="opacity:.7">${ic('cal',13)} ${t('iv_title')}</div><div class="b" style="font-size:18px;margin:4px 0">${esc(job)}</div>
+     <div class="sm"><b>${esc(date)}</b> · ${esc(mt.time)} · ${esc(way)}</div>${mt.place?`<div class="sm" style="margin-top:2px">${ic('pin',13)} ${esc(mt.place)}${mt.loc?` · <a style="text-decoration:underline" href="https://www.google.com/maps?q=${mt.loc.lat},${mt.loc.lng}" target="_blank">Map</a>`:''}</div>`:''}
+     <div class="sm" style="margin-top:8px;opacity:.85">${esc(wTxt(r))}</div>
+     ${mt.ans==='accept'&&mt.phone?`<div class="sm" style="margin-top:8px">${t('iv_phone')}: <a href="tel:${esc(mt.phone.replace(/\s/g,''))}" style="font-weight:700;text-decoration:underline">${esc(mt.phone)}</a>${mt.contact?' · '+esc(mt.contact):''}</div>`:''}
+     <div style="margin-top:10px">${done||`<div class="row gap6"><button class="bigbtn" style="flex:1;height:44px;font-size:15px" onclick="wAnswer(${r.id},'accept')">${ic('check',16)} ${t('iv_accept')}</button><button class="bigbtn" style="flex:1;height:44px;font-size:15px;background:#fff;color:#161616" onclick="wAnswer(${r.id},'decline')">${t('iv_decline')}</button></div>`}</div>${tm}</div>`}
+  if(r.kind==='invite_reply')return `<div class="m me">${mt.ans==='accept'?ic('check',14)+' ':''}${esc(r.body)}${tm}</div>`;
+  if(r.kind==='cancel')return `<div class="m them" style="background:#E3E0DA">${esc(wTxt(r))}${tm}</div>`;
+  if(r.kind==='apply')return `<div class="m me"><div class="xs" style="opacity:.7">${ic('brief',13)} ${t('applied')}</div>${esc(r.body)}${tm}</div>`;
+  const orig=!me&&!zh&&r.trans&&r.trans!==r.body;
+  return `<div class="m ${me?'me':'them'}"${r.failed?' style="opacity:.6"':''}>${esc(wTxt(r))}${orig?`<div class="tr">${esc(r.body)}</div>`:''}${tm}</div>`}
+V.w_chat=()=>{const c=msgCred('w');const eid=S.params.eid;if(!c)return pageHdr(t('msgs'))+`<div class="empty">${t('msg_need_reg')}</div>`;const m=mstore(c);
+  const rows=m.rows.filter(r=>r.employer_id===eid);const seen=+m.seen[eid]||0;const p=m.peers[eid]||{};
+  return `<div class="chead"><button class="icbtn" onclick="back()">${ic('back')}</button>${empAv(eid,1)}<div style="flex:1;min-width:0"><div class="b" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(empName(eid))}</div><div class="xs muted">${empBadge(eid)}${p.city?' · '+esc(cityT(p.city)):''}</div></div>
+   <button class="icbtn" onclick="reportSheet('${esc('招聘方 #'+eid+' '+(p.name||''))}')" title="Report">${ic('shield')}</button></div>
+  <div class="msgs"><div class="xs muted" style="text-align:center;margin:6px 0 10px">${t('tr_note')}</div>
+   ${rows.map(r=>wBubble(r,seen)).join('')}</div>
+  <div class="inputbar"><input id="mi" placeholder="${t('type_msg')}" maxlength="1000" onkeydown="if(event.key==='Enter')wSend()"><button class="icbtn dark" style="width:50px;height:50px" onclick="wSend()">${ic('send')}</button></div>`};
+async function wSend(){const i=$('#mi');const o=(i&&i.value||'').trim();if(!o)return;i.value='';const eid=S.params.eid;
+  const tr=await trTo(o,'zh-CN');msgSend(eid,'text',o,tr&&tr!==o?tr:null,null)}
+async function wAnswer(mid,ans){const c=msgCred('w');if(!c)return;const m=mstore(c);const iv=m.rows.find(r=>r.id===mid);if(!iv)return;const mt=iv.meta||{};
+  const acc=ans==='accept';const date=`${mt.mo} ${mt.d}`;
+  const body=acc?`${t('iv_acc_msg')} (${date} ${mt.time})`:t('iv_dec_msg');
+  const tr=acc?`我接受面试邀请，${mt.m}月${mt.d}日 ${mt.time} 准时参加。`:'抱歉，这次面试我不能参加，谢谢您的邀请。';
+  iv.meta={...mt,ans};msgRender();
+  try{const r=await mrpc('respond_invite',{p_id:c.id,p_token:c.token,p_msg:mid,p_ans:ans,p_body:body,p_trans:tr});
+    if(r&&!m.rows.some(x=>x.id===r.id)){m.rows.push(r);if(r.id>(m.last||0))m.last=r.id}msave(m);msgRender();toast(acc?t('iv_accepted'):t('iv_declined'))}
+  catch(e){iv.meta={...mt};delete iv.meta.ans;msgRender();toast(t('msg_fail'))}}
+/* 工人首页：有新面试邀请时置顶提醒 */
+const _vwh13=V.w_home;
+V.w_home=()=>{let h=_vwh13();const c=msgCred('w');if(!c)return h;const th=threads(c);const inv=th.filter(x=>x.inv);const un=th.filter(x=>x.unread&&!x.inv);
+  let card='';if(inv.length){const x=inv[0];card=`<div class="box" style="background:var(--lime);margin-top:14px;cursor:pointer" onclick="wOpenChat(${x.peer})"><div class="row gap">${ic('cal')}<div style="flex:1;min-width:0"><div class="b">${t('iv_new')}${inv.length>1?' ('+inv.length+')':''}</div><div class="sm">${esc(empName(x.peer))} · ${t('iv_view')}</div></div>${ic('right')}</div></div>`}
+  else if(un.length){const x=un[0];card=`<div class="box" style="background:var(--gold);margin-top:14px;cursor:pointer" onclick="wOpenChat(${x.peer})"><div class="row gap">${ic('chat')}<div style="flex:1;min-width:0"><div class="b">${t('new_msg')} (${un.reduce((a,y)=>a+y.unread,0)})</div><div class="sm">${esc(empName(x.peer))} · ${wPreview(x.last)}</div></div>${ic('right')}</div></div>`}
+  if(!card)return h;const k='<div class="searchbar"';const i=h.indexOf(k);return i<0?h:h.slice(0,i)+card+h.slice(i)};
+/* 岗位详情：联系雇主 */
+const _vwj13=V.w_job;
+V.w_job=()=>{let h=_vwj13();const j=S.jobs.find(x=>x.id===S.params.id);if(!j||!j.emp||!msgCred('w'))return h;
+  return h.replace('<div class="bbar">',`<div class="bbar"><button class="sqbtn" onclick="wOpenChat(${+j.emp})" title="${t('msg_employer')}">${ic('chat')}</button>`)};
+/* 申请岗位：自动通知招聘方 */
+const _applyJob13=applyJob;
+applyJob=function(id){const j=S.jobs.find(x=>x.id===id);const had=S.applied.has(id);_applyJob13(id);const c=msgCred('w');
+  if(!had&&S.applied.has(id)&&j&&j.emp&&c){const m=mstore(c);m.peers[j.emp]=m.peers[j.emp]||{name:j.company,en:j.companyEn};
+    msgSend(+j.emp,'apply',`Hello, I just applied for the ${j.en||j.title} job in ${cityT(j.city)}. — ${S.me.name}, ${roleT(S.me.role)}, ${S.me.exp} ${t('yrs')}`,`您好，我刚申请了您在${j.city}的「${j.title}」岗位。`,{job:j.title,jobId:j.dbid||null})}};
+
+/* 聊天页样式 + 工人消息页底部导航 */
+const _render13=render;
+render=function(top){_render13(top);const sc=$('#screen');
+  if(S.view==='w_chat'){sc.classList.add('chatpad','nonav');$('#navwrap').innerHTML='';sc.scrollTop=sc.scrollHeight}
+  if(S.view==='w_msgs'){sc.classList.remove('nonav');$('#navwrap').innerHTML=wnav()}
+  if(S.view==='chat'&&top)sc.scrollTop=sc.scrollHeight;msgLoop()};
+/* 工人端聊天页没有快捷短语，输入框下移 */
+document.head.insertAdjacentHTML('beforeend','<style>.screen.chatpad.wchat{padding-bottom:110px}.m .tr{font-size:12.5px;opacity:.75;margin-top:5px;padding-top:5px;border-top:1px solid rgba(127,127,127,.25)}.m a{color:inherit}</style>');
+const _render13b=render;render=function(top){_render13b(top);$('#screen').classList.toggle('wchat',S.view==='w_chat')};
+
+if(DB.on){setTimeout(msgPoll,1500);msgLoop()}
+
 </script>
 </body>
 </html>

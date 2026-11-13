@@ -1,6 +1,6 @@
 {
-  "version": "2.1.0",
-  "build": 32,
+  "version": "2.2.0",
+  "build": 33,
   "date": "2026-11-13",
   "force": false,
   "minNative": 35,
@@ -8,11 +8,13 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "App 图标和 Logo 换成新的熊猫标志",
-      "安装新版 APK 后桌面图标也会更新"
+      "新增真实消息：招聘方和工人可以实时对话、留言，自动翻译",
+      "工人能收到面试邀请，可直接接受或拒绝；接受后招聘方可看到电话",
+      "工人申请岗位会自动通知招聘方"
     ],
     "en": [
-      "New panda logo and app icon"
+      "New: real-time chat with employers (auto-translated)",
+      "Interview invitations can be accepted or declined in the app"
     ]
   }
 }
