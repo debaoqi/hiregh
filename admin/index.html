@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HireGH 管理后台</title>
+<title>JobPaw 管理后台</title>
 <style>
 :root{--bg:#EDE8DC;--card:#FBF9F4;--ink:#161616;--ink2:#55524B;--muted:#9C978B;--line:#E7E1D4;--soft:#F3EFE6;
 --lime:#CFE36B;--gold:#F8C94A;--red:#EE5A47;--lilac:#E2B2FA;--blue:#5B8CFF;--bar:#2E3A12;--side:#161616}
@@ -220,7 +220,7 @@ function render(){
   $('#tip').style.opacity=0;
   if(!S.session){$('#root').innerHTML=loginView();return}
   const cnt={review:S.W.filter(w=>w.status==='pending').length,jobs:S.J.filter(j=>j.status==='pending').length,employers:S.E.filter(e=>e.status==='pending').length,reports:S.R.filter(r=>r.status==='open').length};
-  $('#root').innerHTML=`<div class="app"><aside class="side"><div class="brand"><img class="logo" src="../logo.svg" alt="HireGH">HireGH 后台</div>
+  $('#root').innerHTML=`<div class="app"><aside class="side"><div class="brand"><img class="logo" src="../logo.svg" alt="JobPaw">JobPaw 后台</div>
    <nav class="nav">${NAV.map(n=>`<a class="${S.page===n[0]?'on':''}" onclick="go('${n[0]}')">${ic(n[2])}${n[1]}${cnt[n[0]]?`<span class="cnt">${cnt[n[0]]}</span>`:''}</a>`).join('')}</nav>
    <div class="foot">${LIVE?'● 已连接云端数据库':'● 演示模式（示例数据）'}<br>${esc(S.session.email)}</div></aside>
    <main class="main"><div class="top"><h1>${TITLE[S.page]}</h1>
@@ -233,7 +233,7 @@ function render(){
 async function reload(){try{await API.load();toast('已刷新');render()}catch(e){toast(e.message)}}
 
 /* ---------- login ---------- */
-function loginView(){return `<div class="login"><div class="lbox"><div class="brand" style="color:var(--ink);padding:0 0 16px"><img class="logo" src="../logo.svg" alt="HireGH">HireGH 管理后台</div>
+function loginView(){return `<div class="login"><div class="lbox"><div class="brand" style="color:var(--ink);padding:0 0 16px"><img class="logo" src="../logo.svg" alt="JobPaw">JobPaw 管理后台</div>
  ${LIVE?`<form onsubmit="event.preventDefault();doLogin()"><div class="fld"><label>管理员邮箱</label><input class="inp" id="em" type="email" autocomplete="username" required></div>
   <div class="fld" style="margin-top:12px"><label>密码</label><input class="inp" id="pw" type="password" autocomplete="current-password" required></div>
   <button class="btn dark" style="width:100%;justify-content:center;margin-top:18px;padding:13px">登录</button></form>
@@ -475,7 +475,7 @@ async function arTick(manual){
     if(n){for(const k in add)AR.fresh[k]+=add[k];arBeep();
       const msg=[add.W&&`工人 ${add.W}`,add.E&&`招聘方 ${add.E}`,add.J&&`岗位 ${add.J}`,add.R&&`举报/反馈 ${add.R}`].filter(Boolean).join('、');
       toast('新提交：'+msg);
-      try{if('Notification' in window&&Notification.permission==='granted')new Notification('HireGH 新提交',{body:msg})}catch(e){}}
+      try{if('Notification' in window&&Notification.permission==='granted')new Notification('JobPaw 新提交',{body:msg})}catch(e){}}
     arTitle();if(!ui)render();else arBar()}
   catch(e){console.error(e)}finally{AR.busy=false}}
 function arTitle(){const t=AR.fresh.W+AR.fresh.E+AR.fresh.J+AR.fresh.R;document.title=t?`(${t}) 新提交 · ${AR.baseTitle}`:AR.baseTitle}
