@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=20;let ADM_NEW=false;
+const ADMIN_BUILD=21;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -574,6 +574,31 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .mmeta{font-size:11px;color:var(--muted);margin-top:3px}.mmeta a{color:#c0392b;cursor:pointer;margin-left:6px}
 @media (max-width:860px){.msgwrap{grid-template-columns:1fr}.mlist,.mthread{max-height:none}}</style>`);
 if(LIVE&&S.session)API.load().then(render).catch(()=>{});
+
+</script>
+<script>
+/* ================= 后台 v21：输入框边框 + 招聘方页更清楚 + 删除可确认 ================= */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.inp{background:#fff!important;border:2px solid #B9B09D!important}
+.inp:hover{border-color:#9C978B!important}
+.inp:focus{border-color:#161616!important;box-shadow:0 0 0 3px rgba(207,227,107,.45)}
+.login .inp{padding:13px 14px;font-size:15px}
+.etype{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700}
+.etype.co{background:#DCE8FF;color:#1D4ED8}.etype.pe{background:#F3E8FF;color:#7E22CE}
+</style>`);
+/* 删除：确认云端真的删掉了，删不掉就明确报错（以前权限不足时会“假装成功”） */
+API.del=async function(t,id){if(!LIVE)return;const r=await q(`${t}?id=eq.${id}`,{method:'DELETE'});
+  if(Array.isArray(r)&&r.length===0){const left=await q(`${t}?id=eq.${id}&select=id`);if(left&&left.length)throw new Error('云端没有删除成功（权限不足），请确认当前账号在 admins 表中')}};
+/* 招聘方页：顶部统计 + 搜索 + 企业/个人标签 */
+S.eq=S.eq||'';
+const _vemp19=V.employers;
+V.employers=()=>{const all=S.E,co=all.filter(e=>e.d.type!=='personal'),pe=all.filter(e=>e.d.type==='personal');
+  const st=[['全部招聘方',all.length],['企业',co.length],['个人雇主',pe.length],['已认证',all.filter(e=>e.status==='approved').length],['待认证',all.filter(e=>e.status==='pending').length]];
+  const qv=S.eq.trim().toLowerCase();const keep=S.E;if(qv)S.E=S.E.filter(e=>JSON.stringify(e.d).toLowerCase().includes(qv));
+  let h;try{h=_vemp19()}finally{S.E=keep}
+  h=h.replace(/<td><b>([^<]*)<\/b><div style="font-size:12px;color:var\(--muted\)">(企业|个人雇主)/g,(m,n,tp)=>`<td><b>${n}</b> <span class="etype ${tp==='企业'?'co':'pe'}">${tp==='企业'?'🏢 企业':'👤 个人'}</span><div style="font-size:12px;color:var(--muted)">${tp}`);
+  return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));margin-bottom:14px">${st.map(s=>`<div class="card" style="padding:14px 16px"><div style="font-size:12px;color:var(--muted)">${s[0]}</div><div style="font-size:24px;font-weight:800;margin-top:2px">${s[1]}</div></div>`).join('')}</div>
+   <div class="search" style="max-width:320px;margin-bottom:12px">${ic('search')}<input id="eqI" placeholder="搜索名称 / 联系人 / 电话" value="${esc(S.eq)}" oninput="clearTimeout(window._eqT);window._eqT=setTimeout(()=>{S.eq=this.value;render();const i=document.getElementById('eqI');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>`+h};
 
 </script>
 </body>
