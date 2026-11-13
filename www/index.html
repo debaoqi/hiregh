@@ -1118,7 +1118,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.0.6',APP_BUILD=30;
+const APP_VER='2.0.7',APP_BUILD=31;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1856,11 +1856,11 @@ V.welcome=()=>{const c=C();const zhUI=S.lang==='zh';const top=['GH','NG','KE','Z
  <div class="chips wrap" style="margin-top:12px">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div>
  <div style="display:flex;flex-direction:column;gap:14px;margin-top:22px;flex:1">
   <div class="sc" style="margin:0;background:var(--lime);padding:22px 20px;min-height:172px;display:flex;flex-direction:column;justify-content:space-between;border-radius:32px" onclick="startWorker()">
-   <div class="row between" style="align-items:flex-start"><div class="ic" style="width:52px;height:52px">${ic('user',24)}</div><div class="go" style="width:46px;height:46px">${ic('arrow',20)}</div></div>
+   <div class="row between" style="align-items:flex-start"><div class="ic" style="width:42px;height:42px">${ic('user',19)}</div><div class="go" style="width:37px;height:37px">${ic('arrow',16)}</div></div>
    <div><div class="t" style="font-size:26px;line-height:1.15">${t('find_job')}</div><div class="roles" style="font-size:14px;margin-top:4px">${t('find_job_sub')}</div>
    <div class="row gap6 wrap" style="margin-top:12px">${['f_free','f_lang','f_near'].map(k=>`<span style="font-size:12px;font-weight:600;padding:5px 10px;border-radius:14px;background:rgba(255,255,255,.6)">${t(k)}</span>`).join('')}</div></div></div>
   <div class="sc" style="margin:0;background:#161616;color:#fff;padding:22px 20px;min-height:172px;display:flex;flex-direction:column;justify-content:space-between;border-radius:32px" onclick="startEmployer()">
-   <div class="row between" style="align-items:flex-start"><div class="ic" style="width:52px;height:52px">${ic('brief',24)}</div><div class="go" style="width:46px;height:46px">${ic('arrow',20)}</div></div>
+   <div class="row between" style="align-items:flex-start"><div class="ic" style="width:42px;height:42px">${ic('brief',19)}</div><div class="go" style="width:37px;height:37px">${ic('arrow',16)}</div></div>
    <div><div class="t" style="font-size:26px;line-height:1.15">我要招人 <span style="font-size:14px;opacity:.6;font-weight:600">I'm hiring</span></div><div class="roles" style="font-size:14px;margin-top:4px">${S.company.registered?'已注册：'+esc(S.company.name):'企业 / 个人雇主 · 先注册，再找人'}</div>
    <div class="row gap6 wrap" style="margin-top:12px">${['企业 / 个人','平台认证',IND.reduce((a,i)=>a+i.roles.length,0)+' 个工种'].map(x=>`<span style="font-size:12px;font-weight:600;padding:5px 10px;border-radius:14px;background:rgba(255,255,255,.14)">${x}</span>`).join('')}</div></div></div>
  </div>
@@ -1912,7 +1912,7 @@ render(false);
 </script>
 <script>
 /* ================= v2.0.2 · “靠谱”加粗 ================= */
-(function(){const st=document.createElement('style');st.textContent=`
+(function(){const st=document.createElement('style');st.textContent=`.sc .ic,.sc .go{flex:none;aspect-ratio:1/1}.sc .row.gap>div:not(.ic){min-width:0}
 html:not([lang=zh]) h1.hero[style*="font-size:36px"]{font-size:min(32px,7.4vw)!important;white-space:nowrap;letter-spacing:-1px;max-width:100%;overflow:hidden}
 html:not([lang=zh]) .sc .row.gap6.wrap{gap:4px!important;flex-wrap:nowrap!important;margin-top:10px!important}
 html:not([lang=zh]) .sc .row.gap6.wrap span{font-size:min(11px,3vw)!important;padding:4px 7px!important;white-space:nowrap}`;document.head.appendChild(st)})();

@@ -1,6 +1,6 @@
 {
-  "version": "2.0.6",
-  "build": 30,
+  "version": "2.0.7",
+  "build": 31,
   "date": "2026-11-12",
   "force": false,
   "minNative": 18,
@@ -8,7 +8,8 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "首页“靠谱”恢复与标题相同的字体"
+      "欢迎页卡片圆形图标缩小到 80%",
+      "首页行业卡片图标修正为正圆"
     ],
     "en": [
       "Small design update"
