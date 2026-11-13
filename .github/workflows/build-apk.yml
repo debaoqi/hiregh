@@ -35,6 +35,16 @@ jobs:
           printf '<?xml version="1.0" encoding="utf-8"?>\n<resources><color name="jobpaw_accent">#5B8CFF</color></resources>\n' > android/app/src/main/res/values/jobpaw_colors.xml
           grep -n "string/app_name\|label" $M | head -3; cat android/app/src/main/res/values/strings.xml
           grep -n "permission" $M
+      - name: In-app updater (download + install inside the app)
+        run: |
+          D=android/app/src/main/java/com/hiregh/app
+          cp native/AppUpdaterPlugin.java $D/AppUpdaterPlugin.java
+          printf 'package com.hiregh.app;\n\nimport android.os.Bundle;\nimport com.getcapacitor.BridgeActivity;\n\npublic class MainActivity extends BridgeActivity {\n    @Override\n    public void onCreate(Bundle savedInstanceState) {\n        registerPlugin(AppUpdaterPlugin.class);\n        super.onCreate(savedInstanceState);\n    }\n}\n' > $D/MainActivity.java
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />\n</manifest>#' $M
+          mkdir -p android/app/src/main/res/xml
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<paths xmlns:android="http://schemas.android.com/apk/res/android">\n    <external-path name="my_images" path="." />\n    <cache-path name="my_cache_images" path="." />\n</paths>\n' > android/app/src/main/res/xml/file_paths.xml
+          grep -n "fileprovider\|INSTALL_PACKAGES" $M; cat $D/MainActivity.java
       - name: Set app version
         run: |
           VER=$(node -p "require('./www/version.json').version")
@@ -68,3 +78,15 @@ jobs:
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
           gh release create "build-${{ github.run_number }}" JobPaw.apk HireGH.apk --title "JobPaw v${VER} (build ${{ github.run_number }})" --notes "Open this page on your phone and tap JobPaw.apk to download and install. Push notifications: ${PUSH:-0}" --latest
+      - name: Mirror APK to Cloudflare (fast download, no GitHub)
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          for i in 1 2 3; do
+            rm -rf mirror && git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" mirror && cd mirror
+            git config user.name "jobpaw-bot"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            mkdir -p www/app && cp ../JobPaw.apk www/app/JobPaw.apk
+            SZ=$(stat -c%s www/app/JobPaw.apk); SHA=$(sha256sum www/app/JobPaw.apk | cut -d' ' -f1)
+            printf '{"build":%s,"version":"%s","size":%s,"sha256":"%s"}\n' "${{ github.run_number }}" "$VER" "$SZ" "$SHA" > www/app/apk.json
+            git add www/app && git commit -q -m "APK build ${{ github.run_number }} mirror [skip ci]" && git push -q origin HEAD:main && break
+            cd .. ; sleep 5
+          done
