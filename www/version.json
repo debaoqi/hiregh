@@ -1,6 +1,6 @@
 {
-  "version": "2.5.2",
-  "build": 38,
+  "version": "2.6.0",
+  "build": 39,
   "date": "2026-11-13",
   "force": false,
   "minNative": 48,
@@ -8,12 +8,13 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "“检查更新”显示安装包编号",
-      "自动上报版本信息，方便排查更新问题"
+      "首页新增导航栏（未注册时提示先注册）",
+      "首页标题下新增“找工人也轻松”",
+      "招聘方注册如未成功提交，会自动补交给平台"
     ],
     "en": [
-      "Shows installer build number",
-      "Version reporting for troubleshooting"
+      "Navigation bar on the home page",
+      "“Hiring workers is easy too” headline"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

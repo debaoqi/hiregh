@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.5.2',APP_BUILD=38;
+const APP_VER='2.6.0',APP_BUILD=39;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2436,6 +2436,53 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){clearTime
 (async()=>{if(isNative())await nativeBuild()})();
 const _nbTag=h=>UPD.native?h.replace(`<div class="xs muted">v${APP_VER}`,`<div class="xs muted">v${APP_VER} · build ${UPD.native}`):h;
 const _vset18=V.settings;V.settings=()=>_nbTag(_vset18());const _vwme18=V.w_me;V.w_me=()=>_nbTag(_vwme18());
+
+</script>
+<script>
+/* ================= v2.6 首页导航栏 + 副标题 + 招聘方注册补交 ================= */
+Object.assign(T,{
+  welcome_sub2:['Hiring workers is easy too','Hiring workers is easy too','找工人也轻松'],
+  g_title:['Register to unlock this','Register to unlock this','注册后即可使用'],
+  g_body:['Choose who you are and register first. Then you can find jobs, post jobs, chat and get interview invitations.','Choose who you are and register first. Then you can find jobs, post jobs, chat and get interview invitations.','先选择身份并完成注册，之后就能使用找工作、发布招工、消息和面试邀请等功能。'],
+  g_job:['Find a job','Find a job','我要找工作'],
+  g_hire:["I'm hiring","I'm hiring",'我要招人'],
+  g_need_job:['Finding jobs needs a worker profile.','Finding jobs needs a worker profile.','找工作需要先注册求职资料。'],
+  g_need_post:['Posting jobs needs employer registration.','Posting jobs needs employer registration.','发布招工需要先注册招聘方。'],
+  g_need_msg:['Messages are available after you register.','Messages are available after you register.','注册后才能收发消息。'],
+  g_need_me:['Your profile appears here after you register.','Your profile appears here after you register.','注册后这里会显示你的资料。']});
+/* 首页导航栏：已注册直接进入对应功能；未注册时功能受限，提示先注册 */
+function gnav(){const b=(k,i,on)=>`<button class="${on?'on':''}" onclick="guestNav('${k}')" aria-label="${k}">${ic(i)}</button>`;
+  return `<div class="nav">${b('home','home',1)}${b('job','brief')}<button class="add" onclick="guestNav('post')" aria-label="post">${ic('plus')}</button>${b('msg','chat')}${b('me','user')}</div>`}
+function guestNav(k){const wk=!!S.me,emp=!!(S.company&&S.company.registered);
+  if(k==='home'){$('#screen').scrollTo({top:0,behavior:'smooth'});return}
+  if(k==='job'&&wk)return startWorker();
+  if(k==='post'&&emp){startEmployer();return go('post')}
+  if(k==='msg'){if(wk){S.mode='wk';S.hist=[];S.view='w_msgs';return render(true)}if(emp){S.mode='emp';return tab('chats')}}
+  if(k==='me'){if(wk){S.mode='wk';S.hist=[];S.view='w_me';return render(true)}if(emp){S.mode='emp';return tab('me')}}
+  const why={job:'g_need_job',post:'g_need_post',msg:'g_need_msg',me:'g_need_me'}[k];
+  openSheet(`<div class="row gap" style="align-items:center"><span style="width:46px;height:46px;border-radius:15px;background:var(--gold);display:grid;place-items:center;flex:none">${ic('shield')}</span><div><div class="b" style="font-size:19px">${t('g_title')}</div><div class="sm muted">${t(why)}</div></div></div>
+   <p class="sm" style="line-height:1.7;margin:12px 0 0">${t('g_body')}</p>
+   <div class="row gap" style="margin-top:16px"><button class="bigbtn" style="flex:1;background:var(--lime);color:#161616" onclick="closeSheet();startWorker()">${t('g_job')}</button><button class="bigbtn" style="flex:1" onclick="closeSheet();startEmployer()">${t('g_hire')}</button></div>`)}
+/* 首页标题下方加一行“找工人也轻松” */
+const _vwel19=V.welcome;
+V.welcome=()=>{let h=_vwel19();const i=h.indexOf('<h1 class="hero"');const j=i<0?-1:h.indexOf('</h1>',i);if(j<0)return h;
+  h=h.slice(0,i)+h.slice(i,j).replace('margin:24px 0 12px','margin:24px 0 4px')+'</h1>'+`<div id="welSub" style="font-size:19px;font-weight:800;letter-spacing:-.2px;line-height:1.25;margin:0 0 12px;white-space:nowrap;overflow:hidden;color:#6B675E">${t('welcome_sub2')}</div>`+h.slice(j+5);return h};
+function fitWelSub(){if(S.view!=='welcome')return;const e=document.getElementById('welSub');if(!e)return;e.style.removeProperty('font-size');let fs=19,n=0;
+  while(e.scrollWidth>e.clientWidth+1&&fs>12&&n++<20){fs-=1;e.style.fontSize=fs+'px'}}
+const _render19=render;render=function(top){_render19(top);
+  if(S.view==='welcome'){const sc=$('#screen');sc.classList.remove('nonav');$('#navwrap').innerHTML=gnav();fitWelSub()}};
+window.addEventListener('resize',fitWelSub);
+
+/* 招聘方注册：当时没提交到云端（网络中断等），以前会一直停在“认证审核中”、后台也看不到。现在自动补交 */
+let _empRegBusy=false;
+async function ensureEmpReg(){const c=S.company;if(_empRegBusy||!DB.on||!c||!c.registered||c.dbid)return;
+  if(!c.token){c.token=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36))+Math.random().toString(36).slice(2);LS.set('company',c)}_empRegBusy=true;
+  try{const id=await DB.q('rpc/register_employer',{method:'POST',body:JSON.stringify({p_data:{...companyRow(),_token:c.token}})});
+    if(id){S.company.dbid=id;S.company.status='pending';LS.set('company',S.company);if(S.mode==='emp')toast('招聘方信息已提交到平台，等待认证')}}
+  catch(e){console.warn('emp reg',e)}finally{_empRegBusy=false}}
+setTimeout(ensureEmpReg,2500);
+setInterval(()=>{if(document.visibilityState==='visible')ensureEmpReg()},30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(ensureEmpReg,1500)});
 
 </script>
 </body>
