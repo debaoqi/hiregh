@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#EDE8DC">
-<title>加纳用工 HireGH</title>
+<title>JobPaw</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
@@ -181,7 +181,7 @@ textarea.fi{border-radius:24px;min-height:90px;resize:none}
 .seg button.on{background:#161616;color:#fff}
 /* me (ref 6) */
 .ccard{border-radius:30px;padding:20px;background:linear-gradient(135deg,#D9EE7A,#9CC437);position:relative;overflow:hidden}
-.ccard:after{content:"HireGH";position:absolute;right:-6px;bottom:-14px;font-size:64px;font-weight:900;opacity:.08;letter-spacing:-2px}
+.ccard:after{content:"JobPaw";position:absolute;right:-6px;bottom:-14px;font-size:64px;font-weight:900;opacity:.08;letter-spacing:-2px}
 .ccard .cn{font-size:22px;font-weight:800;line-height:1.2;margin-top:10px}
 .ccard .row3{display:flex;margin-top:18px;gap:8px}
 .ccard .row3 div{flex:1;background:rgba(255,255,255,.4);border-radius:18px;padding:10px}
@@ -618,7 +618,7 @@ V.me=()=>{
   const qa=[['heart','收藏人才','#FFD9D2',"go('saved')"],['cal','面试安排','#FCEBB0',"go('interviews')"],['doc','用工合同','#E9DDFF',"go('contract')"],['shield','工作许可','#DDF0A8',"go('permit')"],
     ['tr','翻译服务','#CFE0FF',"go('translate')"],['brief','我的岗位','#F1ECDF',"tab('jobs')"],['help','帮助中心','#F1ECDF',"go('help')"],['gear','设置','#F1ECDF',"go('settings')"]];
   return `<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">我的</div><button class="icbtn" onclick="langSheet()">${ic('globe')}</button></div>
-  <div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('shield',14)} 企业已认证</span><span class="b">HireGH</span></div>
+  <div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('shield',14)} 企业已认证</span><span class="b">JobPaw</span></div>
    <div class="row between" style="align-items:flex-start;gap:10px"><div style="min-width:0"><div class="cn">${esc(S.company.name)}</div><div class="sm" style="opacity:.7;margin-top:4px">${esc(S.company.en)}</div></div><button class="pill" style="background:#161616;color:#fff;border:0;padding:7px 12px;flex:none" onclick="go('company')">${ic('edit',14)} 修改</button></div><div class="sm" style="margin-top:8px;cursor:pointer;text-decoration:underline" onclick="openExt(mapLink(S.company.loc))">${ic('pin',14)} ${esc((S.company.loc&&S.company.loc.addr)||'设置企业位置')} · 谷歌地图</div>
    <div class="row3"><div><b>${S.jobs.filter(j=>j.owner==='me'&&j.status==='open').length}</b><span class="xs">在招岗位</span></div><div><b>${S.jobs.filter(j=>j.owner==='me').reduce((a,j)=>a+j.apps,0)}</b><span class="xs">收到申请</span></div><div><b>${S.interviews.length}</b><span class="xs">待面试</span></div></div></div>
   <div class="sec-h">常用功能</div>
@@ -673,12 +673,12 @@ const T={"welcome_title":["Finding work is easy","Tìm việc thật dễ dàng"
 "id_type":["ID document","Giấy tờ tùy thân","身份证件"],
 "passport":["Passport","Hộ chiếu","护照"],
 "id_photo":["Photo of your ID","Ảnh giấy tờ tùy thân","证件照片"],
-"id_note":["Kept private. Only the HireGH review team can see it.","Được bảo mật. Chỉ đội xét duyệt HireGH xem được.","仅平台审核人员可见，不对雇主公开"],
+"id_note":["Kept private. Only the JobPaw review team can see it.","Được bảo mật. Chỉ đội xét duyệt JobPaw xem được.","仅平台审核人员可见，不对雇主公开"],
 "permit":["Do you have a Ghana work permit?","Bạn có giấy phép lao động Ghana không?","是否持有加纳工作许可？"],
 "health":["Do you have a health certificate?","Bạn có giấy khám sức khỏe không?","是否有健康证明？"],
 "yes":["Yes","Có","有"],
 "no":["No","Không","没有"],
-"consent":["I agree that HireGH shares my profile with verified employers, as described under Ghana’s Data Protection Act, 2012 (Act 843). I can ask for it to be deleted at any time.","Tôi đồng ý để HireGH chia sẻ hồ sơ với nhà tuyển dụng đã xác minh, theo Luật Bảo vệ Dữ liệu Ghana 2012 (Act 843). Tôi có thể yêu cầu xóa bất cứ lúc nào.","我同意 HireGH 按加纳《2012年数据保护法》(Act 843) 将我的档案提供给已认证雇主，并可随时要求删除。"],
+"consent":["I agree that JobPaw shares my profile with verified employers, as described under Ghana’s Data Protection Act, 2012 (Act 843). I can ask for it to be deleted at any time.","Tôi đồng ý để JobPaw chia sẻ hồ sơ với nhà tuyển dụng đã xác minh, theo Luật Bảo vệ Dữ liệu Ghana 2012 (Act 843). Tôi có thể yêu cầu xóa bất cứ lúc nào.","我同意 JobPaw 按加纳《2012年数据保护法》(Act 843) 将我的档案提供给已认证雇主，并可随时要求删除。"],
 "next":["Next","Tiếp theo","下一步"],
 "submit":["Create my profile","Tạo hồ sơ","提交档案"],
 "required":["Please fill in the required fields","Vui lòng điền các mục bắt buộc","请填写必填项"],
@@ -765,7 +765,7 @@ function resizeImg(f,max){return new Promise(res=>{const r=new FileReader();r.on
 function pickPhoto(k){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;S.reg[k]=await resizeImg(f,k==='photo'?360:1000);render(false)};i.click()}
 
 V.welcome=()=>`<div class="pad" style="padding-top:18px">
- <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="HireGH"><b style="font-size:18px">HireGH</b></div>
+ <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="JobPaw"><b style="font-size:18px">JobPaw</b></div>
   <select class="select" onchange="setLang(this.value)">${LANG_LIST.map(l=>`<option value="${l[0]}" ${S.lang===l[0]?'selected':''}>${l[1]}</option>`).join('')}</select></div>
  <h1 class="hero" style="font-size:34px">${t('welcome_title')}</h1>
  <div class="sm muted row gap6">${ic('globe',14)} ${t('detected')}: <b style="color:var(--ink)">${LANG_LIST.find(l=>l[0]===S.detected)[1]}</b></div>
@@ -1089,7 +1089,7 @@ async function sendFeedback(){const c=$('#fbC').value.trim();if(!c){toast('请�
 V.settings=()=>{const row=(label,sub,ctl)=>`<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">${label}</div>${sub?`<div class="xs muted" style="margin-top:2px">${sub}</div>`:''}</div>${ctl}</div>`;
  return pageHdr('设置')+`<div class="pad">
   <div class="box" style="margin-top:0">${row('聊天自动翻译','中文 ⇄ 英语',sw(S.translate,"S.translate=!S.translate;render(false)"))}${row('新消息提醒','',sw(S.settings.notify,"S.settings.notify=!S.settings.notify;render(false)"))}${row('面试提醒','面试前一天提醒',sw(S.settings.ivRemind,"S.settings.ivRemind=!S.settings.ivRemind;render(false)"))}</div>
-  <div class="box">${row('企业信息',esc(S.company.name)+' · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','HireGH 1.3.0','')}</div>
+  <div class="box">${row('企业信息',esc(S.company.name)+' · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','JobPaw 1.3.0','')}</div>
   <div class="box"><div class="li" style="cursor:pointer" onclick="openSheet('<div class=&quot;b&quot; style=&quot;font-size:18px&quot;>清除本机数据？</div><p class=&quot;sm muted&quot; style=&quot;margin:8px 0 16px&quot;>会清除本机保存的聊天、收藏、面试和岗位草稿，不影响云端数据。</p><button class=&quot;bigbtn&quot; style=&quot;width:100%;background:var(--red)&quot; onclick=&quot;LS.clear();location.reload()&quot;>确认清除</button>')">${ic('trash')}<span>清除本机数据</span></div>
    <div class="li" style="cursor:pointer" onclick="toWelcome()">${ic('users')}<span>切换身份 / 返回欢迎页</span></div></div></div>`};
 
@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.3.0',APP_BUILD=34;
+const APP_VER='2.4.0',APP_BUILD=35;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1173,7 +1173,7 @@ async function doUpdate(){
       if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(e){}
   location.replace(location.pathname+'?v='+(UPD.remote?UPD.remote.build:Date.now()));
 }
-function doApk(){const u=(UPD.remote&&UPD.remote.apk)||'https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk';
+function doApk(){const u=(UPD.remote&&UPD.remote.apk)||'https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk';
   if(isNative()){location.href=u}else window.open(u,'_blank')}
 /* 强制更新时，关闭弹窗会再次弹出 */
 const _open0=openSheet;openSheet=function(h){$('#sheet').dataset.force='0';return _open0(h)};
@@ -1324,7 +1324,7 @@ function locNow(ctx){
   toast('正在定位…');
   navigator.geolocation.getCurrentPosition(async p=>{const lat=+p.coords.latitude.toFixed(6),lng=+p.coords.longitude.toFixed(6);
       setLoc(ctx,{lat,lng,addr:'当前位置',approx:false});toast('定位成功');const a=await revGeo(lat,lng);if(a&&LOCS[ctx]&&LOCS[ctx].lat===lat){LOCS[ctx].addr=a;setLoc(ctx,LOCS[ctx],ctx==='post'?false:undefined)}},
-    e=>{toast(e.code===1?'没有定位权限：请在手机设置中允许 HireGH 使用位置，或搜索地址':'定位失败，请到空旷处重试或搜索地址')},
+    e=>{toast(e.code===1?'没有定位权限：请在手机设置中允许 JobPaw 使用位置，或搜索地址':'定位失败，请到空旷处重试或搜索地址')},
     {enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
 function parseLL(s){s=(s||'').trim();let m=s.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/[?&](?:q|query|ll|destination)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/^(-?\d{1,2}\.\d+)\s*[, ]\s*(-?\d{1,3}\.\d+)$/);
   return m?{lat:+m[1],lng:+m[2]}:null}
@@ -1786,7 +1786,7 @@ Object.assign(T,{
  available_in:['Available in 54 African countries','Available in 54 African countries','非洲 54 国通用'],
  f_free:['Free for workers','Free for workers','求职免费'],f_lang:['In your language','In your language','本地语言'],f_near:['Jobs near you','Jobs near you','附近工作'],
  minwage_g:['Check the legal minimum wage in {c} before you agree on a salary.','Check the legal minimum wage in {c} before you agree on a salary.','约定工资前，请了解{c}法定最低工资。'],
- consent_g:['I agree that HireGH shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','I agree that HireGH shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','我同意 HireGH 按{c}相关法律保护我的信息，并将档案提供给已认证雇主，可随时要求删除。'],
+ consent_g:['I agree that JobPaw shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','I agree that JobPaw shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','我同意 JobPaw 按{c}相关法律保护我的信息，并将档案提供给已认证雇主，可随时要求删除。'],
  permit_g:['Do you have a work permit for {c}?','Do you have a work permit for {c}?','是否持有{c}工作许可？'],
 });
 const T_GH={minwage:T.minwage.slice(),consent:T.consent.slice(),permit:T.permit.slice()};
@@ -1852,7 +1852,7 @@ const countryPill=(dark)=>`<button onclick="openCountry()" style="display:inline
 /* ---------- 欢迎页重新设计 ---------- */
 V.welcome=()=>{const c=C();const zhUI=S.lang==='zh';const top=['GH','NG','KE','ZA','ET','TZ','EG','CI','CM','UG','SN','AO','ZM','MA'];
  return `<div class="pad" style="padding-top:16px;min-height:100%;display:flex;flex-direction:column">
- <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="HireGH"><b style="font-size:18px">HireGH</b></div>${countryPill()}</div>
+ <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="JobPaw"><b style="font-size:18px">JobPaw</b></div>${countryPill()}</div>
  <h1 class="hero" style="font-size:36px;margin:24px 0 12px">${t('welcome_title')}</h1>
  <div class="sm muted row gap6" style="flex-wrap:wrap">${ic('pin',14)} ${zhUI?c.zh:c.en} · ${t('detected')}: <b style="color:var(--ink)">${(LANG_LIST.find(l=>l[0]===S.detected)||LANG_LIST[0])[1]}</b></div>
  <div class="chips wrap" style="margin-top:12px">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div>
@@ -2244,6 +2244,39 @@ const _render14b=render;render=function(top){_render14b(top);if(rtTopic()!==RTC.
 /* 打开对话时先显示本地记录，再静默刷新（不阻塞页面切换） */
 const _openChat14=openChat;openChat=function(id){_openChat14(id)};
 if(DB.on){rtConnect();msgLoop(true)}
+
+</script>
+<script>
+/* ================= v2.4 锁屏推送（Firebase Cloud Messaging） ================= */
+/* 安装包里带有推送插件时才启用；网页版和旧安装包不受影响 */
+const PUSH={tok:LS.get('fcm',null),inited:false,synced:LS.get('fcm_sync',''),perm:null};
+function pushAvail(){const C=window.Capacitor;return !!(C&&C.isNativePlatform&&C.isNativePlatform()&&C.isPluginAvailable&&C.isPluginAvailable('PushNotifications'))}
+async function pushInit(){if(PUSH.inited||!pushAvail()||!msgCred())return;PUSH.inited=true;const P=Capacitor.Plugins.PushNotifications;
+  try{await P.createChannel({id:'messages',name:'消息与面试邀请 Messages',description:'New messages and interview invitations',importance:5,visibility:1,vibration:true,lights:true,lightColor:'#CFE36B'})}catch(e){}
+  P.addListener('registration',t=>{PUSH.tok=t.value;LS.set('fcm',t.value);pushSync()});
+  P.addListener('registrationError',e=>console.warn('push',e));
+  P.addListener('pushNotificationReceived',()=>msgPoll());
+  P.addListener('pushNotificationActionPerformed',a=>{const d=(a&&a.notification&&a.notification.data)||{};msgPoll();const peer=+d.peer;if(!peer)return;
+    setTimeout(()=>{if(d.role==='w'&&S.mode==='wk'&&msgCred('w'))wOpenChat(peer);else if(d.role==='e'&&S.mode==='emp'&&msgCred('e'))openChat(100000+peer)},400)});
+  try{let st=await P.checkPermissions();if(st.receive!=='granted'&&st.receive!=='denied')st=await P.requestPermissions();PUSH.perm=st.receive;
+    if(st.receive==='granted')await P.register();else if(S.view)render(false)}catch(e){console.warn(e)}}
+async function pushSync(){const c=msgCred();if(!c||!PUSH.tok||!DB.on)return;const k=c.role+c.id+':'+PUSH.tok.slice(-24)+':'+S.lang;if(k===PUSH.synced)return;
+  try{const ok=await mrpc('register_push',{p_role:c.role,p_id:c.id,p_token:c.token,p_fcm:PUSH.tok,p_lang:S.lang});if(ok){PUSH.synced=k;LS.set('fcm_sync',k)}}catch(e){}}
+/* 通知被关闭时，在“我的”里提示去开启 */
+function pushRow(zh){if(!pushAvail())return '';const on=PUSH.perm==='granted';
+  return `<div class="li" style="cursor:pointer" onclick="pushFix()">${ic('bell')}<span>${zh?'锁屏消息通知':t('push_title')}</span><span class="xs" style="margin-left:auto;color:${on?'#2e7d32':'#c0392b'};font-weight:700">${on?(zh?'已开启':t('push_on')):(zh?'未开启 · 去开启':t('push_off'))}</span></div>`}
+async function pushFix(){if(!pushAvail())return;const P=Capacitor.Plugins.PushNotifications;let st=await P.checkPermissions();
+  if(st.receive!=='granted')st=await P.requestPermissions();PUSH.perm=st.receive;
+  if(st.receive==='granted'){await P.register();toast(S.mode==='wk'?t('push_on'):'锁屏通知已开启')}
+  else toast(S.mode==='wk'?t('push_hint'):'请到手机 设置 → 应用 → JobPaw → 通知 中允许通知');render(false)}
+const _vme15=V.me;V.me=()=>{const h=_vme15();const r=pushRow(true);if(!r)return h;const i=h.lastIndexOf('<div class="box"');return i<0?h:h.slice(0,i)+`<div class="box">${r}</div>`+h.slice(i)};
+const _vwme15=V.w_me;V.w_me=()=>{const h=_vwme15();const r=pushRow(false);if(!r)return h;const i=h.lastIndexOf('<div class="box"');return i<0?h:h.slice(0,i)+`<div class="box">${r}</div>`+h.slice(i)};
+Object.assign(T,{push_title:['Lock-screen notifications','Lock-screen notifications','锁屏消息通知'],push_on:['On','On','已开启'],push_off:['Off · Turn on','Off · Turn on','未开启 · 去开启'],
+  push_hint:['Please allow notifications in Settings → Apps → JobPaw → Notifications','Please allow notifications in Settings → Apps → JobPaw → Notifications','请到手机 设置 → 应用 → JobPaw → 通知 中允许通知']});
+const _render15=render;render=function(top){_render15(top);if(msgCred()){if(!PUSH.inited)pushInit();else pushSync()}};
+document.addEventListener('visibilitychange',async()=>{if(document.hidden||!pushAvail()||!PUSH.inited)return;
+  try{const st=await Capacitor.Plugins.PushNotifications.checkPermissions();if(st.receive!==PUSH.perm){PUSH.perm=st.receive;if(st.receive==='granted')Capacitor.Plugins.PushNotifications.register();render(false)}
+    Capacitor.Plugins.PushNotifications.removeAllDeliveredNotifications&&Capacitor.Plugins.PushNotifications.removeAllDeliveredNotifications()}catch(e){}});
 
 </script>
 </body>

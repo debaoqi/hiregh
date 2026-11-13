@@ -1,20 +1,19 @@
 {
-  "version": "2.3.0",
-  "build": 34,
+  "version": "2.4.0",
+  "build": 35,
   "date": "2026-11-13",
   "force": false,
-  "minNative": 35,
+  "minNative": 42,
   "forceNative": false,
-  "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
+  "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "消息秒达：新消息和面试邀请实时推送，不用再等待",
-      "发送消息立即显示，不再卡顿",
-      "对方已读、接受面试也会立即同步"
+      "App 更名为 JobPaw",
+      "新增锁屏消息通知（需安装新版 APK）"
     ],
     "en": [
-      "Messages and interview invitations now arrive instantly",
-      "Smoother sending, no waiting"
+      "The app is now called JobPaw",
+      "Lock-screen notifications for new messages (install the new APK)"
     ]
   }
 }
