@@ -204,7 +204,7 @@ textarea.fi{border-radius:24px;min-height:90px;resize:none}
 .ivc{background:var(--card);border-radius:22px;padding:14px;display:flex;gap:12px;align-items:center;margin-bottom:10px}
 .datebox{width:54px;height:58px;border-radius:16px;background:var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
 .datebox b{font-size:20px;line-height:1}
-.logo{width:36px;height:36px;border-radius:12px;background:var(--lime);display:grid;place-items:center;font-weight:900;font-size:18px}
+.logo{object-fit:cover;background:none!important;width:36px;height:36px;border-radius:12px;background:var(--lime);display:grid;place-items:center;font-weight:900;font-size:18px}
 .up{height:150px;border-radius:24px;border:2px dashed #C9C3B6;background:var(--card) center/cover no-repeat;display:grid;place-items:center;color:var(--muted);cursor:pointer}
 .up.round{width:84px;height:84px;border-radius:50%;flex:none}
 .steps{display:flex;gap:6px;flex:1;margin:0 14px}.steps i{flex:1;height:6px;border-radius:6px;background:rgba(0,0,0,.15)}.steps i.on{background:#161616}
@@ -217,6 +217,7 @@ textarea.fi{border-radius:24px;min-height:90px;resize:none}
 .select{appearance:none;background:var(--card);border:0;border-radius:30px;padding:9px 14px;font-size:13px;font-weight:600;outline:none}
 .note-y{background:var(--gold);border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.6;margin-bottom:6px}details>summary::-webkit-details-marker{display:none}
 </style>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
 </head>
 <body>
 <div class="phone" id="phone">
@@ -763,7 +764,7 @@ function resizeImg(f,max){return new Promise(res=>{const r=new FileReader();r.on
 function pickPhoto(k){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;S.reg[k]=await resizeImg(f,k==='photo'?360:1000);render(false)};i.click()}
 
 V.welcome=()=>`<div class="pad" style="padding-top:18px">
- <div class="row between"><div class="row gap6"><div class="logo">H</div><b style="font-size:18px">HireGH</b></div>
+ <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="HireGH"><b style="font-size:18px">HireGH</b></div>
   <select class="select" onchange="setLang(this.value)">${LANG_LIST.map(l=>`<option value="${l[0]}" ${S.lang===l[0]?'selected':''}>${l[1]}</option>`).join('')}</select></div>
  <h1 class="hero" style="font-size:34px">${t('welcome_title')}</h1>
  <div class="sm muted row gap6">${ic('globe',14)} ${t('detected')}: <b style="color:var(--ink)">${LANG_LIST.find(l=>l[0]===S.detected)[1]}</b></div>
@@ -1118,7 +1119,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.0.7',APP_BUILD=31;
+const APP_VER='2.1.0',APP_BUILD=32;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1850,7 +1851,7 @@ const countryPill=(dark)=>`<button onclick="openCountry()" style="display:inline
 /* ---------- 欢迎页重新设计 ---------- */
 V.welcome=()=>{const c=C();const zhUI=S.lang==='zh';const top=['GH','NG','KE','ZA','ET','TZ','EG','CI','CM','UG','SN','AO','ZM','MA'];
  return `<div class="pad" style="padding-top:16px;min-height:100%;display:flex;flex-direction:column">
- <div class="row between"><div class="row gap6"><div class="logo">H</div><b style="font-size:18px">HireGH</b></div>${countryPill()}</div>
+ <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="HireGH"><b style="font-size:18px">HireGH</b></div>${countryPill()}</div>
  <h1 class="hero" style="font-size:36px;margin:24px 0 12px">${t('welcome_title')}</h1>
  <div class="sm muted row gap6" style="flex-wrap:wrap">${ic('pin',14)} ${zhUI?c.zh:c.en} · ${t('detected')}: <b style="color:var(--ink)">${(LANG_LIST.find(l=>l[0]===S.detected)||LANG_LIST[0])[1]}</b></div>
  <div class="chips wrap" style="margin-top:12px">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div>

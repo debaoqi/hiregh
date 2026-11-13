@@ -1,18 +1,18 @@
 {
-  "version": "2.0.7",
-  "build": 31,
-  "date": "2026-11-12",
+  "version": "2.1.0",
+  "build": 32,
+  "date": "2026-11-13",
   "force": false,
-  "minNative": 18,
+  "minNative": 35,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "欢迎页卡片圆形图标缩小到 80%",
-      "首页行业卡片图标修正为正圆"
+      "App 图标和 Logo 换成新的熊猫标志",
+      "安装新版 APK 后桌面图标也会更新"
     ],
     "en": [
-      "Small design update"
+      "New panda logo and app icon"
     ]
   }
 }
