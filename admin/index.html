@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=22;let ADM_NEW=false;
+const ADMIN_BUILD=23;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -609,6 +609,56 @@ function bcAll(){if(!LIVE)return;clearTimeout(_bcT);_bcT=setTimeout(()=>{fetch(U
   body:JSON.stringify({messages:[{topic:'hgm-all',event:'sync',payload:{}}]})}).catch(()=>{})},300)}
 const _patch20=API.patch;API.patch=async function(...a){const r=await _patch20.apply(API,a);bcAll();return r};
 const _del20=API.del;API.del=async function(...a){const r=await _del20.apply(API,a);bcAll();return r};
+
+</script>
+<script>
+/* ================= 后台 v23：VIP 订单 / 收款设置 / 招聘方 VIP ================= */
+P.vip='<path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.1l1.5-7L2 9.3l7-.8z"/>';
+S.V=[];S.PAY={};S.vf='submitted';
+NAV.splice(NAV.findIndex(n=>n[0]==='messages')>=0?NAV.findIndex(n=>n[0]==='messages'):NAV.length-2,0,['vip','VIP 订单','vip']);TITLE.vip='VIP 订单与收款';
+const PLAN_NAME={d7:'7 天',d30:'30 天',d90:'90 天'};
+const _load21=API.load;
+API.load=async function(){await _load21.call(API);
+  if(!LIVE){if(!S.V.length)S.V=[{id:1,created_at:new Date().toISOString(),employer_id:(S.E[0]||{}).id,plan:'d30',days:30,amount:299,channel:'wechat',status:'submitted',pay_ref:'4200001234',proof:null}];return}
+  try{const [o,s,ev]=await Promise.all([q('vip_orders?select=*&order=id.desc&limit=300'),q('app_settings?key=eq.pay&select=value'),q('employers?select=id,vip_until')]);
+    S.V=o||[];S.PAY=(s&&s[0]&&s[0].value)||{};const m={};(ev||[]).forEach(x=>m[x.id]=x.vip_until);S.E.forEach(e=>e.vip=m[e.id]||null)}catch(e){console.error(e)}};
+const vipOn=e=>e&&e.vip&&Date.parse(e.vip)>Date.now();
+V.vip=()=>{const l=S.V.filter(o=>S.vf==='all'||o.status===S.vf);const sum=S.V.filter(o=>o.status==='paid').reduce((a,o)=>a+o.amount,0);
+  const st=[['待确认',S.V.filter(o=>o.status==='submitted').length],['已开通订单',S.V.filter(o=>o.status==='paid').length],['累计收入 ¥',sum],['当前 VIP 企业',S.E.filter(vipOn).length]];
+  const P2=S.PAY||{};const qr=P2.qr||{};const api=P2.api||{};
+  return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:14px">${st.map(s=>`<div class="card" style="padding:14px 16px"><div style="font-size:12px;color:var(--muted)">${s[0]}</div><div style="font-size:24px;font-weight:800;margin-top:2px">${s[1]}</div></div>`).join('')}</div>
+  <div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><b>收款设置</b><span class="note" style="padding:6px 10px">价格：7 天 ¥99 · 30 天 ¥299 · 90 天 ¥699</span></div>
+   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:12px">
+    ${[['wechat','微信收款码','#07C160'],['alipay','支付宝收款码','#1677FF']].map(c=>`<div style="border:1.5px dashed #CFC7B6;border-radius:16px;padding:12px;text-align:center"><div style="font-weight:700;color:${c[2]}">${c[1]}</div>
+      ${qr[c[0]]?`<img src="${qr[c[0]]}" style="width:150px;height:150px;object-fit:contain;margin-top:8px;border-radius:10px;background:#fff">`:'<div style="height:150px;display:grid;place-items:center;color:var(--muted);font-size:13px">未上传</div>'}
+      <div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><button class="btn sm" onclick="payQr('${c[0]}')">${qr[c[0]]?'更换':'上传'}</button>${qr[c[0]]?`<button class="btn sm" onclick="payQrDel('${c[0]}')">删除</button>`:''}</div>
+      <label style="display:flex;gap:6px;align-items:center;justify-content:center;margin-top:8px;font-size:12px;color:var(--ink2)"><input type="checkbox" ${api[c[0]]?'checked':''} onchange="payApi('${c[0]}',this.checked)">启用官方接口自动到账</label></div>`).join('')}
+    <div><div class="fld"><label>收款人名称（显示在付款页）</label><input class="inp" id="payee" value="${esc(P2.payee||'')}" placeholder="例如：JobPaw 平台"></div>
+     <button class="btn dark" style="margin-top:10px" onclick="paySave({payee:$('#payee').value.trim()})">保存</button>
+     <div class="note" style="margin-top:10px">企业在 App 中选择套餐 → 扫你的收款码付款并备注订单号 → 提交付款单号或截图 → 在下方“待确认”里核对后点“确认到账”，VIP 立即生效。<br>“官方接口自动到账”需先在 Supabase 的 Edge Functions → Secrets 中配置微信支付/支付宝商户密钥，再勾选。</div></div>
+   </div></div>
+  <div class="filters"><div class="seg">${[['submitted','待确认'],['pending','待付款'],['paid','已开通'],['rejected','已驳回'],['all','全部']].map(t=>`<button class="${S.vf===t[0]?'on':''}" onclick="S.vf='${t[0]}';render()">${t[1]} ${t[0]==='all'?S.V.length:S.V.filter(o=>o.status===t[0]).length}</button>`).join('')}</div></div>
+  <div class="card" style="padding:6px 12px;overflow-x:auto"><table class="tbl"><tr><th>订单号</th><th>招聘方</th><th>套餐</th><th class="num">金额</th><th>渠道</th><th>付款单号</th><th>截图</th><th>下单时间</th><th>状态</th><th>操作</th></tr>
+  ${l.map(o=>{const e=S.E.find(x=>x.id===o.employer_id);return `<tr><td class="mono">JP${o.id}</td><td><b>${esc(e?e.d.name:'#'+o.employer_id)}</b>${vipOn(e)?` <span class="etype" style="background:#FFF2C6;color:#8A5A00">★ VIP 至 ${fmt(e.vip)}</span>`:''}</td><td>${PLAN_NAME[o.plan]||o.days+' 天'}</td><td class="num"><b>¥${o.amount}</b></td><td>${o.channel==='wechat'?'<span style="color:#07C160;font-weight:700">微信</span>':'<span style="color:#1677FF;font-weight:700">支付宝</span>'}</td>
+   <td class="mono">${esc(o.pay_ref||'—')}</td><td>${o.proof?`<img src="${o.proof}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;cursor:zoom-in" onclick="openModal('<img src=&quot;'+this.src+'&quot; style=&quot;max-width:100%;max-height:75vh;display:block;margin:auto&quot;>')">`:'—'}</td><td>${fmt(o.created_at)}</td>
+   <td>${({pending:'<span class="chip">待付款</span>',submitted:'<span class="chip st-pending">待确认</span>',paid:'<span class="chip st-approved">已开通</span>',rejected:'<span class="chip st-rejected">已驳回</span>',cancelled:'<span class="chip">已取消</span>'})[o.status]}${o.mode==='api'?' <span class="etype co">自动</span>':''}</td>
+   <td style="white-space:nowrap">${o.status==='paid'?'':`<button class="btn sm lime" onclick="vipOk(${o.id})">确认到账</button><button class="btn sm" onclick="vipNo(${o.id})">驳回</button>`}</td></tr>`}).join('')||'<tr><td colspan="10" class="empty">暂无订单</td></tr>'}</table></div>`};
+async function paySave(patch){const v={...(S.PAY||{}),...patch};run(async()=>{if(LIVE)await q('app_settings',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({key:'pay',value:v,updated_at:new Date().toISOString()})});S.PAY=v;await API.log('修改收款设置','settings:pay',{keys:Object.keys(patch)})},'已保存')}
+function payQr(ch){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,900/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  paySave({qr:{...((S.PAY||{}).qr||{}),[ch]:c.toDataURL('image/jpeg',.88)}})};im.src=r.result};r.readAsDataURL(f)};i.click()}
+function payQrDel(ch){const qr={...((S.PAY||{}).qr||{})};delete qr[ch];paySave({qr})}
+function payApi(ch,on){paySave({api:{...((S.PAY||{}).api||{}),[ch]:on}})}
+function vipOk(id){const o=S.V.find(x=>x.id===id);confirmBox(`确认已收到 JP${id} 的付款 ¥${o.amount}？确认后立即为该企业开通 ${o.days} 天 VIP。`,()=>run(async()=>{
+  if(LIVE){await q('rpc/admin_confirm_vip',{method:'POST',body:JSON.stringify({p_order:id,p_ok:true,p_note:null})})}o.status='paid';await API.log('确认 VIP 到账','vip:'+id,{amount:o.amount,days:o.days});closeModal();await API.load();bcAll()},'已开通 VIP'),'确认到账')}
+function vipNo(id){openModal(`<div class="ch">驳回 JP${id}</div><div class="fld"><label>原因（企业会在 App 中看到）</label><input class="inp" id="vNo" value="未查到对应付款"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="vipNoGo(${id})">驳回</button></div>`)}
+function vipNoGo(id){const note=$('#vNo').value.trim();run(async()=>{if(LIVE)await q('rpc/admin_confirm_vip',{method:'POST',body:JSON.stringify({p_order:id,p_ok:false,p_note:note})});const o=S.V.find(x=>x.id===id);o.status='rejected';o.note=note;await API.log('驳回 VIP 订单','vip:'+id,{note});closeModal();bcAll()},'已驳回')}
+/* 招聘方页：显示 VIP，并可手动赠送 / 延长 / 取消 */
+const _vemp21=V.employers;
+V.employers=()=>{let h=_vemp21();S.E.forEach(e=>{if(!vipOn(e))return;h=h.replace(`<td><b>${esc(e.d.name)}</b>`,`<td><b>${esc(e.d.name)}</b> <span class="etype" style="background:#FFF2C6;color:#8A5A00">★ VIP 至 ${fmt(e.vip)}</span>`)});
+  return h.replace(/<button class="btn sm" onclick="delEmp\((\d+)\)">删除<\/button>/g,(m,id)=>`<button class="btn sm" onclick="vipGift(${id})">VIP</button>`+m)};
+function vipGift(id){const e=S.E.find(x=>x.id===id);openModal(`<div class="ch">${esc(e.d.name)} · VIP</div><p style="color:var(--muted);font-size:13px">${vipOn(e)?'当前 VIP 有效期至 '+fmt(e.vip):'当前不是 VIP'}</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${[7,30,90,365].map(d=>`<button class="btn sm lime" onclick="vipGiftGo(${id},${d})">+${d} 天</button>`).join('')}${vipOn(e)?`<button class="btn sm" onclick="vipGiftGo(${id},0)">取消 VIP</button>`:''}</div>`)}
+function vipGiftGo(id,d){run(async()=>{if(LIVE)await q('rpc/admin_set_vip',{method:'POST',body:JSON.stringify({p_emp:id,p_days:d})});await API.log(d?'赠送/延长 VIP':'取消 VIP','employer:'+id,{days:d});closeModal();await API.load();bcAll()},d?'已延长 VIP':'已取消 VIP')}
 
 </script>
 </body>
