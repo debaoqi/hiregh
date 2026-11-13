@@ -92,3 +92,5 @@ jobs:
             git add www/app && git commit -q -m "APK build ${{ github.run_number }} mirror" && git push -q origin HEAD:main && break
             cd .. ; sleep 5
           done
+          sleep 20; curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/www/app/JobPaw.apk" | head -c 300 || true
+          curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/www/app/apk.json" | head -c 300 || true
