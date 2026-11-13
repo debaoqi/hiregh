@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.4.0',APP_BUILD=35;
+const APP_VER='2.5.0',APP_BUILD=36;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2277,6 +2277,100 @@ const _render15=render;render=function(top){_render15(top);if(msgCred()){if(!PUS
 document.addEventListener('visibilitychange',async()=>{if(document.hidden||!pushAvail()||!PUSH.inited)return;
   try{const st=await Capacitor.Plugins.PushNotifications.checkPermissions();if(st.receive!==PUSH.perm){PUSH.perm=st.receive;if(st.receive==='granted')Capacitor.Plugins.PushNotifications.register();render(false)}
     Capacitor.Plugins.PushNotifications.removeAllDeliveredNotifications&&Capacitor.Plugins.PushNotifications.removeAllDeliveredNotifications()}catch(e){}});
+
+</script>
+<script>
+/* ================= v2.5 防闪烁：同一页面刷新时只更新变化的部分 ================= */
+/* 原因：每次收到消息/同步数据都会整页重画，并重新播放 0.28 秒的淡入动画，看起来就是“闪一下”；
+   输入框也会被重建，键盘会跳。现在同一页面内的刷新改为“差量更新”：没变的元素原封不动。 */
+function morphNode(a,b){
+  if(a.nodeType===3||a.nodeType===8){if(a.nodeValue!==b.nodeValue)a.nodeValue=b.nodeValue;return}
+  const ba=b.attributes,aa=a.attributes;
+  for(let i=aa.length-1;i>=0;i--){const n=aa[i].name;if(!b.hasAttribute(n))a.removeAttribute(n)}
+  for(let i=0;i<ba.length;i++){const n=ba[i].name,v=ba[i].value;if(a.getAttribute(n)!==v)a.setAttribute(n,v)}
+  morphKids(a,b);
+  const tg=a.tagName;if((tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')&&document.activeElement!==a){
+    if(tg==='INPUT'&&(a.type==='checkbox'||a.type==='radio'))a.checked=b.checked;else if(a.value!==b.value)a.value=b.value}}
+function morphKids(a,b){const ac=[...a.childNodes],bc=[...b.childNodes];
+  for(let i=0;i<bc.length;i++){const x=ac[i],y=bc[i];
+    if(!x){a.appendChild(y);continue}
+    if(x.nodeType===y.nodeType&&(x.nodeType!==1||(x.tagName===y.tagName&&(x.tagName!=='INPUT'||x.type===y.type))))morphNode(x,y);
+    else a.replaceChild(y,x)}
+  for(let i=bc.length;i<ac.length;i++)ac[i].remove()}
+const LIVE_EL={sc:$('#screen'),fx:$('#fixed'),nv:$('#navwrap')};
+let _lastV16=null;
+const _render16=render;
+render=function(top){
+  const v0=S.view;
+  if(top||v0!==_lastV16||v0==='welcome'){const r=_render16(top);_lastV16=S.view;return r}
+  const sc=LIVE_EL.sc,st=sc.scrollTop,wasBottom=sc.scrollHeight-st-sc.clientHeight<80;
+  const sh=document.createElement('div');sh.style.cssText=`position:fixed;left:-30000px;top:0;width:${sc.clientWidth||400}px;height:${sc.clientHeight||700}px;visibility:hidden;pointer-events:none`;
+  const TT={sc:document.createElement('div'),fx:document.createElement('div'),nv:document.createElement('div')};
+  TT.sc.className=sc.className;TT.sc.style.cssText='position:absolute;inset:0;overflow:auto';
+  const ids={sc:'screen',fx:'fixed',nv:'navwrap'};
+  for(const k in ids){LIVE_EL[k].id=ids[k]+'__live';TT[k].id=ids[k];sh.appendChild(TT[k])}
+  document.body.appendChild(sh);
+  try{_render16(top)}finally{for(const k in ids){TT[k].removeAttribute('id');LIVE_EL[k].id=ids[k]}sh.remove()}
+  if(S.view!==v0){ /* 渲染过程中跳到了别的页面：整页替换并播放动画 */
+    for(const k in ids){LIVE_EL[k].replaceChildren(...TT[k].childNodes)}sc.className=TT.sc.className;sc.scrollTop=0;_lastV16=S.view;return}
+  sc.className=TT.sc.className;
+  morphKids(sc,TT.sc);morphKids(LIVE_EL.fx,TT.fx);morphKids(LIVE_EL.nv,TT.nv);
+  if(['chat','w_chat'].includes(S.view)&&wasBottom)sc.scrollTop=sc.scrollHeight;else sc.scrollTop=st;
+  _lastV16=S.view};
+/* 聊天：有新消息且停在底部时，平滑滚到最新一条 */
+document.head.insertAdjacentHTML('beforeend','<style>#screen{overscroll-behavior:contain}.fade{will-change:auto}</style>');
+
+/* ================= v2.5 应用内更新：App 自己下载并安装，不再跳到 GitHub ================= */
+Object.assign(T,{
+  upd_dl:['Downloading update…','Downloading update…','正在下载新版…'],
+  upd_dl_fail:['Download failed. Check your network and try again.','Download failed. Check your network and try again.','下载失败，请检查网络后重试'],
+  upd_retry:['Retry','Retry','重试'],
+  upd_browser:['Download in browser','Download in browser','用浏览器下载'],
+  upd_install:['Install now','Install now','立即安装'],
+  upd_perm:['Allow JobPaw to install updates: tap the button, turn on “Allow from this source”, then come back.','Allow JobPaw to install updates: tap the button, turn on “Allow from this source”, then come back.','需要允许 JobPaw 安装更新：点下方按钮，打开“允许来自此来源的应用”，然后返回 App 即可继续安装。'],
+  upd_perm_btn:['Open settings','Open settings','去允许'],
+  upd_ready:['Download complete','Download complete','下载完成'],
+  upd_cancel:['Cancel','Cancel','取消'],
+});
+const APK_URLS=()=>{const v=UPD.remote||{};return [...new Set([v.apkMirror||'https://hiregh.pages.dev/app/JobPaw.apk',v.apk||'https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk'])]};
+const hasUpdater=()=>isNative()&&window.Capacitor.isPluginAvailable&&window.Capacitor.isPluginAvailable('AppUpdater');
+const UPX={st:'idle',pct:0,done:0,total:0,err:'',wait:false};
+const mb=n=>(n/1048576).toFixed(1)+' MB';
+function updSheet(){const s=UPX.st;const bar=`<div style="height:12px;border-radius:8px;background:#E7E1D4;overflow:hidden;margin-top:16px"><div id="updBar" style="height:100%;width:${Math.max(3,UPX.pct)}%;background:var(--lime);transition:width .25s"></div></div>
+   <div class="row between sm" style="margin-top:8px"><span id="updPct" class="b">${UPX.pct>=0?UPX.pct+'%':''}</span><span id="updSz" class="muted">${UPX.total?mb(UPX.done)+' / '+mb(UPX.total):UPX.done?mb(UPX.done):''}</span></div>`;
+  const head=`<div class="row gap" style="align-items:center"><img src="logo.svg" style="width:52px;height:52px;border-radius:16px"><div><div class="b" style="font-size:20px">JobPaw v${esc((UPD.remote||{}).version||'')}</div><div class="sm muted">${s==='dl'?t('upd_dl'):s==='ready'?t('upd_ready'):s==='perm'?t('upd_install'):t('upd_dl_fail')}</div></div></div>`;
+  let body='';
+  if(s==='dl')body=bar+`<button class="bigbtn" style="width:100%;margin-top:16px;background:var(--card);color:#161616" onclick="updCancel()">${t('upd_cancel')}</button>`;
+  else if(s==='ready')body=bar+`<button class="bigbtn" style="width:100%;margin-top:16px" onclick="updInstall()">${t('upd_install')}</button>`;
+  else if(s==='perm')body=`<div class="note-y" style="margin-top:14px;line-height:1.6">${t('upd_perm')}</div><button class="bigbtn" style="width:100%;margin-top:16px" onclick="updPermit()">${t('upd_perm_btn')}</button>`;
+  else body=`<div class="sm" style="margin-top:12px;color:var(--red)">${esc(UPX.err||'')}</div><div class="row gap" style="margin-top:16px"><button class="bigbtn" style="background:var(--card);color:#161616;flex:1" onclick="updBrowser()">${t('upd_browser')}</button><button class="bigbtn" style="flex:1" onclick="doApk()">${t('upd_retry')}</button></div>`;
+  openSheet(head+body)}
+function updProg(){const b=$('#updBar');if(!b)return;b.style.width=Math.max(3,UPX.pct)+'%';$('#updPct').textContent=UPX.pct>=0?UPX.pct+'%':'';$('#updSz').textContent=UPX.total?mb(UPX.done)+' / '+mb(UPX.total):mb(UPX.done)}
+let _updL=null;
+async function updDownload(url){const P=window.Capacitor.Plugins.AppUpdater;let last=Date.now(),lastDone=0;
+  return new Promise(async(res,rej)=>{let fin=false;
+    const dog=setInterval(()=>{if(fin)return;if(UPX.done>lastDone){lastDone=UPX.done;last=Date.now()}else if(Date.now()-last>20000){clearInterval(dog);P.cancel();rej(new Error('stalled'))}},2000);
+    try{let r;for(let k=0;;k++){try{r=await P.download({url});break}catch(e){if(/busy/.test(e.message||e)&&k<8){await new Promise(z=>setTimeout(z,1000));continue}throw e}}fin=true;clearInterval(dog);res(r)}catch(e){fin=true;clearInterval(dog);rej(e)}})}
+doApk=async function(){
+  if(!isNative())return window.open(APK_URLS()[0],'_blank');
+  if(!hasUpdater())return updBrowser();
+  if(UPX.st==='dl'){updSheet();return}
+  const P=window.Capacitor.Plugins.AppUpdater;if(!_updL)_updL=await P.addListener('progress',p=>{UPX.pct=p.pct;UPX.done=p.done;UPX.total=p.total;updProg()});
+  UPX.st='dl';UPX.pct=0;UPX.done=0;UPX.total=0;UPX.err='';updSheet();$('#sheet').dataset.force='1';
+  let ok=false;for(const u of APK_URLS()){try{UPX.pct=0;UPX.done=0;updProg();await updDownload(u);ok=true;break}catch(e){UPX.err=String(e&&e.message||e);if(/cancelled/.test(UPX.err)&&UPX.st!=='dl')return}}
+  $('#sheet').dataset.force='0';
+  if(!ok){UPX.st='fail';UPX.err=t('upd_dl_fail');updSheet();return}
+  UPX.st='ready';UPX.pct=100;updSheet();updInstall()};
+async function updInstall(){const P=window.Capacitor.Plugins.AppUpdater;try{const r=await P.install();if(r&&r.needPermission){UPX.st='perm';UPX.wait=true;updSheet()}}catch(e){UPX.st='fail';UPX.err=String(e.message||e);updSheet()}}
+function updPermit(){UPX.wait=true;window.Capacitor.Plugins.AppUpdater.openInstallSettings()}
+function updCancel(){UPX.st='idle';$('#sheet').dataset.force='0';try{window.Capacitor.Plugins.AppUpdater.cancel()}catch(e){}closeSheet()}
+/* 旧版安装包没有内置下载器：交给系统浏览器从 Cloudflare 镜像下载（不走 GitHub） */
+function updBrowser(){const v=UPD.remote||{};location.href=v.apkExt||v.apk||APK_URLS()[APK_URLS().length-1]}
+/* 从“允许安装”设置页返回后，自动继续安装 */
+try{window.Capacitor&&window.Capacitor.Plugins.App&&window.Capacitor.Plugins.App.addListener('resume',async()=>{if(!UPX.wait||!hasUpdater())return;
+  const r=await window.Capacitor.Plugins.AppUpdater.canInstall();if(r.allowed){UPX.wait=false;UPX.st='ready';updSheet();updInstall()}})}catch(e){}
+/* 更新提示框：用新 Logo 替换旧的 “H” */
+const _showUpd16=showUpd;showUpd=function(v,k){_showUpd16(v,k);const h=$('#sheet span[style*="font-weight:900"]');if(h&&h.textContent==='H')h.outerHTML='<img src="logo.svg" style="width:52px;height:52px;border-radius:16px">'};
 
 </script>
 </body>

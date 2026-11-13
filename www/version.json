@@ -1,19 +1,21 @@
 {
-  "version": "2.4.0",
-  "build": 35,
+  "version": "2.5.0",
+  "build": 36,
   "date": "2026-11-13",
   "force": false,
-  "minNative": 46,
+  "minNative": 48,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "App 更名为 JobPaw",
-      "新增锁屏消息通知：新消息、面试邀请即使锁屏也会弹出"
+      "修复 App 闪动：收到消息、同步数据时页面不再闪",
+      "更新下载改为高速镜像，不再卡在 GitHub",
+      "新版安装包内置下载器：App 内显示进度并直接安装"
     ],
     "en": [
-      "The app is now called JobPaw",
-      "Lock-screen notifications for new messages and interview invitations"
+      "Fixed screen flicker when new messages arrive",
+      "Faster, more reliable update downloads"
     ]
-  }
+  },
+  "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk"
 }
