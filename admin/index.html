@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=21;let ADM_NEW=false;
+const ADMIN_BUILD=22;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -599,6 +599,16 @@ V.employers=()=>{const all=S.E,co=all.filter(e=>e.d.type!=='personal'),pe=all.fi
   h=h.replace(/<td><b>([^<]*)<\/b><div style="font-size:12px;color:var\(--muted\)">(企业|个人雇主)/g,(m,n,tp)=>`<td><b>${n}</b> <span class="etype ${tp==='企业'?'co':'pe'}">${tp==='企业'?'🏢 企业':'👤 个人'}</span><div style="font-size:12px;color:var(--muted)">${tp}`);
   return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));margin-bottom:14px">${st.map(s=>`<div class="card" style="padding:14px 16px"><div style="font-size:12px;color:var(--muted)">${s[0]}</div><div style="font-size:24px;font-weight:800;margin-top:2px">${s[1]}</div></div>`).join('')}</div>
    <div class="search" style="max-width:320px;margin-bottom:12px">${ic('search')}<input id="eqI" placeholder="搜索名称 / 联系人 / 电话" value="${esc(S.eq)}" oninput="clearTimeout(window._eqT);window._eqT=setTimeout(()=>{S.eq=this.value;render();const i=document.getElementById('eqI');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>`+h};
+
+</script>
+<script>
+/* ================= 后台 v22：“其他行业” + 操作后即时通知所有手机刷新 ================= */
+if(!IND.oth)IND.oth=['其他行业',['平面设计师','办公室文员','销售代表','客服专员','IT技术员','摄影/剪辑','教师/培训师','其他岗位']];
+let _bcT=null;
+function bcAll(){if(!LIVE)return;clearTimeout(_bcT);_bcT=setTimeout(()=>{fetch(U+'/realtime/v1/api/broadcast',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},
+  body:JSON.stringify({messages:[{topic:'hgm-all',event:'sync',payload:{}}]})}).catch(()=>{})},300)}
+const _patch20=API.patch;API.patch=async function(...a){const r=await _patch20.apply(API,a);bcAll();return r};
+const _del20=API.del;API.del=async function(...a){const r=await _del20.apply(API,a);bcAll();return r};
 
 </script>
 </body>
