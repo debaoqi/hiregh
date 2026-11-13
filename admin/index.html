@@ -506,12 +506,75 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=19;let ADM_NEW=false;
+const ADMIN_BUILD=20;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
   d.innerHTML='<b>后台已更新到新版本</b><span style="opacity:.7">刷新后生效（需要重新登录）</span><button class="btn sm lime" onclick="location.reload()">立即刷新</button>';document.body.appendChild(d)}
 setInterval(admVerCheck,60000);setTimeout(admVerCheck,5000);
+</script>
+<script>
+/* ================= 消息记录（工人 ⇄ 招聘方，只读审查 + 删除违规消息） ================= */
+P.chat='<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>';
+S.M=[];S.mq='';S.mk='all';S.mt=null;
+NAV.splice(NAV.findIndex(n=>n[0]==='reports'),0,['messages','消息记录','chat']);TITLE.messages='消息记录';
+const _load13=API.load;
+API.load=async function(){await _load13.call(API);
+  if(!LIVE){if(!S.M.length)demoMsgs();return}
+  try{const m=await q('messages?select=*&order=id.desc&limit=5000');S.M=m||[]}catch(e){console.error(e);S.M=S.M||[]}};
+function demoMsgs(){const ws=S.W.filter(w=>w.status==='approved').slice(0,4),es=S.E.slice(0,3);let id=1;const now=Date.now();S.M=[];
+  ws.forEach((w,k)=>{const e=es[k%es.length];const t=n=>new Date(now-(k*3+n)*36e5).toISOString();
+    S.M.push({id:id++,created_at:t(3),worker_id:w.id,employer_id:e.id,sender:'e',kind:'text',body:'你好，请问明天有空来面试吗？',trans:'Hello, are you free for an interview tomorrow?',read_at:t(2)});
+    S.M.push({id:id++,created_at:t(2.5),worker_id:w.id,employer_id:e.id,sender:'w',kind:'text',body:'Yes boss, I am available.',trans:'是的老板，我有空。',read_at:t(2)});
+    S.M.push({id:id++,created_at:t(2),worker_id:w.id,employer_id:e.id,sender:'e',kind:'invite',body:'邀请您 11月14日 10:00 参加「'+w.d.role+'」到厂面试',trans:'Interview invitation',meta:{job:w.d.role,m:11,d:14,time:'10:00',way:'到厂面试',ans:k%2?'decline':'accept'},read_at:t(1)});
+    S.M.push({id:id++,created_at:t(1),worker_id:w.id,employer_id:e.id,sender:'w',kind:'invite_reply',body:k%2?'Sorry, I cannot attend.':'I accept the interview invitation.',trans:k%2?'抱歉，不能参加。':'我接受面试邀请。',meta:{ans:k%2?'decline':'accept',phone:k%2?null:'+233 24 555 '+(1000+k)},read_at:null})});
+  S.M.sort((a,b)=>b.id-a.id)}
+const mW=id=>S.W.find(w=>w.id===id),mE=id=>S.E.find(e=>e.id===id);
+const mName=(r,role)=>role==='w'?(mW(r.worker_id)||{d:{name:'工人 #'+r.worker_id}}).d.name:(mE(r.employer_id)||{d:{name:'招聘方 #'+r.employer_id}}).d.name;
+const KIND={text:'文字',invite:'面试邀请',invite_reply:'邀请回复',apply:'岗位申请',cancel:'取消面试'};
+function mThreads(){const by={};S.M.forEach(r=>{const k=r.worker_id+'-'+r.employer_id;const t=by[k]||(by[k]={k,w:r.worker_id,e:r.employer_id,n:0,last:r,inv:0,acc:0,dec:0,unread:0});t.n++;
+  if(r.id>t.last.id)t.last=r;if(r.kind==='invite')t.inv++;if(r.kind==='invite_reply')(r.meta||{}).ans==='accept'?t.acc++:t.dec++;if(!r.read_at)t.unread++});
+  let l=Object.values(by).sort((a,b)=>b.last.id-a.last.id);const qv=S.mq.trim().toLowerCase();
+  if(qv)l=l.filter(t=>(mName(t.last,'w')+' '+mName(t.last,'e')+' '+S.M.filter(r=>r.worker_id===t.w&&r.employer_id===t.e).map(r=>r.body+' '+(r.trans||'')).join(' ')).toLowerCase().includes(qv));
+  if(S.mk==='invite')l=l.filter(t=>t.inv);if(S.mk==='pending')l=l.filter(t=>t.inv>t.acc+t.dec);return l}
+function mPrev(r){const mt=r.meta||{};if(r.kind==='invite')return '📅 面试邀请：'+(mt.job||'');if(r.kind==='invite_reply')return mt.ans==='accept'?'✅ 已接受面试':'❌ 已拒绝面试';if(r.kind==='cancel')return '已取消面试';if(r.kind==='apply')return '申请岗位：'+(mt.job||'');return r.body}
+V.messages=()=>{const th=mThreads();const today=new Date().toDateString();const all=S.M;
+  if(S.mt&&!th.some(t=>t.k===S.mt))S.mt=th[0]?th[0].k:null;if(!S.mt&&th[0])S.mt=th[0].k;
+  const st=[['消息总数',all.length],['对话数',new Set(all.map(r=>r.worker_id+'-'+r.employer_id)).size],['今日消息',all.filter(r=>new Date(r.created_at).toDateString()===today).length],
+    ['面试邀请',all.filter(r=>r.kind==='invite').length],['已接受',all.filter(r=>r.kind==='invite_reply'&&(r.meta||{}).ans==='accept').length],['未读',all.filter(r=>!r.read_at).length]];
+  const cur=th.find(t=>t.k===S.mt);
+  return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));margin-bottom:14px">${st.map(s=>`<div class="card" style="padding:14px 16px"><div style="font-size:12px;color:var(--muted)">${s[0]}</div><div style="font-size:24px;font-weight:800;margin-top:2px">${s[1]}</div></div>`).join('')}</div>
+  <div class="filters"><div class="seg">${[['all','全部对话'],['invite','有面试邀请'],['pending','待工人回复']].map(x=>`<button class="${S.mk===x[0]?'on':''}" onclick="S.mk='${x[0]}';S.mt=null;render()">${x[1]}</button>`).join('')}</div>
+   <div class="search" style="max-width:300px">${ic('search')}<input id="mqI" placeholder="搜索姓名 / 企业 / 消息内容" value="${esc(S.mq)}" oninput="clearTimeout(window._mq);window._mq=setTimeout(()=>{S.mq=this.value;S.mt=null;render();const i=document.getElementById('mqI');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div></div>
+  <div class="msgwrap"><div class="card mlist">${th.map(t=>{const w=mW(t.w);return `<div class="mrow ${t.k===S.mt?'on':''}" onclick="S.mt='${t.k}';render()">${w?avatar(w):'<div class="av" style="background:#ddd">?</div>'}<div style="flex:1;min-width:0">
+     <div style="display:flex;gap:6px;align-items:center"><b class="ell">${esc(mName(t.last,'w'))}</b><span style="color:var(--muted)">⇄</span><span class="ell" style="font-weight:600">${esc(mName(t.last,'e'))}</span></div>
+     <div class="ell" style="font-size:12.5px;color:var(--ink2);margin-top:2px">${esc(mPrev(t.last))}</div>
+     <div style="font-size:11.5px;color:var(--muted);margin-top:3px">${fmt(t.last.created_at)} · ${t.n} 条${t.inv?` · 邀请 ${t.inv}`:''}${t.acc?` · <span style="color:#2e7d32">接受 ${t.acc}</span>`:''}${t.dec?` · <span style="color:#c0392b">拒绝 ${t.dec}</span>`:''}</div></div></div>`}).join('')||'<div class="empty">暂无对话</div>'}</div>
+   <div class="card mthread">${cur?mThreadView(cur):'<div class="empty">选择左侧对话查看聊天记录</div>'}</div></div>
+  <div class="note" style="margin-top:12px">这里是工人与招聘方在 App 中的全部聊天和面试邀请记录（只读）。发现收费、骚扰等违规内容可删除单条消息，并到“工人管理 / 招聘方管理”停用账号。停用后对方无法再发送消息。</div>`};
+function mThreadView(t){const w=mW(t.w),e=mE(t.e);const rows=S.M.filter(r=>r.worker_id===t.w&&r.employer_id===t.e).sort((a,b)=>a.id-b.id);
+  return `<div class="mhead"><div style="display:flex;gap:10px;align-items:center;min-width:0">${w?avatar(w):''}<div style="min-width:0"><b class="ell">${esc(mName(t.last,'w'))}</b><div style="font-size:12px;color:var(--muted)">工人 #${t.w}${w?' · '+esc(w.d.role||'')+' · '+stChip(w.status):' · 已删除'}</div></div></div>
+   <div style="text-align:right;min-width:0"><b class="ell">${esc(mName(t.last,'e'))}</b><div style="font-size:12px;color:var(--muted)">招聘方 #${t.e}${e?' · '+esc(e.d.contact||'')+' '+esc(e.d.phone||'')+' · '+stChip(e.status):' · 已删除'}</div></div></div>
+   <div class="mbody">${rows.map(r=>{const me=r.sender==='e';const mt=r.meta||{};
+     let inner=esc(r.body);if(r.kind==='invite')inner=`<div style="font-size:12px;opacity:.7">📅 面试邀请</div><b>${esc(mt.job||'')}</b> · ${esc(mt.m)}月${esc(mt.d)}日 ${esc(mt.time||'')} · ${esc(mt.way||'')}${mt.place?'<br>📍 '+esc(mt.place):''}<div style="margin-top:6px">${mt.cancel?'已取消':mt.ans==='accept'?'✅ 工人已接受':mt.ans==='decline'?'❌ 工人已拒绝':'⏳ 等待回复'}</div>`;
+     if(r.kind==='invite_reply')inner=`<b>${mt.ans==='accept'?'✅ 接受面试邀请':'❌ 拒绝面试邀请'}</b>${mt.phone?' · 电话 '+esc(mt.phone):''}<div style="margin-top:4px">${esc(r.body)}</div>`;
+     if(r.kind==='apply')inner=`<div style="font-size:12px;opacity:.7">岗位申请 · ${esc(mt.job||'')}</div>${esc(r.body)}`;
+     return `<div class="mb ${me?'me':''}"><div class="mbb">${inner}${r.trans&&r.trans!==r.body&&r.kind!=='invite'?`<div class="mtr">译：${esc(r.trans)}</div>`:''}</div>
+      <div class="mmeta">${me?'招聘方':'工人'} · ${fmt(r.created_at)} · ${KIND[r.kind]||r.kind}${r.read_at?' · 已读':' · 未读'} <a onclick="delMsg(${r.id})">删除</a></div></div>`}).join('')}</div>`}
+function delMsg(id){const r=S.M.find(x=>x.id===id);if(!r)return;confirmBox(`删除这条消息？删除后双方 App 中都不再显示。<br><span style="color:var(--muted)">${esc(String(r.body).slice(0,80))}</span>`,()=>run(async()=>{
+  await API.del('messages',id);S.M=S.M.filter(x=>x.id!==id);await API.log('删除聊天消息','message:'+id,{worker:r.worker_id,employer:r.employer_id,body:String(r.body).slice(0,60)});closeModal()},'已删除'),'删除')}
+document.head.insertAdjacentHTML('beforeend',`<style>
+.msgwrap{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:14px;align-items:start}
+.mlist{padding:6px;max-height:68vh;overflow:auto}.mrow{display:flex;gap:10px;padding:10px;border-radius:14px;cursor:pointer;align-items:center}.mrow:hover{background:var(--soft)}.mrow.on{background:var(--lime)}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:100%}
+.mthread{padding:0;display:flex;flex-direction:column;max-height:68vh}.mhead{display:flex;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.mbody{padding:14px 16px;overflow:auto;flex:1}.mb{margin:8px 0;max-width:80%}.mb.me{margin-left:auto;text-align:right}
+.mbb{display:inline-block;text-align:left;background:var(--soft);padding:10px 13px;border-radius:16px;line-height:1.5;font-size:13.5px}.mb.me .mbb{background:#161616;color:#fff}
+.mtr{font-size:12px;opacity:.7;margin-top:5px;padding-top:5px;border-top:1px solid rgba(127,127,127,.3)}
+.mmeta{font-size:11px;color:var(--muted);margin-top:3px}.mmeta a{color:#c0392b;cursor:pointer;margin-left:6px}
+@media (max-width:860px){.msgwrap{grid-template-columns:1fr}.mlist,.mthread{max-height:none}}</style>`);
+if(LIVE&&S.session)API.load().then(render).catch(()=>{});
+
 </script>
 </body>
 </html>
