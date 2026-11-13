@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "334289642684",
+    "project_id": "jobpaw-3f32e",
+    "storage_bucket": "jobpaw-3f32e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334289642684:android:6a2b7600e6b9e7d6fadcb9",
+        "android_client_info": {
+          "package_name": "com.hiregh.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBht6IVS0ouTWxWykyWKPDkCxaHecBOSt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
