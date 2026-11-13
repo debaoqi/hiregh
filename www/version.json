@@ -1,6 +1,6 @@
 {
-  "version": "2.2.0",
-  "build": 33,
+  "version": "2.3.0",
+  "build": 34,
   "date": "2026-11-13",
   "force": false,
   "minNative": 35,
@@ -8,13 +8,13 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/HireGH.apk",
   "notes": {
     "zh": [
-      "新增真实消息：招聘方和工人可以实时对话、留言，自动翻译",
-      "工人能收到面试邀请，可直接接受或拒绝；接受后招聘方可看到电话",
-      "工人申请岗位会自动通知招聘方"
+      "消息秒达：新消息和面试邀请实时推送，不用再等待",
+      "发送消息立即显示，不再卡顿",
+      "对方已读、接受面试也会立即同步"
     ],
     "en": [
-      "New: real-time chat with employers (auto-translated)",
-      "Interview invitations can be accepted or declined in the app"
+      "Messages and interview invitations now arrive instantly",
+      "Smoother sending, no waiting"
     ]
   }
 }

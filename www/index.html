@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.2.0',APP_BUILD=33;
+const APP_VER='2.3.0',APP_BUILD=34;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2177,6 +2177,73 @@ document.head.insertAdjacentHTML('beforeend','<style>.screen.chatpad.wchat{paddi
 const _render13b=render;render=function(top){_render13b(top);$('#screen').classList.toggle('wchat',S.view==='w_chat')};
 
 if(DB.on){setTimeout(msgPoll,1500);msgLoop()}
+
+</script>
+<script>
+/* ================= v2.3 消息秒达：Realtime 推送提醒 + 先显示后发送 ================= */
+/* 发消息后立刻通过 Supabase Realtime 广播一个“有新消息”的提醒（不含内容），对方收到后马上拉取；轮询只做兜底 */
+const RTC={ws:null,topic:null,ok:false,ref:0,hb:null,retry:0,rt:null};
+const rtBase=()=>CFG.supabaseUrl.replace(/\/$/,'');
+function rtTopic(){const c=msgCred();return c?'hgm-'+c.role+'-'+c.id:null}
+function rtConnect(){const tp=rtTopic();if(!DB.on||!tp||!window.WebSocket)return rtClose();
+  if(RTC.ws&&RTC.topic===tp&&RTC.ws.readyState<=1)return;rtClose();RTC.topic=tp;
+  let ws;try{ws=new WebSocket(rtBase().replace(/^http/,'ws')+'/realtime/v1/websocket?apikey='+CFG.supabaseAnonKey+'&vsn=1.0.0')}catch(e){return rtLater()}
+  RTC.ws=ws;
+  ws.onopen=()=>{RTC.retry=0;ws.send(JSON.stringify({topic:'realtime:'+tp,event:'phx_join',payload:{config:{broadcast:{self:false,ack:false},presence:{key:''},private:false},access_token:CFG.supabaseAnonKey},ref:String(++RTC.ref),join_ref:'1'}));
+    clearInterval(RTC.hb);RTC.hb=setInterval(()=>{try{ws.readyState===1&&ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:String(++RTC.ref)}))}catch(e){}},25000)};
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}
+    if(m.event==='phx_reply'&&m.topic==='realtime:'+tp&&m.payload&&m.payload.status==='ok'){if(!RTC.ok){RTC.ok=true;msgPoll();msgLoop(true)}}
+    else if(m.event==='broadcast'&&m.topic==='realtime:'+tp)msgPoll()};
+  ws.onclose=()=>{if(RTC.ws!==ws)return;RTC.ok=false;clearInterval(RTC.hb);msgLoop(true);rtLater()};
+  ws.onerror=()=>{try{ws.close()}catch(e){}}}
+function rtLater(){clearTimeout(RTC.rt);RTC.rt=setTimeout(rtConnect,Math.min(30000,1500*Math.pow(2,RTC.retry++)))}
+function rtClose(){clearTimeout(RTC.rt);clearInterval(RTC.hb);const w=RTC.ws;RTC.ws=null;RTC.ok=false;RTC.topic=null;if(w)try{w.close()}catch(e){}}
+/* 通知对方：走 REST 广播，不依赖自己的 WebSocket */
+function rtPing(role,id,ev){if(!DB.on||!id)return;fetch(rtBase()+'/realtime/v1/api/broadcast',{method:'POST',keepalive:true,
+  headers:{apikey:CFG.supabaseAnonKey,Authorization:'Bearer '+CFG.supabaseAnonKey,'Content-Type':'application/json'},
+  body:JSON.stringify({messages:[{topic:'hgm-'+role+'-'+id,event:ev||'msg',payload:{}}]})}).catch(()=>{})}
+const pingPeer=(c,peer,ev)=>rtPing(c.role==='w'?'e':'w',peer,ev);
+
+/* 拉取：并发请求合并，进行中再来的提醒会在结束后补拉一次 */
+let _mpAgain=false;
+const _msgPoll14=msgPoll;
+msgPoll=async function(){if(_mpBusy){_mpAgain=true;return}await _msgPoll14();if(_mpAgain){_mpAgain=false;await _msgPoll14()}};
+/* 兜底轮询：已连上推送时聊天页 5 秒 / 其他 20 秒；没连上时 2.5 秒 / 6 秒。不会因为页面重绘被不断推迟 */
+let _mpDue=0;
+msgLoop=function(force){const chat=['chat','w_chat','chats','w_msgs'].includes(S.view);const d=RTC.ok?(chat?5000:20000):(chat?2500:6000);const due=Date.now()+d;
+  if(!force&&_mpT&&_mpDue&&_mpDue<=due)return;clearTimeout(_mpT);_mpDue=due;
+  _mpT=setTimeout(async()=>{_mpT=null;_mpDue=0;if(!document.hidden)await msgPoll();msgLoop()},d)};
+
+/* 发送：气泡立刻出现，翻译和上传在后台进行，成功后通知对方 */
+msgSend=async function(peer,kind,body,trans,meta){const c=msgCred();if(!c)return null;const m=mstore(c);
+  const tmp={id:'p'+(++_pid),pending:true,sender:c.role,kind,body,trans:null,meta,created_at:new Date().toISOString(),worker_id:c.role==='w'?c.id:peer,employer_id:c.role==='e'?c.id:peer};
+  m.rows.push(tmp);msgRender();const sc=$('#screen');if(sc&&['chat','w_chat'].includes(S.view))sc.scrollTop=sc.scrollHeight;
+  let tr=trans;if(tr&&typeof tr.then==='function'){try{tr=await tr}catch(e){tr=null}}if(tr===body||tr==='')tr=null;tmp.trans=tr;
+  try{const r=await mrpc('send_message',{p_role:c.role,p_id:c.id,p_token:c.token,p_peer:peer,p_kind:kind,p_body:body,p_trans:tr,p_meta:meta||null});
+    pingPeer(c,peer);const i=m.rows.indexOf(tmp);if(i>=0)m.rows.splice(i,1);if(!m.rows.some(x=>x.id===r.id))m.rows.push(r);
+    m.peers[peer]=m.peers[peer]||{};msave(m);msgRender();return r}
+  catch(e){tmp.pending=false;tmp.failed=true;tmp.id='f'+_pid;msgRender();toast(c.role==='w'?t('msg_fail'):'发送失败，请检查网络后重试');return null}};
+/* 招聘方发消息：不再等翻译 */
+sendMsg=async function(k){const id=S.params.id;if(!realW(id))return _sendMsg13(k);let o,tr;
+  if(k!==undefined){[o,tr]=QUICK[k]}else{const i=$('#mi');o=i.value.trim();if(!o)return;i.value='';tr=zh2en(o)}
+  msgSend(id-100000,'text',o,tr,null)};
+/* 工人发消息：不再等翻译 */
+wSend=function(){const i=$('#mi');const o=(i&&i.value||'').trim();if(!o)return;i.value='';i.focus();msgSend(S.params.eid,'text',o,trTo(o,'zh-CN'),null)};
+/* 已读回执也即时通知对方 */
+const _markRead14=markRead;
+markRead=async function(c,peer,silent){const m=mstore(c);const had=m.rows.some(r=>peerOf(c,r)===peer&&r.sender!==c.role&&!r.read_at);await _markRead14(c,peer,silent);if(had)pingPeer(c,peer,'read')};
+/* 接受 / 拒绝面试：立即显示，后台提交，成功后通知招聘方 */
+const _wAnswer14=wAnswer;
+wAnswer=async function(mid,ans){const c=msgCred('w');const m=c&&mstore(c);const iv=m&&m.rows.find(r=>r.id===mid);await _wAnswer14(mid,ans);
+  if(iv&&iv.meta&&iv.meta.ans===ans)pingPeer(c,iv.employer_id)};
+/* 回到前台 / 网络恢复：立即重连并拉取 */
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)rtConnect()});
+window.addEventListener('online',()=>{rtConnect();msgPoll()});
+/* 身份变化（注册、切换工人/招聘方）时切换推送频道 */
+const _render14b=render;render=function(top){_render14b(top);if(rtTopic()!==RTC.topic)rtConnect()};
+/* 打开对话时先显示本地记录，再静默刷新（不阻塞页面切换） */
+const _openChat14=openChat;openChat=function(id){_openChat14(id)};
+if(DB.on){rtConnect();msgLoop(true)}
 
 </script>
 </body>
