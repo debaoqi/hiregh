@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.5.0',APP_BUILD=36;
+const APP_VER='2.5.1',APP_BUILD=37;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2371,6 +2371,54 @@ try{window.Capacitor&&window.Capacitor.Plugins.App&&window.Capacitor.Plugins.App
   const r=await window.Capacitor.Plugins.AppUpdater.canInstall();if(r.allowed){UPX.wait=false;UPX.st='ready';updSheet();updInstall()}})}catch(e){}
 /* 更新提示框：用新 Logo 替换旧的 “H” */
 const _showUpd16=showUpd;showUpd=function(v,k){_showUpd16(v,k);const h=$('#sheet span[style*="font-weight:900"]');if(h&&h.textContent==='H')h.outerHTML='<img src="logo.svg" style="width:52px;height:52px;border-radius:16px">'};
+
+</script>
+<script>
+/* ================= v2.5.1 更新提示更可靠 ================= */
+/* 问题：点过一次“稍后”后，安装包提示会被静默 24 小时；新版本出来也不提示，看起来就是“没反应”。
+   现在：①“稍后”只对当前这个版本有效，出新版本立刻再提示，最多静默 2 小时；
+        ② 页面顶部常驻一条“有新版本”提示条，随时点开更新；
+        ③ 旧安装包（没有内置下载器）改用国内也能快速访问的 CDN 下载，并提供“复制链接”备用。 */
+const UPD_PENDING={kind:null,v:null};
+const apkKey=v=>'n'+(v.minNative||0);
+updLater=function(b){const v=UPD.remote||{};LS.set('updLater',{b,t:Date.now()});LS.set('apkLater2',{k:apkKey(v),t:Date.now()});closeSheet()};
+checkUpdate=async function(manual){
+  if(UPD.busy)return;UPD.busy=true;
+  try{const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
+    let kind=null;
+    if((+v.build||0)>APP_BUILD)kind='web';
+    else if(isNative()&&v.minNative){const nb=await nativeBuild();if(nb&&nb<v.minNative)kind='apk'}
+    UPD_PENDING.kind=kind;UPD_PENDING.v=v;updBarSync();
+    if(!kind){if(manual)toast(t('upd_latest')+' · v'+APP_VER);return}
+    if(!manual&&!v.force){
+      if(kind==='web'){const d=LS.get('updLater',null);if(d&&d.b===v.build&&Date.now()-d.t<2*3600e3)return}
+      else{const d=LS.get('apkLater2',null);if(d&&d.k===apkKey(v)&&Date.now()-d.t<2*3600e3)return}}
+    if($('#sheet').classList.contains('on')&&!manual)return;
+    showUpd(v,kind)}
+  catch(e){if(manual)toast(t('upd_fail'))}
+  finally{UPD.busy=false}};
+Object.assign(T,{upd_bar:['New version available — tap to update','New version available — tap to update','有新版本，点此更新'],
+  upd_copy:['Copy download link','Copy download link','复制下载链接'],
+  upd_ext_tip:['If the download does not start, copy the link and open it in your phone browser.','If the download does not start, copy the link and open it in your phone browser.','如果没有开始下载，请复制链接，用手机浏览器打开即可下载安装。']});
+function updBarSync(){let el=document.getElementById('updBarTop');const sc=$('#screen');if(!sc)return;
+  const fx=$('#fixed');const hide=!UPD_PENDING.kind||['chat','w_chat','e_reg','w_reg','post','welcome'].includes(S.view)||(fx&&fx.children.length)||$('#sheet').classList.contains('on');
+  if(!el){el=document.createElement('div');el.id='updBarTop';el.onclick=()=>checkUpdate(true);
+    el.style.cssText='position:absolute;left:16px;right:16px;bottom:calc(98px + env(safe-area-inset-bottom));z-index:40;padding:11px 14px;border-radius:16px;background:#161616;color:var(--lime);display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25)';
+    sc.parentNode.appendChild(el)}
+  el.style.display=hide?'none':'flex';if(hide)return;
+  const zh=S.mode==='emp'||S.lang==='zh';const txt=zh?'有新版本 v'+(UPD_PENDING.v.version||'')+'，点此更新':t('upd_bar');
+  if(el.dataset.t!==txt){el.dataset.t=txt;el.innerHTML=ic('arrow',16)+'<span style="flex:1">'+esc(txt)+'</span><span>›</span>'}}
+const _render17=render;render=function(top){_render17(top);updBarSync()};
+const _close17=closeSheet;closeSheet=function(){const r=_close17();setTimeout(updBarSync,50);return r};
+/* 旧安装包：从 CDN 下载（不走 GitHub），并给出复制链接的备用方式 */
+const EXT_APK=()=>{const v=UPD.remote||{};return v.apkExt||'https://cdn.jsdelivr.net/gh/debaoqi/hiregh@main/www/app/JobPaw.apk'};
+updBrowser=function(){const u=EXT_APK();
+  openSheet(`<div class="row gap" style="align-items:center"><img src="logo.svg" style="width:52px;height:52px;border-radius:16px"><div><div class="b" style="font-size:20px">JobPaw v${esc((UPD.remote||{}).version||'')}</div><div class="sm muted">${t('upd_dl')}</div></div></div>
+   <div class="note-y" style="margin-top:14px;line-height:1.6">${t('upd_ext_tip')}</div>
+   <div class="xs" style="margin-top:10px;word-break:break-all;background:var(--card);padding:10px;border-radius:12px">${esc(u)}</div>
+   <div class="row gap" style="margin-top:14px"><button class="bigbtn" style="flex:1;background:var(--card);color:#161616" onclick="copyText('${esc(u)}')">${t('upd_copy')}</button><button class="bigbtn" style="flex:1" onclick="location.href='${esc(u)}'">${t('upd_apk')}</button></div>`);
+  setTimeout(()=>{location.href=u},300)};
+setTimeout(()=>checkUpdate(false),1200);
 
 </script>
 </body>

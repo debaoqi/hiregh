@@ -1,6 +1,6 @@
 {
-  "version": "2.5.0",
-  "build": 36,
+  "version": "2.5.1",
+  "build": 37,
   "date": "2026-11-13",
   "force": false,
   "minNative": 48,
@@ -8,14 +8,14 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "修复 App 闪动：收到消息、同步数据时页面不再闪",
-      "更新下载改为高速镜像，不再卡在 GitHub",
-      "新版安装包内置下载器：App 内显示进度并直接安装"
+      "更新提示更可靠：新版本一出就提示，并在页面底部常驻“有新版本”提示条",
+      "旧版安装包改从高速 CDN 下载，并可复制下载链接"
     ],
     "en": [
-      "Fixed screen flicker when new messages arrive",
-      "Faster, more reliable update downloads"
+      "More reliable update prompts",
+      "Faster download for the new installer"
     ]
   },
-  "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk"
+  "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
+  "apkExt": "https://cdn.jsdelivr.net/gh/debaoqi/hiregh@main/www/app/JobPaw.apk"
 }
