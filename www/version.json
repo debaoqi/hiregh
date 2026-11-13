@@ -3,17 +3,17 @@
   "build": 35,
   "date": "2026-11-13",
   "force": false,
-  "minNative": 42,
+  "minNative": 46,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
       "App 更名为 JobPaw",
-      "新增锁屏消息通知（需安装新版 APK）"
+      "新增锁屏消息通知：新消息、面试邀请即使锁屏也会弹出"
     ],
     "en": [
       "The app is now called JobPaw",
-      "Lock-screen notifications for new messages (install the new APK)"
+      "Lock-screen notifications for new messages and interview invitations"
     ]
   }
 }
