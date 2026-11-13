@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.7.0',APP_BUILD=40;
+const APP_VER='2.8.0',APP_BUILD=41;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2536,6 +2536,142 @@ V.w_home=()=>{let h=_vwh20();const q=(S.wq||'').trim();if(q)return h;
 const _vhome20=V.home;
 V.home=()=>{const tmp=WORKERS.filter(w=>w.joinedAt&&Date.now()-Date.parse(w.joinedAt)<WEEK&&!w.self);tmp.sort((a,b)=>Date.parse(b.joinedAt)-Date.parse(a.joinedAt));
   tmp.forEach(w=>{w.self=true;w.status='approved'});try{return _vhome20()}finally{tmp.forEach(w=>{w.self=false})}};
+
+</script>
+<script>
+/* ================= v2.8 正确的中国国旗（大五角星 + 四颗小星） ================= */
+if(NATS.CN){NATS.CN.flag=`#DE2910 url("data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2030%2020%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%3Crect%20width%3D%2230%22%20height%3D%2220%22%20fill%3D%22%23DE2910%22%2F%3E%3Cg%20fill%3D%22%23FFDE00%22%3E%3Cpolygon%20points%3D%225.00%2C2.00%205.67%2C4.07%207.85%2C4.07%206.09%2C5.35%206.76%2C7.43%205.00%2C6.15%203.24%2C7.43%203.91%2C5.35%202.15%2C4.07%204.33%2C4.07%22%2F%3E%3Cpolygon%20points%3D%229.14%2C2.51%209.62%2C1.97%209.25%2C1.34%209.91%2C1.63%2010.39%2C1.08%2010.33%2C1.80%2011.00%2C2.09%2010.29%2C2.25%2010.22%2C2.97%209.85%2C2.35%22%2F%3E%3Cpolygon%20points%3D%2211.01%2C4.14%2011.66%2C3.82%2011.56%2C3.10%2012.07%2C3.62%2012.72%2C3.30%2012.38%2C3.95%2012.88%2C4.47%2012.17%2C4.34%2011.83%2C4.99%2011.73%2C4.27%22%2F%3E%3Cpolygon%20points%3D%2211.04%2C6.73%2011.76%2C6.70%2011.96%2C6.00%2012.21%2C6.68%2012.94%2C6.66%2012.37%2C7.10%2012.62%2C7.79%2012.01%2C7.38%2011.44%2C7.83%2011.64%2C7.13%22%2F%3E%3Cpolygon%20points%3D%229.22%2C8.38%209.90%2C8.63%2010.35%2C8.06%2010.32%2C8.79%2011.00%2C9.05%2010.30%2C9.24%2010.26%2C9.96%209.87%2C9.36%209.16%2C9.55%209.62%2C8.98%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/cover no-repeat`;NATS.CN.star=null}
+
+/* ================= v2.8 VIP 企业会员 + 一次招多个工种 ================= */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.vipb{display:inline-flex;align-items:center;gap:2px;background:linear-gradient(135deg,#F7D774,#E0A923);color:#3B2600;font-size:10.5px;font-weight:900;padding:2px 7px;border-radius:8px;letter-spacing:.3px;vertical-align:middle}
+.vipcard{border-radius:26px;padding:18px 18px 16px;margin-top:16px;background:linear-gradient(135deg,#2A2112,#161616);color:#F7D774}
+.vipcard.on{background:linear-gradient(135deg,#F7D774,#E0A923);color:#2A1A00}
+.vplan{flex:1;border-radius:20px;background:var(--card);padding:14px 10px;text-align:center;cursor:pointer;border:2px solid transparent;position:relative}
+.vplan.on{border-color:#161616;background:#fff}.vplan .p{font-size:24px;font-weight:900;margin-top:4px}.vplan .tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.paych{flex:1;border-radius:18px;padding:13px;display:flex;align-items:center;gap:8px;justify-content:center;font-weight:800;cursor:pointer;background:var(--card);border:2px solid transparent}
+.paych.on{border-color:#161616;background:#fff}
+.xrow{display:flex;gap:8px;align-items:center;background:#fff;border-radius:18px;padding:10px 10px 10px 14px;margin-top:8px;color:#161616}
+.xrow input{width:64px;border:1.5px solid #D9D2C3;border-radius:10px;padding:7px 6px;font-size:13px;text-align:center}
+</style>`);
+const VIP={until:null,orders:[],set:new Set(),info:null,sel:'d30',ch:'wechat'};
+const VIP_PLANS=[['d7',7,99,''],['d30',30,299,'推荐'],['d90',90,699,'最划算']];
+const JOB_LIMIT=3;
+const isVip=()=>!!(VIP.until&&Date.parse(VIP.until)>Date.now());
+const vipDays=()=>isVip()?Math.ceil((Date.parse(VIP.until)-Date.now())/864e5):0;
+const isVipJob=j=>!!(j&&j.emp&&VIP.set.has(+j.emp));
+const fmtD=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+async function vipSync(){const c=msgCred('e');if(!DB.on||!c)return;
+  try{const r=await DB.q('rpc/get_my_vip',{method:'POST',body:JSON.stringify({p_id:c.id,p_token:c.token})});if(!r)return;
+    const was=isVip(),sig=JSON.stringify([VIP.until,VIP.orders.map(o=>o.status)]);VIP.until=r.until;VIP.orders=r.orders||[];
+    if(!was&&isVip())toast('VIP 已开通，岗位已置顶');
+    if(sig!==JSON.stringify([VIP.until,VIP.orders.map(o=>o.status)])&&['me','vip','vippay','jobs','home'].includes(S.view))render(false)}catch(e){}}
+async function vipPublic(){if(!DB.on)return;try{const r=await DB.q('rpc/public_vips',{method:'POST',body:'{}'});VIP.set=new Set((r||[]).map(Number))}catch(e){}}
+async function vipInfo(){if(VIP.info)return VIP.info;try{VIP.info=await DB.q('rpc/get_pay_info',{method:'POST',body:'{}'})}catch(e){VIP.info={pay:{}}}return VIP.info}
+/* VIP 岗位排在最前面 */
+function vipSort(){const before=S.jobs.map(j=>j.id).join();S.jobs.sort((a,b)=>(isVipJob(b)?1:0)-(isVipJob(a)?1:0));return before!==S.jobs.map(j=>j.id).join()}
+const _syncDB21=syncDB;
+syncDB=async function(force){const r=await _syncDB21(force);await vipPublic();if(vipSort()&&!FORM_VIEWS.includes(S.view))render(false);if(S.mode==='emp')vipSync();return r};
+setTimeout(()=>{vipPublic().then(()=>{if(vipSort()&&!FORM_VIEWS.includes(S.view))render(false)});vipSync()},1500);
+setInterval(()=>{if(document.visibilityState==='visible'&&S.mode==='emp')vipSync()},20000);
+/* 岗位卡片 / 详情显示 VIP 标识 */
+const _wJobCard21=wJobCard;
+wJobCard=function(j){let h=_wJobCard21(j);if(!isVipJob(j))return h;return h.replace('<small class="row gap6">','<small class="row gap6"><span class="vipb">★ VIP</span>').replace('<div class="wc"','<div class="wc" style="box-shadow:0 0 0 2px #E0A923"')};
+const _vwj21=V.w_job;V.w_job=()=>{let h=_vwj21();const j=S.jobs.find(x=>x.id===S.params.id);if(!isVipJob(j))return h;return h.replace('<div class="rpill" style="color:#161616">','<div class="rpill" style="color:#161616"><span class="vipb" style="margin-right:6px">★ VIP</span>')};
+/* 今日推荐：VIP 岗位优先 */
+const _vwh21=V.w_home;V.w_home=()=>{const tmp=S.jobs.filter(j=>isVipJob(j)&&j.status==='open').map(j=>[j,j.postedAt]);
+  tmp.forEach(([j],k)=>{j.postedAt=new Date(Date.now()+86400000-k*1000).toISOString()});try{return _vwh21()}finally{tmp.forEach(([j,p])=>{j.postedAt=p})}};
+/* 招聘方“我的”：VIP 会员卡 */
+function vipCardHTML(){const pend=VIP.orders.find(o=>o.status==='submitted'||o.status==='pending');
+  if(isVip())return `<div class="vipcard on"><div class="row between"><b style="font-size:19px">★ VIP 企业会员</b><span class="sm b">剩余 ${vipDays()} 天</span></div>
+   <div class="sm" style="margin-top:6px;opacity:.85">有效期至 ${fmtD(VIP.until)} · 岗位置顶 · VIP 标识 · 优先推送 · 不限在招岗位</div>
+   <button class="bigbtn" style="width:100%;margin-top:12px;background:#161616;color:#F7D774" onclick="go('vip')">续费 VIP</button></div>`;
+  return `<div class="vipcard"><div class="row between"><b style="font-size:19px">★ 开通 VIP 企业会员</b><span class="sm">¥99 起</span></div>
+   <div class="sm" style="margin-top:6px;opacity:.85;line-height:1.6">岗位置顶 · 金色 VIP 标识 · 优先推送给工人 · 不限在招岗位（普通企业最多 ${JOB_LIMIT} 个）</div>
+   ${pend&&pend.status==='submitted'?'<div class="sm b" style="margin-top:8px;color:#fff">付款已提交，等待平台确认到账</div>':''}
+   <button class="bigbtn" style="width:100%;margin-top:12px;background:#F7D774;color:#2A1A00" onclick="go('vip')">${pend&&pend.status==='submitted'?'查看订单':'立即开通'}</button></div>`}
+const _vme21=V.me;V.me=()=>{let h=_vme21();if(!S.company||!S.company.registered)return h;const k='<div class="sec-h">近期面试';const i=h.indexOf(k);return i<0?h:h.slice(0,i)+vipCardHTML()+h.slice(i)};
+/* VIP 购买页 */
+V.vip=()=>{const pl=VIP_PLANS.find(p=>p[0]===VIP.sel)||VIP_PLANS[1];
+  const ben=[['star','岗位置顶','你的岗位排在工人端列表和“今日推荐”最前面'],['shield','金色 VIP 标识','企业名称和岗位卡片显示 VIP，更受工人信任'],['bell','优先推送','岗位审核通过后，立即推送给匹配工种的工人手机'],['brief','不限在招岗位',`普通企业最多同时 ${JOB_LIMIT} 个在招岗位，VIP 不限`]];
+  return pageHdr('VIP 企业会员')+`<div class="pad">
+  ${isVip()?`<div class="vipcard on" style="margin-top:0"><b>当前 VIP 有效期至 ${fmtD(VIP.until)}（剩余 ${vipDays()} 天）</b><div class="sm" style="margin-top:4px">续费后在现有到期日上顺延</div></div>`:''}
+  <div class="box" style="margin-top:${isVip()?16:0}px">${ben.map(b=>`<div class="li"><span style="width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,#F7D774,#E0A923);display:grid;place-items:center;flex:none">${ic(b[0],18)}</span><div><div class="b">${b[1]}</div><div class="xs muted">${b[2]}</div></div></div>`).join('')}</div>
+  <div class="fl">选择套餐</div><div class="row gap" style="margin-top:6px">${VIP_PLANS.map(p=>`<div class="vplan ${p[0]===pl[0]?'on':''}" onclick="VIP.sel='${p[0]}';render(false)">${p[3]?`<span class="tag">${p[3]}</span>`:''}<div class="sm b">${p[1]} 天</div><div class="p">¥${p[2]}</div><div class="xs muted">约 ¥${(p[2]/p[1]).toFixed(1)}/天</div></div>`).join('')}</div>
+  <div class="fl">支付方式</div><div class="row gap" style="margin-top:6px"><div class="paych ${VIP.ch==='wechat'?'on':''}" onclick="VIP.ch='wechat';render(false)"><span style="color:#07C160;font-size:20px">●</span>微信支付</div><div class="paych ${VIP.ch==='alipay'?'on':''}" onclick="VIP.ch='alipay';render(false)"><span style="color:#1677FF;font-size:20px">●</span>支付宝</div></div>
+  ${VIP.orders.length?`<div class="fl">我的订单</div><div class="box" style="margin-top:6px">${VIP.orders.slice(0,5).map(o=>`<div class="li" style="cursor:pointer" onclick="${o.status==='paid'?'':`go('vippay',{id:${o.id}})`}"><div style="flex:1"><div class="b sm">JP${o.id} · ${o.days} 天 · ¥${o.amount}</div><div class="xs muted">${fmtD(o.created_at)} · ${o.channel==='wechat'?'微信':'支付宝'}${o.note?' · '+esc(o.note):''}</div></div><span class="badge ${({paid:'lime',submitted:'gold'})[o.status]||''}" style="${o.status==='rejected'?'background:#FAD2CB':''}">${({pending:'待付款',submitted:'待确认',paid:'已开通',rejected:'未通过',cancelled:'已取消'})[o.status]}</span></div>`).join('')}</div>`:''}
+  </div><div class="bbar"><button class="bigbtn" style="width:100%;background:linear-gradient(135deg,#F7D774,#E0A923);color:#2A1A00" onclick="vipBuy()">${isVip()?'续费':'立即开通'} · ¥${pl[2]}</button></div>`};
+async function vipBuy(){const c=msgCred('e');if(!c){toast('请先完成招聘方注册，并等待资料提交到平台');return}
+  const btn=document.querySelector('.bbar .bigbtn');if(btn){btn.disabled=true;btn.textContent='正在创建订单…'}
+  try{const o=await DB.q('rpc/create_vip_order',{method:'POST',body:JSON.stringify({p_id:c.id,p_token:c.token,p_plan:VIP.sel,p_channel:VIP.ch})});
+    VIP.orders.unshift(o);go('vippay',{id:o.id})}
+  catch(e){toast(/rate/.test(e.message)?'下单太频繁，请稍后再试':'创建订单失败，请检查网络');render(false)}}
+/* 付款页：优先官方支付（开通后自动到账），否则收款码 + 提交付款凭证 */
+const VPAY={proof:null};
+V.vippay=()=>{const o=VIP.orders.find(x=>x.id===S.params.id);if(!o)return pageHdr('付款')+'<div class="empty">订单不存在</div>';
+  const info=VIP.info||{};const pay=info.pay||{};const ch=o.channel;const qr=(pay.qr||{})[ch];const api=(pay.api||{})[ch];const nm=ch==='wechat'?'微信':'支付宝';
+  if(!VIP.info)vipInfo().then(()=>{if(S.view==='vippay')render(false)});
+  const head=`<div class="box" style="margin-top:0;text-align:center"><div class="sm muted">订单号 JP${o.id} · ${o.days} 天 VIP</div><div style="font-size:40px;font-weight:900;margin:4px 0">¥${o.amount}</div><div class="sm">${nm}支付</div></div>`;
+  if(o.status==='paid')return pageHdr('付款')+`<div class="pad">${head}<div class="vipcard on"><b>已开通 VIP</b></div></div>`;
+  const apiBlk=api?`<button class="bigbtn" style="width:100%;margin-top:14px;background:${ch==='wechat'?'#07C160':'#1677FF'}" onclick="vipApiPay(${o.id})">打开${nm}付款（自动到账）</button><div class="xs muted" style="text-align:center;margin-top:8px">付款完成后返回 App，会自动开通</div><div class="sec-h" style="margin-top:22px">或者扫码付款</div>`:'';
+  const steps=`<div class="box">${qr?`<div style="text-align:center"><img src="${qr}" style="width:220px;max-width:80%;border-radius:16px;background:#fff;padding:8px" alt="${nm}收款码"><div class="xs muted" style="margin-top:6px">${esc(pay.payee||'JobPaw')} · 长按图片保存到相册</div></div>`:`<div class="sm" style="color:var(--red)">平台${nm}收款码正在配置中，请稍后再试或联系客服。</div>`}
+   <ol class="sm" style="line-height:1.8;padding-left:20px;margin:12px 0 0"><li>保存收款码，打开${nm}「扫一扫」→ 右上角「相册」选择这张图</li><li>付款 <b>¥${o.amount}</b>，备注填写 <b>JP${o.id}</b></li><li>付款后回到这里，填写付款单号或上传付款截图，点“提交”</li></ol></div>
+   <div class="fl">付款单号 / 交易单号（任选其一）</div><input class="fi" id="vRef" maxlength="60" placeholder="在${nm}账单详情里可以看到" value="${esc(o.pay_ref||'')}">
+   <div class="fl">付款截图</div><div class="row gap" style="align-items:center"><button class="bigbtn" style="flex:0 0 auto;padding:12px 16px;background:var(--card);color:#161616" onclick="vipPickProof()">${ic('doc',16)} 选择截图</button><span class="sm muted" id="vProofTxt">${VPAY.proof?'已选择 1 张截图':'未选择'}</span></div>
+   ${o.status==='submitted'?'<div class="note-y" style="margin-top:14px">已提交付款凭证，平台确认到账后自动开通（通常 30 分钟内）。可以离开此页面。</div>':''}
+   ${o.status==='rejected'?`<div class="sm" style="margin-top:12px;color:var(--red)">平台未确认到账${o.note?'：'+esc(o.note):''}。请核对后重新提交。</div>`:''}`;
+  return pageHdr('付款')+`<div class="pad">${head}${apiBlk}${steps}</div><div class="bbar"><button class="bigbtn" style="width:100%" onclick="vipSubmit(${o.id})">${o.status==='submitted'?'重新提交凭证':'我已付款，提交'}</button></div>`};
+function vipPickProof(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;
+  VPAY.proof=await resizeImg(f,1100);const t=$('#vProofTxt');if(t)t.textContent='已选择 1 张截图'};i.click()}
+async function vipSubmit(id){const c=msgCred('e');const ref=($('#vRef')||{}).value||'';if(!ref.trim()&&!VPAY.proof){toast('请填写付款单号或上传付款截图');return}
+  const btn=document.querySelector('.bbar .bigbtn');if(btn){btn.disabled=true;btn.textContent='提交中…'}
+  try{await DB.q('rpc/submit_vip_proof',{method:'POST',body:JSON.stringify({p_id:c.id,p_token:c.token,p_order:id,p_ref:ref.trim(),p_proof:VPAY.proof||''})});
+    VPAY.proof=null;const o=VIP.orders.find(x=>x.id===id);if(o){o.status='submitted';o.pay_ref=ref.trim()}toast('已提交，平台确认到账后自动开通');render(false)}
+  catch(e){toast('提交失败，请检查网络后重试');render(false)}}
+async function vipApiPay(id){const c=msgCred('e');toast('正在打开支付…');
+  try{const r=await fetch(CFG.supabaseUrl.replace(/\/$/,'')+'/functions/v1/pay',{method:'POST',headers:{Authorization:'Bearer '+CFG.supabaseAnonKey,'Content-Type':'application/json'},body:JSON.stringify({action:'create',emp:c.id,token:c.token,order:id})});
+    const j=await r.json();if(j.url){location.href=j.url;VIP.polling=Date.now()}else toast(j.error==='not_configured'?'官方支付暂未开通，请使用扫码付款':'支付暂不可用，请使用扫码付款')}catch(e){toast('支付暂不可用，请使用扫码付款')}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.mode==='emp')vipSync()});
+FORM_VIEWS.push('vippay');
+/* 在招岗位上限：普通企业最多 3 个，VIP 不限 */
+function openJobsMine(){return S.jobs.filter(j=>j.owner==='me'&&j.status==='open').length}
+function vipUpsell(need){openSheet(`<div class="b" style="font-size:20px">在招岗位已达上限</div><p class="sm" style="line-height:1.7;margin:8px 0 0">普通企业最多同时 ${JOB_LIMIT} 个在招岗位（你现在有 ${openJobsMine()} 个，这次要新增 ${need} 个）。开通 VIP 不限数量，岗位还会置顶、带 VIP 标识并优先推送给工人。</p>
+  <button class="bigbtn" style="width:100%;margin-top:16px;background:linear-gradient(135deg,#F7D774,#E0A923);color:#2A1A00" onclick="closeSheet();go('vip')">开通 VIP · ¥99 起</button>
+  <button class="bigbtn" style="width:100%;margin-top:10px;background:var(--card);color:#161616" onclick="closeSheet();S.jobFilter='open';tab('jobs')">去暂停 / 关闭旧岗位</button>`)}
+/* 一次招多个工种：同一次发布可以加多个工种，每个工种单独设置人数和月薪 */
+S.pX=S.pX||[];
+function xRows(){return S.pX.map((x,k)=>`<div class="xrow"><div style="flex:1;min-width:0"><b class="sm">${esc(x.title)}</b><div class="xs muted">${esc((IND.find(i=>i.id===x.ind)||{}).zh||'')}</div></div>
+  <div class="stepper" style="transform:scale(.82);margin:-6px -8px"><button onclick="xN(${k},-1)">−</button><b>${x.n}</b><button onclick="xN(${k},1)">+</button></div>
+  <input inputmode="numeric" placeholder="最低" value="${esc(x.lo)}" oninput="S.pX[${k}].lo=this.value.replace(/\\D/g,'')"><input inputmode="numeric" placeholder="最高" value="${esc(x.hi)}" oninput="S.pX[${k}].hi=this.value.replace(/\\D/g,'')">
+  <span onclick="S.pX.splice(${k},1);xRefresh()" style="cursor:pointer;padding:4px">${ic('x',16)}</span></div>`).join('')}
+function xRefresh(){const e=$('#pXrows');if(e)e.innerHTML=xRows();const c=$('#pXcnt');if(c)c.textContent=S.pX.length?`共 ${1+S.pX.length} 个工种 · ${S.pX.reduce((a,x)=>a+x.n,0)+(+($('#pN')||{}).textContent||1)} 人`:''}
+function xN(k,d){S.pX[k].n=Math.max(1,Math.min(999,S.pX[k].n+d));xRefresh()}
+function xPick(ind){ind=ind||S.xInd||'ind';S.xInd=ind;const I=IND.find(i=>i.id===ind);
+  openSheet(`<div class="b" style="font-size:19px">添加工种</div><div class="chips" style="margin:10px -20px 0;padding:0 20px">${IND.map(i=>`<span class="chip sm ${i.id===ind?'on':''}" onclick="xPick('${i.id}')">${i.zh}</span>`).join('')}</div>
+   <div class="chips wrap" style="margin-top:12px">${I.roles.map(r=>`<span class="chip sm" onclick="xAdd('${ind}','${esc(r[0])}','${esc(r[1])}',${r[2]})">${r[0]}</span>`).join('')}</div>
+   <div class="row gap" style="margin-top:14px"><input class="fi" id="xCustom" placeholder="其他工种名称（自定义）" style="flex:1"><button class="bigbtn" style="flex:0 0 auto;padding:12px 16px" onclick="const v=$('#xCustom').value.trim();if(v)xAdd('${ind}',v,'',0)">添加</button></div>`)}
+function xAdd(ind,title,en,sal){if(S.pX.some(x=>x.title===title)){toast('这个工种已经添加了');return}
+  const lo=sal?Math.round(sal*0.85/50)*50:'',hi=sal?Math.round(sal*1.2/50)*50:'';S.pX.push({ind,title,en,n:1,lo:String(lo),hi:String(hi)});closeSheet();xRefresh();toast('已添加：'+title)}
+const _vpost21=V.post;
+V.post=()=>{let h=_vpost21();if(S.params.edit)return h;const k='<div class="fl">工作地点</div>';const i=h.indexOf(k);if(i<0)return h;
+  const blk=`<div class="fl">同时招聘更多工种 <span class="xs" style="opacity:.75">· 每个工种单独设置人数和月薪（GH₵）</span></div>
+   <div id="pXrows">${xRows()}</div>
+   <div class="row gap" style="margin-top:8px;align-items:center"><button class="bigbtn" style="flex:0 0 auto;padding:11px 16px;background:#fff;color:#161616;font-size:14px" onclick="xPick()">${ic('plus',16)} 添加工种</button><span class="sm" id="pXcnt" style="opacity:.85">${S.pX.length?`共 ${1+S.pX.length} 个工种`:''}</span></div>`;
+  return h.slice(0,i)+blk+h.slice(i)};
+const _savePost21=savePost;
+savePost=async function(id){if(id)return _savePost21(id);
+  const extras=S.pX.filter(x=>x.title);const need=1+extras.length;
+  if(S.company&&S.company.registered&&!isVip()&&openJobsMine()+need>JOB_LIMIT){vipUpsell(need);return}
+  for(const x of extras){if(!x.lo||!x.hi){toast(`请填写「${x.title}」的月薪范围`);return}}
+  const before=S.jobs[0]&&S.jobs[0].id;await _savePost21(0);const main=S.jobs[0];if(!main||main.id===before||main.owner!=='me')return;
+  if(!extras.length)return;const batch='b'+Date.now();main.batch=batch;const fmt=n=>(+n).toLocaleString('en-US');
+  extras.forEach((x,k)=>{const {id:_i,dbid:_d,title:_t,en:_e,ind:_n,n:_c,sal:_s,apps:_a,...shared}=main;
+    const j={...shared,id:Date.now()+k+1,apps:0,status:'open',owner:'me',title:x.title,en:x.en||'',ind:x.ind,n:x.n,sal:fmt(x.lo)+'–'+fmt(x.hi),batch};
+    S.jobs.splice(1+k,0,j);dbSafe(async()=>{const r=await DB.q('rpc/post_job',{method:'POST',body:JSON.stringify({p_data:jobRow(j).data})});j.dbid=r})});
+  S.pX=[];persist();toast(`已提交 ${need} 个工种，平台审核通过后工人可见`);render(false)};
+/* 推送通知：VIP 新岗位 → 点开直接看岗位 */
+try{if(typeof pushAvail==='function'&&pushAvail())Capacitor.Plugins.PushNotifications.addListener('pushNotificationActionPerformed',a=>{const d=(a&&a.notification&&a.notification.data)||{};
+  if(d.kind==='vipjob'&&d.job){syncDB(true).then(()=>{if(S.me){S.mode='wk';const id=100000+(+d.job);if(S.jobs.some(j=>j.id===id))go('w_job',{id})}})}})}catch(e){}
 
 </script>
 </body>

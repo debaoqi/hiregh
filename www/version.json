@@ -1,6 +1,6 @@
 {
-  "version": "2.7.0",
-  "build": 40,
+  "version": "2.8.0",
+  "build": 41,
   "date": "2026-11-13",
   "force": false,
   "minNative": 48,
@@ -8,13 +8,14 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "后台审核通过的岗位和人才，手机上即时出现",
-      "工人首页新增“今日推荐”：最新上线的岗位排在最前并标“新”",
-      "新增“其他行业”（设计、文员、销售、客服、IT 等）"
+      "企业 VIP 会员：岗位置顶、VIP 认证标识、优先推送给工人、不限在招岗位（7天¥99 / 30天¥299 / 90天¥699，微信/支付宝）",
+      "发布岗位时可同时招聘多个工种、每个工种多人",
+      "修正中国国旗显示"
     ],
     "en": [
-      "New jobs appear instantly; Today's picks",
-      "New 'Other' industry"
+      "Employer VIP: pinned jobs, VIP badge, priority push",
+      "Post multiple roles at once",
+      "Correct China flag"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
