@@ -1,6 +1,6 @@
 {
-  "version": "2.6.0",
-  "build": 39,
+  "version": "2.7.0",
+  "build": 40,
   "date": "2026-11-13",
   "force": false,
   "minNative": 48,
@@ -8,13 +8,13 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页新增导航栏（未注册时提示先注册）",
-      "首页标题下新增“找工人也轻松”",
-      "招聘方注册如未成功提交，会自动补交给平台"
+      "后台审核通过的岗位和人才，手机上即时出现",
+      "工人首页新增“今日推荐”：最新上线的岗位排在最前并标“新”",
+      "新增“其他行业”（设计、文员、销售、客服、IT 等）"
     ],
     "en": [
-      "Navigation bar on the home page",
-      "“Hiring workers is easy too” headline"
+      "New jobs appear instantly; Today's picks",
+      "New 'Other' industry"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

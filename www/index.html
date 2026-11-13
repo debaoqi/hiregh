@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.6.0',APP_BUILD=39;
+const APP_VER='2.7.0',APP_BUILD=40;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2483,6 +2483,59 @@ async function ensureEmpReg(){const c=S.company;if(_empRegBusy||!DB.on||!c||!c.r
 setTimeout(ensureEmpReg,2500);
 setInterval(()=>{if(document.visibilityState==='visible')ensureEmpReg()},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(ensureEmpReg,1500)});
+
+</script>
+<script>
+/* ================= v2.7 新信息即时同步 + 今日推荐 + “其他行业” ================= */
+/* 1) 新增“其他行业”：设计、文员、销售等不属于六大行业的岗位都能归类，人才库也能筛选 */
+if(!IND.find(i=>i.id==='oth')){
+  const oth={id:'oth',zh:'其他行业',en:'Other',color:'#E9DFCB',ink:'#161616',icon:'brief',roles:[
+    ['平面设计师','Graphic Designer',3500,['PS/AI','海报设计','排版']],['办公室文员','Office Clerk',2200,['Word/Excel','资料整理','接待']],
+    ['销售代表','Sales Rep',2500,['客户开发','市场推广']],['客服专员','Customer Service',2000,['电话/在线客服','售后处理']],
+    ['IT技术员','IT Technician',3800,['电脑维修','网络布线']],['摄影/剪辑','Photo & Video',3000,['拍摄','视频剪辑']],
+    ['教师/培训师','Teacher / Trainer',3000,['中文教学','技能培训']],['其他岗位','Other Role',2000,[]]]};
+  IND.push(oth);oth.roles.forEach(r=>{if(ROLE_MAP[r[0]])ROLE_MAP[r[0]].ind.roles=ROLE_MAP[r[0]].ind.roles.filter(x=>x[0]!==r[0]);ROLE_MAP[r[0]]={ind:oth,r}});
+  IT.oth=['Other','Other'];}
+/* 招工时：岗位名称属于某个行业的，自动归到正确行业 */
+/* 2) 拉取数据时带上发布/注册时间，用于“今日推荐”和“新”标记 */
+const WEEK=7*864e5,DAY=864e5;
+const _q20=DB.q;DB.q=async function(path,opt={}){
+  if(path==='rpc/post_job'&&opt.body){try{const b=JSON.parse(opt.body);const m=b.p_data&&ROLE_MAP[b.p_data.title];if(m)b.p_data.ind=m.ind.id;opt={...opt,body:JSON.stringify(b)}}catch(e){}}
+  const jm=/^(jobs|workers)\?select=id,data(&|$)/.exec(path);
+  if(!jm)return _q20.call(DB,path,opt);
+  const rows=await _q20.call(DB,path.replace('select=id,data','select=id,data,created_at'),opt);
+  if(!Array.isArray(rows))return rows;const now=Date.now();
+  return rows.map(r=>{const d={...(r.data||{})};const ts=r.created_at?Date.parse(r.created_at):0;
+    if(jm[1]==='jobs'){d.postedAt=r.created_at;if(ROLE_MAP[d.title]&&d.ind==='svc'&&ROLE_MAP[d.title].ind.id==='oth')d.ind='oth'}
+    else{d.joinedAt=r.created_at;d.status='approved';if(ts&&now-ts<WEEK)d.isNew=true}
+    return {id:r.id,data:d}})};
+/* 3) 即时同步：后台审核通过/删除/修改后，通过 Realtime 广播通知所有手机立刻刷新 */
+const GS={ws:null,ok:false,ref:0,hb:null,rt:null,retry:0};
+function gsConnect(){if(!DB.on||!window.WebSocket)return;if(GS.ws&&GS.ws.readyState<=1)return;
+  let ws;try{ws=new WebSocket(CFG.supabaseUrl.replace(/\/$/,'').replace(/^http/,'ws')+'/realtime/v1/websocket?apikey='+CFG.supabaseAnonKey+'&vsn=1.0.0')}catch(e){return gsLater()}
+  GS.ws=ws;
+  ws.onopen=()=>{GS.retry=0;ws.send(JSON.stringify({topic:'realtime:hgm-all',event:'phx_join',payload:{config:{broadcast:{self:false},presence:{key:''},private:false},access_token:CFG.supabaseAnonKey},ref:String(++GS.ref),join_ref:'1'}));
+    clearInterval(GS.hb);GS.hb=setInterval(()=>{try{ws.readyState===1&&ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:String(++GS.ref)}))}catch(e){}},25000)};
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}if(m.event==='phx_reply'&&m.topic==='realtime:hgm-all')GS.ok=true;
+    if(m.event==='broadcast'&&m.topic==='realtime:hgm-all'){clearTimeout(GS.t);GS.t=setTimeout(()=>{syncDB(true);typeof syncMe==='function'&&syncMe();typeof syncCo==='function'&&syncCo()},400)}};
+  ws.onclose=()=>{if(GS.ws!==ws)return;GS.ok=false;clearInterval(GS.hb);gsLater()};ws.onerror=()=>{try{ws.close()}catch(e){}}}
+function gsLater(){clearTimeout(GS.rt);GS.rt=setTimeout(gsConnect,Math.min(30000,1500*Math.pow(2,GS.retry++)))}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){gsConnect();syncDB(true)}});
+window.addEventListener('online',()=>{gsConnect();syncDB(true)});
+if(DB.on){gsConnect();setTimeout(()=>syncDB(true),1200);setInterval(()=>{if(document.visibilityState==='visible')syncDB(true)},GS.ok?30000:12000)}
+/* 4) 工人首页：顶部“今日推荐”= 最新上线的岗位（72 小时内），带“新”标记 */
+Object.assign(T,{today_pick:["Today's picks","Today's picks",'今日推荐'],new_tag:['NEW','NEW','新']});
+const isFresh=(x,ms)=>x&&x.postedAt&&Date.now()-Date.parse(x.postedAt)<ms;
+const _vwh20=V.w_home;
+V.w_home=()=>{let h=_vwh20();const q=(S.wq||'').trim();if(q)return h;
+  const fresh=S.jobs.filter(j=>j.status==='open'&&isFresh(j,3*DAY)&&(typeof inC!=='function'||inC(j))).sort((a,b)=>Date.parse(b.postedAt)-Date.parse(a.postedAt)).slice(0,5);
+  if(!fresh.length)return h;
+  const sec=`<div class="sec-h"><span style="display:inline-flex;align-items:center;gap:6px">${ic('star',16)}${t('today_pick')}</span></div>`+fresh.map(j=>`<div style="position:relative">${wJobCard(j)}<span style="position:absolute;top:-7px;left:14px;background:#161616;color:var(--lime);font-size:11px;font-weight:800;padding:3px 9px;border-radius:10px;z-index:2">${t('new_tag')}</span></div>`).join('');
+  const i=h.indexOf('<div class="sec-h">');return i<0?h:h.slice(0,i)+sec+h.slice(i)};
+/* 5) 招聘方首页：“今日推荐”优先显示最近一周新上线的工人 */
+const _vhome20=V.home;
+V.home=()=>{const tmp=WORKERS.filter(w=>w.joinedAt&&Date.now()-Date.parse(w.joinedAt)<WEEK&&!w.self);tmp.sort((a,b)=>Date.parse(b.joinedAt)-Date.parse(a.joinedAt));
+  tmp.forEach(w=>{w.self=true;w.status='approved'});try{return _vhome20()}finally{tmp.forEach(w=>{w.self=false})}};
 
 </script>
 </body>
