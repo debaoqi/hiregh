@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Keep the mirrored APK out of the app bundle
+        run: rm -rf www/app
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - uses: actions/setup-java@v4
@@ -87,6 +89,6 @@ jobs:
             mkdir -p www/app && cp ../JobPaw.apk www/app/JobPaw.apk
             SZ=$(stat -c%s www/app/JobPaw.apk); SHA=$(sha256sum www/app/JobPaw.apk | cut -d' ' -f1)
             printf '{"build":%s,"version":"%s","size":%s,"sha256":"%s"}\n' "${{ github.run_number }}" "$VER" "$SZ" "$SHA" > www/app/apk.json
-            git add www/app && git commit -q -m "APK build ${{ github.run_number }} mirror [skip ci]" && git push -q origin HEAD:main && break
+            git add www/app && git commit -q -m "APK build ${{ github.run_number }} mirror" && git push -q origin HEAD:main && break
             cd .. ; sleep 5
           done
