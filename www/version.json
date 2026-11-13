@@ -1,6 +1,6 @@
 {
-  "version": "2.5.1",
-  "build": 37,
+  "version": "2.5.2",
+  "build": 38,
   "date": "2026-11-13",
   "force": false,
   "minNative": 48,
@@ -8,15 +8,14 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "更新提示更可靠：新版本一出就提示，并在页面底部常驻“有新版本”提示条",
-      "旧版安装包改从高速 CDN 下载，并可复制下载链接"
+      "“检查更新”显示安装包编号",
+      "自动上报版本信息，方便排查更新问题"
     ],
     "en": [
-      "More reliable update prompts",
-      "Faster download for the new installer"
+      "Shows installer build number",
+      "Version reporting for troubleshooting"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
-  "apkExt": "https://cdn.jsdelivr.net/gh/debaoqi/hiregh@main/www/app/JobPaw.apk",
-  "rev": 4
+  "apkExt": "https://cdn.jsdelivr.net/gh/debaoqi/hiregh@main/www/app/JobPaw.apk"
 }

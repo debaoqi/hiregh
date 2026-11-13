@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.5.1',APP_BUILD=37;
+const APP_VER='2.5.2',APP_BUILD=38;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2419,6 +2419,23 @@ updBrowser=function(){const u=EXT_APK();
    <div class="row gap" style="margin-top:14px"><button class="bigbtn" style="flex:1;background:var(--card);color:#161616" onclick="copyText('${esc(u)}')">${t('upd_copy')}</button><button class="bigbtn" style="flex:1" onclick="location.href='${esc(u)}'">${t('upd_apk')}</button></div>`);
   setTimeout(()=>{location.href=u},300)};
 setTimeout(()=>checkUpdate(false),1200);
+
+</script>
+<script>
+/* ================= v2.5.2 版本上报：每台手机把自己的网页版本、安装包编号上报给后台，方便排查更新问题 ================= */
+async function clientPing(why){if(!DB.on)return;try{const nb=isNative()?await nativeBuild():0;
+  const did=LS.get('did',null)||(()=>{const x=Math.random().toString(36).slice(2,10);LS.set('did',x);return x})();
+  const info={did,why,web:APP_VER,webBuild:APP_BUILD,native:nb,isNative:isNative(),updater:typeof hasUpdater==='function'&&hasUpdater(),push:typeof pushAvail==='function'&&pushAvail(),
+    pushPerm:typeof PUSH!=='undefined'?PUSH.perm:null,mode:S.mode,view:S.view,lang:S.lang,country:S.country,
+    wid:S.me&&S.me.dbid||null,eid:S.company&&S.company.dbid||null,remote:UPD.remote?{v:UPD.remote.version,b:UPD.remote.build,min:UPD.remote.minNative}:null,
+    pending:typeof UPD_PENDING!=='undefined'?UPD_PENDING.kind:null,ua:navigator.userAgent.slice(0,160)};
+  await DB.q('rpc/client_ping',{method:'POST',body:JSON.stringify({p:info})})}catch(e){}}
+setTimeout(()=>clientPing('start'),4000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){clearTimeout(window._cpT);window._cpT=setTimeout(()=>clientPing('resume'),3000)}});
+/* “检查更新”一行同时显示安装包编号 */
+(async()=>{if(isNative())await nativeBuild()})();
+const _nbTag=h=>UPD.native?h.replace(`<div class="xs muted">v${APP_VER}`,`<div class="xs muted">v${APP_VER} · build ${UPD.native}`):h;
+const _vset18=V.settings;V.settings=()=>_nbTag(_vset18());const _vwme18=V.w_me;V.w_me=()=>_nbTag(_vwme18());
 
 </script>
 </body>
