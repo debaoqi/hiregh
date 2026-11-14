@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='2.9.0',APP_BUILD=42;
+const APP_VER='3.0.0',APP_BUILD=43;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2675,68 +2675,73 @@ try{if(typeof pushAvail==='function'&&pushAvail())Capacitor.Plugins.PushNotifica
 
 </script>
 <script>
-/* ===== v2.9.0 (p22): 五星红旗 + 求职会员（SN 搜索）+ 注册后不再显示首页 ===== */
+/* ===== v2.9.0 (p22): 五星红旗 + 求职会员库+ 注册后不再显示首页 ===== */
 /* 1) 中国国旗：内联 SVG 五星红旗（不依赖 data URI，所有手机都能正确显示） */
 const CN_FLAG_SVG=`<svg viewBox="0 0 30 20" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><rect width="30" height="20" fill="#DE2910"/><g fill="#FFDE00"><polygon points="5.00,2.00 5.67,4.07 7.85,4.07 6.09,5.35 6.76,7.43 5.00,6.15 3.24,7.43 3.91,5.35 2.15,4.07 4.33,4.07"/><polygon points="9.14,2.51 9.62,1.97 9.25,1.34 9.91,1.63 10.39,1.08 10.33,1.80 11.00,2.09 10.29,2.25 10.22,2.97 9.85,2.35"/><polygon points="11.01,4.14 11.66,3.82 11.56,3.10 12.07,3.62 12.72,3.30 12.38,3.95 12.88,4.47 12.17,4.34 11.83,4.99 11.73,4.27"/><polygon points="11.04,6.73 11.76,6.70 11.96,6.00 12.21,6.68 12.94,6.66 12.37,7.10 12.62,7.79 12.01,7.38 11.44,7.83 11.64,7.13"/><polygon points="9.22,8.38 9.90,8.63 10.35,8.06 10.32,8.79 11.00,9.05 10.30,9.24 10.26,9.96 9.87,9.36 9.16,9.55 9.62,8.98"/></g></svg>`;
 if(NATS.CN){NATS.CN.flag='#DE2910';NATS.CN.star=`#FFDE00"></i>${CN_FLAG_SVG}<i style="display:none`}
 
-/* 2) 求职会员：搜索栏输入会员编号（如 sn12345678）打开会员详情 */
+/* 2) 求职会员库：搜索栏输入入口密码（测试：sn12345678）→ 会员列表 → 会员详情；数据由后台维护 */
 const MZH=()=>S.mode==='emp'||S.lang==='zh'||!S.mode;
 const L2=(zh,en)=>MZH()?zh:en;
-const MEMBER_PHOTO=`<svg viewBox="0 0 300 400" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><defs><linearGradient id="mbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D9F27A"/><stop offset="1" stop-color="#8FC93A"/></linearGradient><linearGradient id="msh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1F3B73"/><stop offset="1" stop-color="#12264D"/></linearGradient></defs><rect width="300" height="400" fill="url(#mbg)"/><circle cx="240" cy="70" r="90" fill="#fff" opacity=".18"/><path d="M40 400c4-78 48-118 110-118s106 40 110 118z" fill="url(#msh)"/><path d="M128 262h44v34c0 12-44 12-44 0z" fill="#6B3E22"/><path d="M150 300l-22-20 22 34 22-34z" fill="#fff"/><ellipse cx="150" cy="190" rx="62" ry="74" fill="#7A4626"/><path d="M90 170c0-52 28-82 60-82s60 30 60 82c-8-30-30-42-60-42s-52 12-60 42z" fill="#1A1A1A"/><ellipse cx="127" cy="196" rx="7" ry="8" fill="#1A1A1A"/><ellipse cx="173" cy="196" rx="7" ry="8" fill="#1A1A1A"/><path d="M128 232q22 16 44 0" stroke="#3A1C0C" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="86" cy="196" rx="10" ry="16" fill="#6E3E21"/><ellipse cx="214" cy="196" rx="10" ry="16" fill="#6E3E21"/></svg>`;
-const MEMBERS={SN12345678:{test:true,sn:'SN12345678',name:'Kwame Asante Mensah',zh:'夸梅·阿桑特·门萨',female:false,age:28,birth:'1998-03-16',nat:'GH',
-  height:'176 cm',weight:'72 kg',marital:['已婚，育有 1 子','Married, 1 child'],edu:['高中毕业 · Tema 技术学院焊接专业证书','Senior High · Welding certificate, Tema Technical Institute'],
-  langs:['英语（流利）、契维语（母语）、中文（简单交流）','English (fluent), Twi (native), Chinese (basic)'],religion:['基督教','Christian'],
-  idType:['加纳卡 Ghana Card','Ghana Card'],idNo:'GHA-7214••••-3',hometown:['阿散蒂省 库马西','Kumasi, Ashanti Region'],
-  addr:['大阿克拉省 特马 第 25 社区 B 街 14 号','House 14, Street B, Community 25, Tema, Greater Accra'],city:'Tema',
-  phone:'+233 24 000 1234',wa:'+233 24 000 1234',email:'kwame.mensah.test@example.com',
-  emergency:['Ama Mensah（妻子）+233 20 000 5678','Ama Mensah (wife) +233 20 000 5678'],
-  role:['焊工 / 钢结构焊工','Welder / Structural welder'],ind:['工业制造 · 建筑工程','Manufacturing · Construction'],
-  salary:['GH₵ 3,000 – 4,000 / 月','GH₵ 3,000 – 4,000 / month'],exp:6,start:['随时到岗','Available now'],
-  area:['特马、阿克拉及周边，可接受外派','Tema, Accra & nearby; open to travel'],stay:['需要住宿','Needs accommodation'],ot:['接受加班、倒班','Overtime & shifts OK'],
-  skills:['电焊（SMAW）','氩弧焊（TIG）','CO₂ 保护焊（MIG）','看懂施工图纸','钢结构安装','切割 / 打磨','安全操作'],
-  certs:[['焊工职业资格证（3G/4G）','Welder qualification (3G/4G)'],['健康证','Health certificate'],['无犯罪记录证明','Police clearance']],
-  works:[['2022.04 – 至今','2022.04 – now','中资钢结构公司（特马工业区）','Chinese steel-structure company, Tema','焊工班组长','Welding team lead','带 6 人班组，负责厂房钢结构焊接与质检','Led a 6-person team on factory steel welding & QC'],
-         ['2019.08 – 2022.03','2019.08 – 2022.03','阿克拉建筑工程公司','Accra construction company','焊工','Welder','桥梁护栏、钢筋笼焊接','Bridge railings, rebar cage welding'],
-         ['2017.06 – 2019.07','2017.06 – 2019.07','库马西机修厂','Kumasi repair workshop','学徒 → 焊工','Apprentice → Welder','车辆底盘及农机维修焊接','Chassis & farm machinery repair welding']],
-  intro:['做事踏实，守时，能吃苦。会基本中文，跟中国师傅沟通没问题。希望找长期稳定的工作。','Hard-working and punctual. I speak basic Chinese and work well with Chinese supervisors. Looking for a long-term job.'],
-  verify:[['身份已核验','ID verified'],['电话已核验','Phone verified'],['证书已核验','Certificates verified']],
-  level:['金卡会员','Gold member'],until:'2027-11-14',joined:'2026-11-14',rating:4.8,hires:3}};
-function findMember(sn){sn=(sn||'').toUpperCase();if(MEMBERS[sn])return MEMBERS[sn];
-  const w=(typeof WORKERS!=='undefined'?WORKERS:[]).find(x=>(x.sn||(x.data&&x.data.sn)||'').toUpperCase()===sn);return w?{sn,name:w.name,female:w.female,age:w.age,nat:w.nat,city:w.city,role:[w.role,w.roleEn||w.role],phone:w.phone||'',photo:w.photo,skills:w.skills||[],exp:w.exp,worker:w}:null}
-const mv=v=>Array.isArray(v)?L2(v[0],v[1]):(v==null||v===''?'—':v);
+const MEM={list:null,code:null,q:'',ind:'all'};
+async function memLoad(code){const cfg=window.HIREGH_CONFIG||(typeof CFG!=='undefined'?CFG:{});
+  try{const r=await fetch(cfg.supabaseUrl.replace(/\/$/,'')+'/rest/v1/rpc/get_members',{method:'POST',headers:{apikey:cfg.supabaseAnonKey,Authorization:'Bearer '+cfg.supabaseAnonKey,'Content-Type':'application/json'},body:JSON.stringify({p_code:code})});
+    if(!r.ok)return 'err';const j=await r.json();if(j===null)return false;MEM.list=(j||[]).map(x=>({...x.data,id:x.id}));MEM.code=code;return true}catch(e){return 'err'}}
+async function memOpen(code){toast(L2('正在打开会员库…','Opening…'));const ok=await memLoad(code);
+  if(ok===true){MEM.q='';MEM.ind='all';go('members')}else toast(ok===false?L2('入口密码不正确','Wrong access code'):L2('网络不稳定，请稍后再试','Network error'))}
+const MPAL=['#1F3B73','#8E2C48','#2D6A4F','#5B3FA0','#B4581B','#20656E','#3A3A3A','#9C2A2A'];
+const MBG=[['#D9F27A','#8FC93A'],['#FFE1A8','#F4A259'],['#C9E4FF','#6FA8DC'],['#F8D0E0','#E07AA5'],['#D7F0E5','#6CC3A0'],['#E9DDFF','#9D84E0']];
+function memAvatar(m){const id=m.id||0,f=m.gender==='女',cn=m.nat==='CN';const skin=cn?['#F1C9A5','#E8B88F'][id%2]:['#7A4626','#5E331A','#8B5634','#6B3B20'][id%4];
+  const ear=cn?'#E2AE85':'#5A311B';const bg=MBG[id%MBG.length],sh=MPAL[id%MPAL.length],hair=cn?'#151515':'#1A1A1A',k='m'+id;
+  const hairF=f?(cn?`<path d="M84 210c-6-80 26-124 66-124s72 44 66 124c-6-48-24-80-66-80s-60 32-66 80z" fill="${hair}"/><path d="M84 200c-8 70-4 120 14 150l20-6c-14-40-18-90-16-140z M216 200c8 70 4 120-14 150l-20-6c14-40 18-90 16-140z" fill="${hair}"/>`
+      :`<circle cx="150" cy="96" r="34" fill="${hair}"/><path d="M88 176c0-56 28-86 62-86s62 30 62 86c-10-34-32-48-62-48s-52 14-62 48z" fill="${hair}"/>`)
+    :(cn?`<path d="M90 172c0-54 28-84 60-84s60 30 60 84c-6-24-22-40-60-44-36 4-54 20-60 44z" fill="${hair}"/>`:`<path d="M92 168c0-48 26-76 58-76s58 28 58 76c-8-26-28-38-58-38s-50 12-58 38z" fill="${hair}"/>`);
+  return `<svg viewBox="0 0 300 400" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><defs><linearGradient id="${k}b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/></linearGradient></defs><rect width="300" height="400" fill="url(#${k}b)"/><circle cx="245" cy="70" r="90" fill="#fff" opacity=".18"/><path d="M40 400c4-78 48-118 110-118s106 40 110 118z" fill="${sh}"/><path d="M128 262h44v34c0 12-44 12-44 0z" fill="${skin}"/>${f?'':`<path d="M150 300l-22-20 22 34 22-34z" fill="#fff"/>`}<ellipse cx="86" cy="196" rx="10" ry="16" fill="${ear}"/><ellipse cx="214" cy="196" rx="10" ry="16" fill="${ear}"/><ellipse cx="150" cy="190" rx="62" ry="74" fill="${skin}"/>${hairF}<ellipse cx="127" cy="198" rx="6.5" ry="7.5" fill="#1A1A1A"/><ellipse cx="173" cy="198" rx="6.5" ry="7.5" fill="#1A1A1A"/><path d="M130 232q20 14 40 0" stroke="${f?'#A23B4B':'#3A1C0C'}" stroke-width="5" fill="none" stroke-linecap="round"/>${f?`<circle cx="88" cy="214" r="4" fill="#FFD66B"/><circle cx="212" cy="214" r="4" fill="#FFD66B"/>`:''}</svg>`}
+const memPhoto=m=>m.photo?`<img src="${m.photo}" style="width:100%;height:100%;object-fit:cover;display:block">`:memAvatar(m);
+const memNat=m=>NATS[m.nat]?`${flag(m.nat)} ${MZH()?NATS[m.nat].zh:NATS[m.nat].en}`:esc(m.nat||'—');
+const mv=v=>v==null||v===''?'—':esc(String(v));
 const mRow=(k,v)=>`<div class="mrow"><span>${k}</span><b>${v}</b></div>`;
 const mSec=(t,body)=>`<div class="box msec"><h4>${t}</h4>${body}</div>`;
-V.member=()=>{const m=findMember(S.params.sn);const ttl=L2('求职会员','Job-seeker member');
-  if(!m)return pageHdr(ttl)+`<div class="pad"><div class="empty">${ic('search',40)}<p style="margin-top:10px">${L2('未找到会员编号','No member with ID')} ${esc(S.params.sn||'')}</p></div></div>`;
-  const natN=NATS[m.nat]?(MZH()?NATS[m.nat].zh:NATS[m.nat].en):'';
-  const photo=m.photo?`<img src="${m.photo}" style="width:100%;height:100%;object-fit:cover;display:block">`:MEMBER_PHOTO;
-  const top=`<div class="mtop"><div class="mph">${photo}<span class="mbadge">★ ${mv(m.level||['会员','Member'])}</span></div>
-   <div class="minfo"><div class="mname">${esc(m.name)}</div>${m.zh&&MZH()?`<div class="xs muted" style="margin-top:2px">${m.zh}</div>`:''}
-    <div class="xs" style="margin:6px 0 8px"><span class="mtag">${m.sn}</span>${m.test?`<span class="mtag" style="background:#FFE6A8">${L2('测试数据','Test data')}</span>`:''}</div>
-    ${mRow(L2('性别','Gender'),m.female?L2('女','Female'):L2('男','Male'))}
-    ${mRow(L2('年龄','Age'),m.age?m.age+L2(' 岁',''):'—')}
-    ${mRow(L2('国籍','Nationality'),`${flag(m.nat)} ${natN}`)}
-    ${mRow(L2('现居','Lives in'),esc(m.city||'—'))}
-    ${mRow(L2('电话','Phone'),esc(m.phone||'—'))}
-    ${mRow(L2('求职','Seeking'),mv(m.role))}
-    ${mRow(L2('经验','Experience'),m.exp!=null?m.exp+L2(' 年',' yrs'):'—')}
+const mList=s=>String(s||'').split(/[,，、\n]/).map(x=>x.trim()).filter(Boolean);
+const memNeed=()=>pageHdr(L2('求职会员库','Member directory'))+`<div class="pad"><div class="empty">${ic('lock',40)}<p style="margin-top:10px">${L2('请在搜索栏输入会员入口密码','Enter the member access code in the search bar')}</p></div></div>`;
+function memFiltered(){const q=MEM.q.trim().toLowerCase();return (MEM.list||[]).filter(m=>(MEM.ind==='all'||m.industry===MEM.ind)&&(!q||[m.name,m.name_zh,m.no,m.role,m.city,m.industry,m.skills].join(' ').toLowerCase().includes(q)))}
+const memCard=m=>`<div class="mcard" onclick="go('member',{id:${m.id}})"><div class="mcph">${memPhoto(m)}</div><div style="min-width:0;flex:1">
+  <div class="row between" style="gap:6px"><b class="mcn">${esc(m.name||'')}</b>${m.level?`<span class="mlv">★ ${esc(m.level)}</span>`:''}</div>
+  ${m.name_zh&&m.name_zh!==m.name&&MZH()?`<div class="xs muted">${esc(m.name_zh)}</div>`:''}
+  <div class="sm b" style="margin-top:4px">${esc(m.role||'')}</div>
+  <div class="xs muted" style="margin-top:3px">${m.gender?esc(m.gender)+' · ':''}${m.age?m.age+L2('岁','y')+' · ':''}${memNat(m)} · ${esc(m.city||'')}</div>
+  <div class="xs" style="margin-top:4px"><span class="mtag">${esc(m.no||'')}</span>${m.exp!=null&&m.exp!==''?`<span class="mtag">${esc(m.exp)}${L2('年经验',' yrs')}</span>`:''}${m.salary?`<span class="mtag">${esc(m.salary)}</span>`:''}</div></div></div>`;
+function memUpd(){const e=document.getElementById('memList');if(!e)return;const l=memFiltered();e.innerHTML=l.length?l.map(memCard).join(''):`<div class="empty">${L2('没有符合条件的会员','No members found')}</div>`;const c=document.getElementById('memCnt');if(c)c.textContent=l.length}
+V.members=()=>{if(!MEM.list)return memNeed();const inds=[...new Set(MEM.list.map(m=>m.industry).filter(Boolean))];const l=memFiltered();
+  return pageHdr(L2('求职会员库','Member directory'))+`<div class="pad" style="padding-top:4px">
+  <div class="vipcard on" style="margin:0 0 12px"><div class="row between"><b style="font-size:18px">★ ${L2('付费求职会员','Premium job seekers')}</b><span class="sm b"><span id="memCnt">${l.length}</span> / ${MEM.list.length} ${L2('人','')}</span></div><div class="xs" style="margin-top:4px;opacity:.85">${L2('资料经平台核验，点击查看完整信息','Verified profiles · tap to view details')}</div></div>
+  <div class="msearch">${ic('search')}<input id="memQ" placeholder="${L2('搜索姓名 / 工种 / 城市 / 编号','Search name / role / city / ID')}" value="${esc(MEM.q)}" oninput="MEM.q=this.value;memUpd()"></div>
+  <div class="chips" style="margin:10px 0 4px;flex-wrap:nowrap;overflow-x:auto"><span class="chip sm ${MEM.ind==='all'?'on':''}" onclick="MEM.ind='all';render(false)">${L2('全部','All')}</span>${inds.map(i=>`<span class="chip sm ${MEM.ind===i?'on':''}" onclick="MEM.ind='${esc(i)}';render(false)">${esc(i)}</span>`).join('')}</div>
+  <div id="memList">${l.length?l.map(memCard).join(''):`<div class="empty">${L2('没有符合条件的会员','No members found')}</div>`}</div></div>`};
+V.member=()=>{const m=(MEM.list||[]).find(x=>x.id===S.params.id);if(!m)return memNeed();
+  const top=`<div class="mtop"><div class="mph">${memPhoto(m)}${m.level?`<span class="mbadge">★ ${esc(m.level)}</span>`:''}</div>
+   <div class="minfo"><div class="mname">${esc(m.name||'')}</div>${m.name_zh&&m.name_zh!==m.name&&MZH()?`<div class="xs muted" style="margin-top:2px">${esc(m.name_zh)}</div>`:''}
+    <div class="xs" style="margin:6px 0 8px"><span class="mtag">${esc(m.no||'')}</span>${m.test?`<span class="mtag" style="background:#FFE6A8">${L2('测试数据','Test data')}</span>`:''}</div>
+    ${mRow(L2('性别','Gender'),mv(m.gender))}${mRow(L2('年龄','Age'),m.age?esc(m.age)+L2(' 岁',''):'—')}${mRow(L2('国籍','Nationality'),memNat(m))}
+    ${mRow(L2('现居','Lives in'),mv(m.city))}${mRow(L2('电话','Phone'),mv(m.phone))}${mRow(L2('求职','Seeking'),mv(m.role))}${mRow(L2('经验','Experience'),m.exp!=null&&m.exp!==''?esc(m.exp)+L2(' 年',' yrs'):'—')}
    </div></div>`;
-  const full=m.worker?'':`
-   ${mSec(L2('基本信息','Basic info'),[[L2('出生日期','Date of birth'),m.birth],[L2('身高 / 体重','Height / weight'),m.height+' / '+m.weight],[L2('婚姻状况','Marital status'),mv(m.marital)],[L2('学历','Education'),mv(m.edu)],[L2('语言','Languages'),mv(m.langs)],[L2('宗教','Religion'),mv(m.religion)],[L2('籍贯','Hometown'),mv(m.hometown)],[L2('证件','ID'),mv(m.idType)+' · '+m.idNo]].map(x=>mRow(x[0],x[1])).join(''))}
-   ${mSec(L2('联系方式','Contact'),[[L2('手机','Mobile'),m.phone],['WhatsApp',m.wa],[L2('邮箱','Email'),m.email],[L2('详细住址','Address'),mv(m.addr)],[L2('紧急联系人','Emergency contact'),mv(m.emergency)]].map(x=>mRow(x[0],esc(x[1]))).join(''))}
-   ${mSec(L2('求职意向','Job preferences'),[[L2('意向工种','Role'),mv(m.role)],[L2('行业','Industry'),mv(m.ind)],[L2('期望薪资','Expected salary'),mv(m.salary)],[L2('到岗时间','Start'),mv(m.start)],[L2('工作地点','Location'),mv(m.area)],[L2('住宿','Housing'),mv(m.stay)],[L2('加班','Overtime'),mv(m.ot)]].map(x=>mRow(x[0],x[1])).join(''))}
-   ${mSec(L2('工作经历','Work history'),m.works.map(w=>`<div class="mwork"><div class="xs muted">${L2(w[0],w[1])}</div><b>${L2(w[2],w[3])}</b><div class="sm">${L2(w[4],w[5])}</div><div class="xs muted" style="margin-top:2px">${L2(w[6],w[7])}</div></div>`).join(''))}
-   ${mSec(L2('技能','Skills'),`<div class="row gap6 wrap">${m.skills.map(s=>`<span class="chip sm" style="background:#F1ECDF;cursor:default">${s}</span>`).join('')}</div>`)}
-   ${mSec(L2('证书','Certificates'),m.certs.map(c=>`<div class="mrow"><span>${ic('check',16)}</span><b>${mv(c)}</b></div>`).join(''))}
-   ${mSec(L2('自我介绍','About me'),`<div class="sm" style="line-height:1.7">${mv(m.intro)}</div>`)}
-   ${mSec(L2('平台认证','Verification'),`<div class="row gap6 wrap">${m.verify.map(v=>`<span class="chip sm" style="background:#E3F5C8;cursor:default">✓ ${mv(v)}</span>`).join('')}</div>`)}
-   ${mSec(L2('会员信息','Membership'),[[L2('会员编号','Member ID'),m.sn],[L2('会员等级','Level'),mv(m.level)],[L2('有效期至','Valid until'),m.until],[L2('入会时间','Joined'),m.joined],[L2('评分','Rating'),'★ '+m.rating],[L2('成功入职','Hired'),m.hires+L2(' 次','')]].map(x=>mRow(x[0],x[1])).join(''))}`;
+  const rows=a=>a.map(x=>mRow(x[0],mv(x[1]))).join('');
+  const works=String(m.works||'').split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const p=l.split('|').map(x=>x.trim());return `<div class="mwork"><div class="xs muted">${esc(p[0]||'')}</div><b>${esc(p[1]||'')}</b>${p[2]?`<div class="sm">${esc(p[2])}</div>`:''}${p[3]?`<div class="xs muted" style="margin-top:2px">${esc(p[3])}</div>`:''}</div>`}).join('');
+  const chips=(s,bg,pre)=>`<div class="row gap6 wrap">${mList(s).map(x=>`<span class="chip sm" style="background:${bg};cursor:default">${pre||''}${esc(x)}</span>`).join('')||'—'}</div>`;
+  const body=`${mSec(L2('基本信息','Basic info'),rows([[L2('出生日期','Date of birth'),m.birth],[L2('身高 / 体重','Height / weight'),[m.height,m.weight].filter(Boolean).join(' / ')],[L2('婚姻状况','Marital status'),m.marital],[L2('学历','Education'),m.edu],[L2('语言','Languages'),m.langs],[L2('宗教','Religion'),m.religion],[L2('籍贯','Hometown'),m.hometown],[L2('证件','ID'),[m.id_type,m.id_no].filter(Boolean).join(' · ')]]))}
+   ${mSec(L2('联系方式','Contact'),rows([[L2('手机','Mobile'),m.phone],['WhatsApp',m.whatsapp],[L2('邮箱','Email'),m.email],[L2('详细住址','Address'),m.addr],[L2('紧急联系人','Emergency contact'),m.emergency]]))}
+   ${mSec(L2('求职意向','Job preferences'),rows([[L2('意向工种','Role'),m.role],[L2('行业','Industry'),m.industry],[L2('期望薪资','Expected salary'),m.salary],[L2('到岗时间','Start'),m.start],[L2('工作地点','Location'),m.area],[L2('住宿','Housing'),m.stay],[L2('加班','Overtime'),m.overtime]]))}
+   ${works?mSec(L2('工作经历','Work history'),works):''}
+   ${mSec(L2('技能','Skills'),chips(m.skills,'#F1ECDF'))}
+   ${mSec(L2('证书','Certificates'),chips(m.certs,'#F1ECDF','📄 '))}
+   ${m.intro?mSec(L2('自我介绍','About me'),`<div class="sm" style="line-height:1.7">${esc(m.intro)}</div>`):''}
+   ${mSec(L2('平台认证','Verification'),chips(m.verify,'#E3F5C8','✓ '))}
+   ${mSec(L2('会员信息','Membership'),rows([[L2('会员编号','Member ID'),m.no],[L2('会员等级','Level'),m.level],[L2('有效期至','Valid until'),m.until],[L2('入会时间','Joined'),m.joined],[L2('评分','Rating'),m.rating?'★ '+m.rating:''],[L2('成功入职','Hired'),m.hires!=null&&m.hires!==''?m.hires+L2(' 次',''):'']]))}`;
   const bar=`<div class="bbar" style="display:flex;gap:10px"><button class="bigbtn" style="flex:1;background:#fff;color:#161616" onclick="memberAct('wa')">WhatsApp</button><button class="bigbtn" style="flex:1" onclick="memberAct('call')">${ic('phone',18)} ${L2('拨打电话','Call')}</button></div>`;
-  return pageHdr(ttl)+`<div class="pad" style="padding-top:4px">${top}${full}</div>${bar}`};
-function memberAct(k){const m=findMember(S.params.sn);if(!m)return;
+  return pageHdr(L2('会员详情','Member profile'))+`<div class="pad" style="padding-top:4px">${top}${body}</div>${bar}`};
+function memberAct(k){const m=(MEM.list||[]).find(x=>x.id===S.params.id);if(!m)return;
   if(m.test)return toast(L2('这是测试会员，仅用于演示','Test member, demo only'));
-  const n=(m.phone||'').replace(/[^\d+]/g,'');if(!n)return toast(L2('该会员未留电话','No phone number'));
+  const n=String((k==='wa'?m.whatsapp:m.phone)||m.phone||'').replace(/[^\d+]/g,'');if(!n)return toast(L2('该会员未留电话','No phone number'));
   location.href=k==='wa'?'https://wa.me/'+n.replace('+',''):'tel:'+n}
 (function(){const st=document.createElement('style');st.textContent=`
 .mtop{display:grid;grid-template-columns:44% 1fr;gap:12px;align-items:start}
@@ -2748,12 +2753,17 @@ function memberAct(k){const m=findMember(S.params.sn);if(!m)return;
 .mrow{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:14px}
 .mrow:last-child{border-bottom:0}.mrow span{color:var(--muted);flex:none}.mrow b{text-align:right;font-weight:700;word-break:break-word}
 .msec{margin-top:12px}.msec h4{margin:0 0 6px}
-.mwork{padding:8px 0 8px 12px;border-left:3px solid #C7E65A;margin:6px 0}`;document.head.appendChild(st)})();
-/* 搜索栏输入会员编号即打开会员页 */
+.mwork{padding:8px 0 8px 12px;border-left:3px solid #C7E65A;margin:6px 0}
+.mcard{display:flex;gap:12px;background:var(--card);border-radius:20px;padding:10px;margin-top:10px;cursor:pointer;align-items:center}
+.mcph{width:78px;height:100px;border-radius:14px;overflow:hidden;flex:none;background:#ddd}
+.mcn{font-size:16px;line-height:1.25;word-break:break-word}
+.mlv{flex:none;background:#161616;color:#FFD66B;font-size:10px;font-weight:800;padding:3px 7px;border-radius:10px}
+.msearch{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:30px;padding:12px 18px;color:var(--muted)}
+.msearch input{flex:1;border:0;background:none;outline:none;font-size:15px;color:var(--ink);min-width:0}`;document.head.appendChild(st)})();
+/* 搜索栏输入会员入口密码即打开会员库 */
 document.addEventListener('input',e=>{const el=e.target;if(!el||el.tagName!=='INPUT'||!el.closest('.searchbar'))return;
   const v=(el.value||'').trim();if(!/^sn\d{8}$/i.test(v))return;e.stopPropagation();el.value='';el.blur();
-  if(S.f)S.f.q='';S.wq='';clearTimeout(window._wq);setTimeout(()=>go('member',{sn:v.toUpperCase()}),0)},true);
-
+  if(S.f)S.f.q='';S.wq='';clearTimeout(window._wq);memOpen(v.toUpperCase())},true);
 /* 3) 注册（求职或招人）后不再显示首页（选择身份页） */
 function regRole(){const w=!!S.me,e=!!(S.company&&S.company.registered);if(!w&&!e)return null;if(w&&e){const st=LS.get('state2',null);return st&&st.mode==='emp'?'emp':(S.mode==='emp'?'emp':'wk')}return w?'wk':'emp'}
 function enterRole(r){S.welForce=false;S.hist=[];if(r==='wk'){S.mode='wk';S.view='w_home';return render(true)}S.mode='emp';tab('home')}

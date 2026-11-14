@@ -1,6 +1,6 @@
 {
-  "version": "2.9.0",
-  "build": 42,
+  "version": "3.0.0",
+  "build": 43,
   "date": "2026-11-14",
   "force": false,
   "minNative": 48,
@@ -8,14 +8,12 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "中国国旗改为标准五星红旗",
-      "新增求职会员页：搜索栏输入会员编号（测试：sn12345678）查看会员详细资料",
-      "注册求职或招人后，打开 App 直接进入自己的首页"
+      "新增求职会员库：在搜索栏输入会员入口密码，查看全部付费求职会员",
+      "会员详情含照片、年龄、住址、电话、工作经历等完整资料"
     ],
     "en": [
-      "Correct China flag",
-      "Member profiles via member ID search",
-      "Registered users skip the welcome page"
+      "New premium member directory",
+      "Detailed member profiles"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
