@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=23;let ADM_NEW=false;
+const ADMIN_BUILD=24;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -660,6 +660,69 @@ function vipGift(id){const e=S.E.find(x=>x.id===id);openModal(`<div class="ch">$
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${[7,30,90,365].map(d=>`<button class="btn sm lime" onclick="vipGiftGo(${id},${d})">+${d} 天</button>`).join('')}${vipOn(e)?`<button class="btn sm" onclick="vipGiftGo(${id},0)">取消 VIP</button>`:''}</div>`)}
 function vipGiftGo(id,d){run(async()=>{if(LIVE)await q('rpc/admin_set_vip',{method:'POST',body:JSON.stringify({p_emp:id,p_days:d})});await API.log(d?'赠送/延长 VIP':'取消 VIP','employer:'+id,{days:d});closeModal();await API.load();bcAll()},d?'已延长 VIP':'已取消 VIP')}
 
+</script>
+<script>
+/* ================= 后台 v24：求职会员库（增 / 查 / 改 / 上下架 / 删除 + 入口密码） ================= */
+P.mem='<circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/><path d="M17 3l1 2 2 .3-1.5 1.4.4 2.1L17 7.8 15.1 8.8l.4-2.1L14 5.3l2-.3z"/>';
+S.MB=[];S.MCODE='SN12345678';S.mq='';S.mst='all';
+NAV.splice(NAV.findIndex(n=>n[0]==='vip')>=0?NAV.findIndex(n=>n[0]==='vip')+1:NAV.length-2,0,['members','求职会员','mem']);TITLE.members='求职会员库';
+const MF=[ // [key,label,type,宽度(1=半行,2=整行),提示]
+ ['no','会员编号','text',1,'如 JPM0033'],['name','姓名（英文/原文）','text',1],['name_zh','中文名','text',1],['gender','性别','sel:男,女',1],
+ ['age','年龄','num',1],['birth','出生日期','text',1,'1998-03-16'],['nat','国籍代码','sel:GH,NG,TG,BF,CI,CN,KE,ZA,ET,SN,CM,UG,TZ',1],['hometown','籍贯','text',1],
+ ['height','身高','text',1,'176 cm'],['weight','体重','text',1,'72 kg'],['marital','婚姻状况','text',1],['edu','学历','text',1],
+ ['langs','语言','text',2],['religion','宗教','text',1],['id_type','证件类型','text',1],['id_no','证件号码','text',1],
+ ['city','现居城市','text',1],['addr','详细住址','text',2],['phone','手机','text',1],['whatsapp','WhatsApp','text',1],['email','邮箱','text',1],['emergency','紧急联系人','text',1],
+ ['role','意向工种','text',1],['industry','行业','sel:工业制造,农业种植,服务业,建筑工程,矿业能源,物流仓储,其他行业',1],['salary','期望薪资','text',1,'GH₵ 3,000–4,000/月'],['exp','工作年限','num',1],
+ ['start','到岗时间','text',1],['area','工作地点','text',1],['stay','住宿','text',1],['overtime','加班','text',1],
+ ['skills','技能（逗号分隔）','text',2],['certs','证书（逗号分隔）','text',2],
+ ['works','工作经历（每行一条：时间 | 公司 | 职位 | 描述）','area',2],['intro','自我介绍','area',2],['verify','平台认证（逗号分隔）','text',2],
+ ['level','会员等级','sel:金卡会员,银卡会员,普通会员',1],['until','有效期至','text',1,'2027-11-14'],['joined','入会时间','text',1],['rating','评分','num',1],['hires','成功入职次数','num',1]];
+const _load24=API.load;
+API.load=async function(){await _load24.call(API);
+  if(!LIVE){if(!S.MB.length)S.MB=[{id:1,status:'on',sort:1,data:{no:'JPM0001',name:'Kwame Asante Mensah',name_zh:'夸梅·门萨',gender:'男',age:28,nat:'GH',role:'焊工',industry:'工业制造',city:'Tema',phone:'+233 24 000 1001',level:'金卡会员',test:true}}];return}
+  try{const [m,s]=await Promise.all([q('members?select=*&order=sort.asc,id.asc'),q('app_settings?key=eq.member&select=value')]);S.MB=m||[];S.MCODE=(s&&s[0]&&s[0].value&&s[0].value.code)||'SN12345678'}catch(e){console.error(e)}};
+const mbF=()=>{const k=S.mq.trim().toLowerCase();return S.MB.filter(m=>(S.mst==='all'||m.status===S.mst)&&(!k||[m.data.no,m.data.name,m.data.name_zh,m.data.role,m.data.city,m.data.phone,m.data.industry].join(' ').toLowerCase().includes(k)))};
+const mbRow=m=>{const d=m.data||{};return `<tr><td>${d.photo?`<img src="${d.photo}" style="width:40px;height:52px;object-fit:cover;border-radius:8px">`:`<div style="width:40px;height:52px;border-radius:8px;background:var(--soft);display:grid;place-items:center;font-size:11px;color:var(--muted)">插画</div>`}</td>
+ <td class="mono">${esc(d.no||'')}</td><td><b>${esc(d.name||'')}</b>${d.name_zh&&d.name_zh!==d.name?`<div style="font-size:12px;color:var(--muted)">${esc(d.name_zh)}</div>`:''}${d.test?' <span class="etype" style="background:#FFE6A8;color:#8A5A00">测试</span>':''}</td>
+ <td>${esc(d.gender||'')} ${d.age?esc(d.age)+'岁':''}</td><td>${esc(d.nat||'')}</td><td>${esc(d.role||'')}<div style="font-size:12px;color:var(--muted)">${esc(d.industry||'')}</div></td><td>${esc(d.city||'')}</td><td class="mono">${esc(d.phone||'')}</td><td>${esc(d.level||'')}</td>
+ <td>${m.status==='on'?'<span class="chip st-approved">展示中</span>':'<span class="chip">已下架</span>'}</td>
+ <td style="white-space:nowrap"><button class="btn sm lime" onclick="mbEdit(${m.id})">查看/编辑</button><button class="btn sm" onclick="mbToggle(${m.id})">${m.status==='on'?'下架':'上架'}</button><button class="btn sm" onclick="mbDel(${m.id})">删除</button></td></tr>`};
+function mbUpd(){const t=document.getElementById('mbBody');if(t)t.innerHTML=mbF().map(mbRow).join('')||'<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:30px">没有符合条件的会员</td></tr>'}
+V.members=()=>{const on=S.MB.filter(m=>m.status==='on').length;
+  return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:14px">${[['会员总数',S.MB.length],['展示中',on],['已下架',S.MB.length-on],['金卡会员',S.MB.filter(m=>(m.data||{}).level==='金卡会员').length]].map(s=>`<div class="card" style="padding:14px 16px"><div style="font-size:12px;color:var(--muted)">${s[0]}</div><div style="font-size:24px;font-weight:800;margin-top:2px">${s[1]}</div></div>`).join('')}</div>
+  <div class="card" style="margin-bottom:14px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap"><div class="fld" style="min-width:220px"><label>App 会员入口密码（在 App 搜索栏输入）</label><input class="inp" id="mCode" value="${esc(S.MCODE)}" placeholder="SN12345678"></div>
+   <button class="btn dark" onclick="mbCodeSave()">保存密码</button><div class="note" style="flex:1;min-width:240px">格式：SN + 8 位数字（例如 SN12345678）。修改后旧密码立即失效。</div></div>
+  <div class="filters" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><div class="seg">${[['all','全部'],['on','展示中'],['off','已下架']].map(t=>`<button class="${S.mst===t[0]?'on':''}" onclick="S.mst='${t[0]}';render()">${t[1]}</button>`).join('')}</div>
+   <input class="inp" style="max-width:280px" placeholder="搜索编号 / 姓名 / 工种 / 城市 / 电话" value="${esc(S.mq)}" oninput="S.mq=this.value;mbUpd()"><span style="flex:1"></span><button class="btn dark" onclick="mbEdit(0)">＋ 新增会员</button></div>
+  <div class="card" style="padding:6px 12px;overflow-x:auto;margin-top:12px"><table class="tbl"><thead><tr><th>照片</th><th>编号</th><th>姓名</th><th>性别/年龄</th><th>国籍</th><th>工种</th><th>城市</th><th>电话</th><th>等级</th><th>状态</th><th>操作</th></tr></thead><tbody id="mbBody">${mbF().map(mbRow).join('')||'<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:30px">暂无会员</td></tr>'}</tbody></table></div>`};
+let MB_PHOTO=undefined;
+function mbNextNo(){const n=S.MB.map(m=>parseInt(String((m.data||{}).no||'').replace(/\D/g,''))||0);return 'JPM'+String(Math.max(0,...n)+1).padStart(4,'0')}
+function mbEdit(id){const m=S.MB.find(x=>x.id===id);const d=m?{...m.data}:{no:mbNextNo(),gender:'男',nat:'GH',level:'普通会员',joined:new Date().toISOString().slice(0,10)};MB_PHOTO=undefined;
+  const inp=f=>{const v=d[f[0]]==null?'':String(d[f[0]]);const id='mf_'+f[0];
+    if(f[2].startsWith('sel:'))return `<select class="inp" id="${id}">${['',...f[2].slice(4).split(',')].concat(v&&!f[2].includes(v)?[v]:[]).map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+    if(f[2]==='area')return `<textarea class="inp" id="${id}" rows="${f[0]==='works'?4:3}" style="resize:vertical">${esc(v)}</textarea>`;
+    return `<input class="inp" id="${id}" ${f[2]==='num'?'inputmode="decimal"':''} value="${esc(v)}" placeholder="${esc(f[4]||'')}">`};
+  openModal(`<div class="ch">${m?'编辑会员 · '+esc(d.no||''):'新增会员'}</div>
+   <div style="display:flex;gap:14px;align-items:center;margin:6px 0 12px"><div id="mbPh" style="width:90px;height:116px;border-radius:14px;overflow:hidden;background:var(--soft);display:grid;place-items:center;font-size:12px;color:var(--muted);flex:none">${d.photo?`<img src="${d.photo}" style="width:100%;height:100%;object-fit:cover">`:'无照片<br>(App 显示插画)'}</div>
+    <div style="display:flex;flex-direction:column;gap:6px"><button class="btn sm" onclick="mbPick()">${d.photo?'更换照片':'上传照片'}</button>${d.photo?`<button class="btn sm" onclick="MB_PHOTO=null;$('#mbPh').innerHTML='已删除'">删除照片</button>`:''}
+    <label style="font-size:12.5px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="mf_test" ${d.test?'checked':''}>测试数据（App 中不拨打电话）</label>
+    <label style="font-size:12.5px;display:flex;gap:6px;align-items:center">排序 <input class="inp" id="mf_sort" style="width:70px;padding:6px 10px" value="${m?m.sort:0}"></label></div></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${MF.map(f=>`<div class="fld" style="${f[3]===2?'grid-column:1/-1':''}"><label>${f[1]}</label>${inp(f)}</div>`).join('')}</div>
+   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;position:sticky;bottom:-22px;background:var(--bg);padding:10px 0"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="mbSave(${id})">保存</button></div>`)}
+function mbPick(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,700/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);MB_PHOTO=c.toDataURL('image/jpeg',.85);$('#mbPh').innerHTML=`<img src="${MB_PHOTO}" style="width:100%;height:100%;object-fit:cover">`};im.src=r.result};r.readAsDataURL(f)};i.click()}
+function mbSave(id){const m=S.MB.find(x=>x.id===id);const d=m?{...m.data}:{};
+  MF.forEach(f=>{const e=document.getElementById('mf_'+f[0]);if(!e)return;let v=e.value.trim();if(f[2]==='num'&&v!=='')v=isNaN(+v)?v:+v;if(v===''||v==null)delete d[f[0]];else d[f[0]]=v});
+  d.test=$('#mf_test').checked;if(MB_PHOTO===null)delete d.photo;else if(MB_PHOTO)d.photo=MB_PHOTO;
+  if(!d.name)return toast('请填写姓名');if(!d.no)d.no=mbNextNo();
+  if(S.MB.some(x=>x.id!==id&&(x.data||{}).no===d.no))return toast('会员编号重复');
+  const sort=parseInt($('#mf_sort').value)||0;
+  run(async()=>{if(LIVE){if(m)await q('members?id=eq.'+id,{method:'PATCH',body:JSON.stringify({data:d,sort,updated_at:new Date().toISOString()})});else await q('members',{method:'POST',body:JSON.stringify({data:d,sort})})}
+    else{if(m){m.data=d;m.sort=sort}else S.MB.push({id:Date.now(),status:'on',sort,data:d})}
+    await API.log(m?'编辑会员':'新增会员','member:'+(d.no||''),{name:d.name});closeModal();if(LIVE)await API.load()},m?'已保存':'已新增会员')}
+function mbToggle(id){const m=S.MB.find(x=>x.id===id);const st=m.status==='on'?'off':'on';run(async()=>{if(LIVE)await q('members?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:st})});m.status=st;await API.log(st==='on'?'上架会员':'下架会员','member:'+m.data.no,{})},st==='on'?'已上架':'已下架')}
+function mbDel(id){const m=S.MB.find(x=>x.id===id);confirmBox(`确定删除会员「${esc(m.data.name||'')}」（${esc(m.data.no||'')}）？删除后无法恢复，如只是暂时不展示，请用“下架”。`,()=>run(async()=>{if(LIVE)await q('members?id=eq.'+id,{method:'DELETE'});S.MB=S.MB.filter(x=>x.id!==id);await API.log('删除会员','member:'+m.data.no,{name:m.data.name});closeModal()},'已删除'),'删除')}
+function mbCodeSave(){const c=$('#mCode').value.trim().toUpperCase();if(!/^SN\d{8}$/.test(c))return toast('格式应为 SN + 8 位数字');
+  run(async()=>{if(LIVE)await q('app_settings',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({key:'member',value:{code:c},updated_at:new Date().toISOString()})});S.MCODE=c;await API.log('修改会员入口密码','settings:member',{})},'入口密码已更新')}
 </script>
 </body>
 </html>
