@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=24;let ADM_NEW=false;
+const ADMIN_BUILD=25;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -723,6 +723,28 @@ function mbToggle(id){const m=S.MB.find(x=>x.id===id);const st=m.status==='on'?'
 function mbDel(id){const m=S.MB.find(x=>x.id===id);confirmBox(`确定删除会员「${esc(m.data.name||'')}」（${esc(m.data.no||'')}）？删除后无法恢复，如只是暂时不展示，请用“下架”。`,()=>run(async()=>{if(LIVE)await q('members?id=eq.'+id,{method:'DELETE'});S.MB=S.MB.filter(x=>x.id!==id);await API.log('删除会员','member:'+m.data.no,{name:m.data.name});closeModal()},'已删除'),'删除')}
 function mbCodeSave(){const c=$('#mCode').value.trim().toUpperCase();if(!/^SN\d{8}$/.test(c))return toast('格式应为 SN + 8 位数字');
   run(async()=>{if(LIVE)await q('app_settings',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({key:'member',value:{code:c},updated_at:new Date().toISOString()})});S.MCODE=c;await API.log('修改会员入口密码','settings:member',{})},'入口密码已更新')}
+</script>
+<script>
+/* ================= 后台 v25：手机端（管理 App）适配 ================= */
+(function(){const st=document.createElement('style');st.textContent=`
+@media (max-width:900px){
+ .side{position:sticky;top:0;z-index:40;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top));align-items:center;gap:8px}
+ .brand{font-size:0;gap:0;padding:0 4px;flex:none}.brand .logo{width:34px;height:34px}
+ .nav{scrollbar-width:none}.nav::-webkit-scrollbar,.side::-webkit-scrollbar{display:none}
+ .nav a{padding:9px 13px;font-size:14px}
+ .main{padding:12px 12px calc(70px + env(safe-area-inset-bottom))}
+ .top{gap:8px;margin-bottom:12px}.top h1{font-size:22px;width:100%;margin:0}.top .search{flex:1 1 100%}
+ .modal{width:96vw;max-height:90vh;padding:18px;border-radius:22px}
+ .tbl td,.tbl th{padding:9px 8px}
+ .btn{min-height:36px}
+}`;document.head.appendChild(st)})();
+const IS_NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+/* 切换页面后，把当前菜单项滚到可见位置 */
+const _render25=render;render=function(){_render25.apply(this,arguments);const a=document.querySelector('.nav a.on');if(a&&window.innerWidth<=900)a.scrollIntoView({block:'nearest',inline:'center'})};
+/* 安卓返回键：先关弹窗，再回到概览，最后退出 */
+if(IS_NATIVE){try{const A=Capacitor.Plugins.App;A&&A.addListener('backButton',()=>{
+  if($('#modal')&&$('#modal').classList.contains('on'))return closeModal();
+  if(S.session&&S.page!=='dash')return go('dash');A.exitApp()})}catch(e){}}
 </script>
 </body>
 </html>
