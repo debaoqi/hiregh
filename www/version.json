@@ -1,21 +1,21 @@
 {
-  "version": "2.8.0",
-  "build": 41,
-  "date": "2026-11-13",
+  "version": "2.9.0",
+  "build": 42,
+  "date": "2026-11-14",
   "force": false,
   "minNative": 48,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "企业 VIP 会员：岗位置顶、VIP 认证标识、优先推送给工人、不限在招岗位（7天¥99 / 30天¥299 / 90天¥699，微信/支付宝）",
-      "发布岗位时可同时招聘多个工种、每个工种多人",
-      "修正中国国旗显示"
+      "中国国旗改为标准五星红旗",
+      "新增求职会员页：搜索栏输入会员编号（测试：sn12345678）查看会员详细资料",
+      "注册求职或招人后，打开 App 直接进入自己的首页"
     ],
     "en": [
-      "Employer VIP: pinned jobs, VIP badge, priority push",
-      "Post multiple roles at once",
-      "Correct China flag"
+      "Correct China flag",
+      "Member profiles via member ID search",
+      "Registered users skip the welcome page"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
