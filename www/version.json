@@ -1,6 +1,6 @@
 {
-  "version": "3.0.0",
-  "build": 43,
+  "version": "3.0.1",
+  "build": 44,
   "date": "2026-11-14",
   "force": false,
   "minNative": 48,
@@ -8,12 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "新增求职会员库：在搜索栏输入会员入口密码，查看全部付费求职会员",
-      "会员详情含照片、年龄、住址、电话、工作经历等完整资料"
+      "修复：后台审核通过后，手机上仍显示“证件审核中”"
     ],
     "en": [
-      "New premium member directory",
-      "Detailed member profiles"
+      "Fix: approval status now updates right away"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
