@@ -1,6 +1,6 @@
 {
-  "version": "3.2.3",
-  "build": 49,
+  "version": "3.3.0",
+  "build": 50,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,15 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "招人首页标题改为一行：“在加纳，找靠谱的人！”"
+      "底部改为传统导航栏，任何页面一键回首页",
+      "求职者新增“企业”：查看所有招工企业及其岗位、介绍",
+      "消息并入“我的”，有未读时显示红点数字",
+      "修复界面被顶起、跳动的问题"
     ],
     "en": [
-      "Employer home title on one line"
+      "New bottom navigation with Home",
+      "Browse hiring companies",
+      "Messages moved into Me with unread badge"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
