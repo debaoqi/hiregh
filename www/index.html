@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.3.0',APP_BUILD=50;
+const APP_VER='3.3.1',APP_BUILD=51;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2978,14 +2978,14 @@ const LEGAL={name:'华商（加纳）律师事务所',lawyer:'杨伟强 律师',
   addr:'3rd Floor, A&A Plaza, Community 11, Tema, Greater Accra Region, Ghana',site:'https://www.huashanglawyer.com/ghana',
   areas:[['土地法','Land law'],['公司法','Company law'],['合同法','Contract law'],['破产及企业清盘','Insolvency & liquidation'],['收购兼并','M&A'],['知识产权','Intellectual property'],['商业纠纷','Commercial disputes'],['债务纠纷','Debt disputes'],['股东纠纷','Shareholder disputes'],['劳资纠纷','Labour disputes'],['人身伤害及意外申索','Personal injury claims'],['建设工程合同纠纷','Construction contract disputes'],['尽职调查','Due diligence']]};
 const legalCard=()=>`<div class="lgcard" onclick="go('legal')"><span class="lgic">${ic('scale',20)}</span><div style="flex:1;min-width:0">
-  <div class="b" style="font-size:15px">${L3('法律援助 · 企业法律咨询','Legal help for workers & companies')}</div>
+  <div class="b" style="font-size:15px">${L3('法律咨询，企业服务','Legal advice & business services')}</div>
   <div class="xs muted" style="margin-top:3px">${L3('遇到劳资、合同、债务等法律问题，可咨询 华商（加纳）律师事务所','Labour, contract or debt problems? Ask Huashang (Ghana) Law Firm')}</div></div><span class="lggo">${ic('arrow',15)}</span></div>`;
 const _vwel26=V.welcome;
 V.welcome=()=>{let h=_vwel26();
   return h.replace(/<div class="box row gap" style="margin-top:14px"><span class="qi"[\s\S]*?<\/span><span class="sm">[\s\S]*?<\/span><\/div>/,`<div style="margin-top:14px">${legalCard()}</div>`)};
 V.legal=()=>{const tel=LEGAL.phone.replace(/[^\d+]/g,'');
   const grp=(t,list)=>`<div class="box msec"><h4>${t}</h4>${list.map(x=>`<div class="row gap" style="padding:6px 0;align-items:flex-start"><span style="color:#2D6A4F;flex:none">${ic('check',16)}</span><span class="sm" style="line-height:1.5">${x}</span></div>`).join('')}</div>`;
-  return hdr2(L3('法律援助','Legal help'))+`<div class="pad" style="padding-top:4px">
+  return hdr2(L3('法律咨询 · 企业服务','Legal & business services'))+`<div class="pad" style="padding-top:4px">
    <div class="lghero"><div class="row gap" style="align-items:center"><span class="lgic" style="background:rgba(255,255,255,.18);color:#fff">${ic('scale',22)}</span><div><div style="font-size:19px;font-weight:900;line-height:1.25">${LEGAL.name}</div><div class="xs" style="opacity:.8;margin-top:3px">Huashang (Ghana) Law Firm · Tema</div></div></div>
     <div class="sm" style="margin-top:14px;line-height:1.65;opacity:.92">${L3('华商律师事务所在加纳特马设有分所，由在加纳工作生活二十多年、持有加纳律师执业证的中国律师负责，可用中文沟通，为在加纳的中国企业、个人及当地员工提供法律服务。','Huashang Law Firm has a branch in Tema, Ghana, led by a Chinese lawyer licensed to practise in Ghana who has lived there for over 20 years. Services in Chinese and English.')}</div></div>
    <div class="box msec">${[[L3('律所','Firm'),LEGAL.name],[L3('负责律师','Lawyer'),LEGAL.lawyer],[L3('电话','Phone'),LEGAL.phone],[L3('地址','Address'),LEGAL.addr]].map(x=>`<div class="mrow"><span>${x[0]}</span><b>${esc(x[1])}</b></div>`).join('')}

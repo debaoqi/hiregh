@@ -1,6 +1,6 @@
 {
-  "version": "3.3.0",
-  "build": 50,
+  "version": "3.3.1",
+  "build": 51,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,15 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "底部改为传统导航栏，任何页面一键回首页",
-      "求职者新增“企业”：查看所有招工企业及其岗位、介绍",
-      "消息并入“我的”，有未读时显示红点数字",
-      "修复界面被顶起、跳动的问题"
+      "首页入口改名为“法律咨询，企业服务”"
     ],
     "en": [
-      "New bottom navigation with Home",
-      "Browse hiring companies",
-      "Messages moved into Me with unread badge"
+      "Renamed: Legal advice & business services"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
