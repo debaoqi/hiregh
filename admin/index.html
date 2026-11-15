@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=26;let ADM_NEW=false;
+const ADMIN_BUILD=27;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -750,6 +750,101 @@ if(IS_NATIVE){try{const A=Capacitor.Plugins.App;A&&A.addListener('backButton',()
 /* ================= 后台 v26：中国国旗改为五星红旗 ================= */
 NATS.CN[2]=`#FFDE00"></i><svg viewBox="0 0 30 20" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;display:block"><rect width="30" height="20" fill="#DE2910"/><g fill="#FFDE00"><polygon points="5.00,2.00 5.67,4.07 7.85,4.07 6.09,5.35 6.76,7.43 5.00,6.15 3.24,7.43 3.91,5.35 2.15,4.07 4.33,4.07"/><polygon points="9.14,2.51 9.62,1.97 9.25,1.34 9.91,1.63 10.39,1.08 10.33,1.80 11.00,2.09 10.29,2.25 10.22,2.97 9.85,2.35"/><polygon points="11.01,4.14 11.66,3.82 11.56,3.10 12.07,3.62 12.72,3.30 12.38,3.95 12.88,4.47 12.17,4.34 11.83,4.99 11.73,4.27"/><polygon points="11.04,6.73 11.76,6.70 11.96,6.00 12.21,6.68 12.94,6.66 12.37,7.10 12.62,7.79 12.01,7.38 11.44,7.83 11.64,7.13"/><polygon points="9.22,8.38 9.90,8.63 10.35,8.06 10.32,8.79 11.00,9.05 10.30,9.24 10.26,9.96 9.87,9.36 9.16,9.55 9.62,8.98"/></g></svg><i style="display:none`;
 if(S.session)render();
+</script>
+<script>
+/* ================= 后台 v27：二手买卖信息 + 职业技能培训 ================= */
+P.tag='<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>';
+P.cap='<path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/>';
+S.MK=[];S.mkf='pending';S.mkq='';S.CO=[];S.SU=[];S.trTab='courses';S.suf='new';S.suc='all';
+(function(){const k=NAV.findIndex(n=>n[0]==='members');const at=k>=0?k+1:NAV.length-2;NAV.splice(at,0,['market','二手买卖','tag'],['training','技能培训','cap'])})();
+TITLE.market='二手买卖信息';TITLE.training='职业技能培训';
+const _load27=API.load;
+API.load=async function(){await _load27.call(API);
+  if(!LIVE){if(!S.MK.length)S.MK=[{id:1,created_at:new Date().toISOString(),status:'pending',sort:0,title:'林肯电焊机 400A',price:4500,cat:'工具设备',city:'Tema',name:'Kofi',phone:'+233 24 000 2001',test:true}];
+    if(!S.CO.length)S.CO=[{id:1,status:'on',sort:1,data:{title:'电焊技能培训',provider:'Tema 培训中心',city:'Tema',start:'2026-12-01',fee:'GH₵ 1,800',seats:20,test:true}}];
+    if(!S.SU.length)S.SU=[{id:1,created_at:new Date().toISOString(),course_id:1,status:'new',data:{name:'Kojo',phone:'+233 24 111 2222',note:'有 1 年经验'}}];return}
+  try{const [m,c,s]=await Promise.all([
+      q('market_items?select=id,created_at,updated_at,status,review,sort,title:data->>title,price:data->price,cat:data->>cat,city:data->>city,name:data->>name,phone:data->>phone,thumb:data->>thumb,test:data->test&order=id.desc&limit=600'),
+      q('courses?select=*&order=sort.asc,id.asc'),q('course_signups?select=*&order=id.desc&limit=1000')]);
+    S.MK=m||[];S.CO=c||[];S.SU=s||[]}catch(e){console.error(e)}};
+/* 菜单角标：待审核二手 / 新报名 */
+const _render27=render;render=function(){_render27.apply(this,arguments);try{
+  [['market',S.MK.filter(x=>x.status==='pending').length],['training',S.SU.filter(x=>x.status==='new').length]].forEach(([k,n])=>{const a=[...document.querySelectorAll('.nav a')].find(e=>(e.getAttribute('onclick')||'').includes("'"+k+"'"));if(a&&n&&!a.querySelector('.cnt'))a.insertAdjacentHTML('beforeend',`<span class="cnt">${n}</span>`)})}catch(e){}};
+const stat=a=>`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:14px">${a.map(s=>`<div class="card" style="padding:14px 16px"><div style="font-size:12px;color:var(--muted)">${s[0]}</div><div style="font-size:24px;font-weight:800;margin-top:2px">${s[1]}</div></div>`).join('')}</div>`;
+const gh=n=>n==null||n===''?'—':'GH₵ '+Number(n).toLocaleString('en-US');
+
+/* ---------- 二手买卖 ---------- */
+const MKS={pending:['待审核','st-pending'],approved:['已上架','st-approved'],rejected:['未通过','st-rejected'],sold:['已售出',''],removed:['已删除','']};
+const mkF=()=>{const k=S.mkq.trim().toLowerCase();return S.MK.filter(x=>(S.mkf==='all'||x.status===S.mkf)&&(!k||[x.title,x.city,x.name,x.phone,x.cat].join(' ').toLowerCase().includes(k)))};
+const mkRow=x=>`<tr><td>${x.thumb?`<img src="${x.thumb}" style="width:48px;height:48px;object-fit:cover;border-radius:10px;cursor:zoom-in" onclick="mkView(${x.id})">`:`<div style="width:48px;height:48px;border-radius:10px;background:var(--soft);display:grid;place-items:center;color:var(--muted)">${ic('tag',18)}</div>`}</td>
+ <td><b style="cursor:pointer" onclick="mkView(${x.id})">${esc(x.title||'')}</b>${x.test?' <span class="etype" style="background:#FFE6A8;color:#8A5A00">示例</span>':''}${x.sort>0?' <span class="etype" style="background:#161616;color:#fff">置顶</span>':''}<div style="font-size:12px;color:var(--muted)">${esc(x.cat||'')} · ${esc(x.city||'')}</div></td>
+ <td class="num"><b>${gh(x.price)}</b></td><td>${esc(x.name||'')}<div class="mono" style="font-size:12px">${esc(x.phone||'')}</div></td><td>${fmt(x.created_at)}</td>
+ <td><span class="chip ${(MKS[x.status]||[])[1]||''}">${(MKS[x.status]||[x.status])[0]}</span>${x.status==='rejected'&&x.review?`<div style="font-size:12px;color:var(--muted);margin-top:3px">${esc(x.review)}</div>`:''}</td>
+ <td style="white-space:nowrap"><button class="btn sm" onclick="mkView(${x.id})">查看</button>${x.status!=='approved'&&x.status!=='removed'?`<button class="btn sm lime" onclick="mkSt(${x.id},'approved')">通过</button>`:''}${x.status==='pending'||x.status==='approved'?`<button class="btn sm" onclick="mkRej(${x.id})">驳回</button>`:''}${x.status==='approved'?`<button class="btn sm" onclick="mkTop(${x.id})">${x.sort>0?'取消置顶':'置顶'}</button>`:''}<button class="btn sm" onclick="mkDel(${x.id})">删除</button></td></tr>`;
+function mkUpdA(){const t=document.getElementById('mkBody');if(t)t.innerHTML=mkF().map(mkRow).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">没有记录</td></tr>'}
+V.market=()=>{const c=k=>S.MK.filter(x=>x.status===k).length;
+  return stat([['待审核',c('pending')],['已上架',c('approved')],['已售出',c('sold')],['总发布',S.MK.length]])+
+  `<div class="note" style="margin-bottom:12px">用户在 App 首页“二手买卖信息”发布闲置物品，审核通过后才会公开展示。请重点检查：违禁品、虚假信息、招聘收费广告、联系方式是否正常。</div>
+  <div class="filters" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><div class="seg">${[['pending','待审核'],['approved','已上架'],['rejected','未通过'],['sold','已售出'],['removed','已删除'],['all','全部']].map(t=>`<button class="${S.mkf===t[0]?'on':''}" onclick="S.mkf='${t[0]}';render()">${t[1]} ${t[0]==='all'?S.MK.length:c(t[0])}</button>`).join('')}</div>
+   <input class="inp" style="max-width:260px" placeholder="搜索标题 / 城市 / 卖家 / 电话" value="${esc(S.mkq)}" oninput="S.mkq=this.value;mkUpdA()"></div>
+  <div class="card" style="padding:6px 12px;overflow-x:auto;margin-top:12px"><table class="tbl"><thead><tr><th>图片</th><th>物品</th><th class="num">价格</th><th>卖家</th><th>发布时间</th><th>状态</th><th>操作</th></tr></thead><tbody id="mkBody">${mkF().map(mkRow).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">没有记录</td></tr>'}</tbody></table></div>`};
+async function mkView(id){let r=null;try{r=LIVE?(await q('market_items?id=eq.'+id+'&select=*'))[0]:{...S.MK.find(x=>x.id===id),data:{...S.MK.find(x=>x.id===id)}}}catch(e){return toast('加载失败')}if(!r)return;const d=r.data||{};
+  const row=(k,v)=>`<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.06)"><span style="color:var(--muted);width:76px;flex:none">${k}</span><b style="word-break:break-word">${v||'—'}</b></div>`;
+  openModal(`<div class="ch">${esc(d.title||'')}</div>
+   ${(d.photos||[]).length?`<div style="display:flex;gap:8px;overflow-x:auto;margin:6px 0 12px">${d.photos.map(p=>`<img src="${p}" style="height:180px;border-radius:12px;cursor:zoom-in" onclick="window.open().document.write('<img src=&quot;'+this.src+'&quot; style=&quot;max-width:100%&quot;>')">`).join('')}</div>`:'<div class="note" style="margin:6px 0 12px">没有上传照片</div>'}
+   ${row('价格',gh(d.price)+(d.nego?'（可议价）':''))}${row('分类',esc(d.cat))}${row('成色',esc(d.cond))}${row('城市',esc(d.city))}${row('卖家',esc(d.name))}${row('电话',esc(d.phone))}${row('WhatsApp',esc(d.whatsapp))}${row('描述',`<span style="white-space:pre-wrap;font-weight:500">${esc(d.desc||'')}</span>`)}${row('发布时间',fmt(r.created_at))}${row('状态',(MKS[r.status]||[r.status])[0]+(r.review?'（'+esc(r.review)+'）':''))}
+   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap"><button class="btn" onclick="closeModal()">关闭</button>${r.status!=='approved'&&r.status!=='removed'?`<button class="btn lime" onclick="mkSt(${id},'approved')">通过并上架</button>`:''}${r.status==='pending'||r.status==='approved'?`<button class="btn" onclick="mkRej(${id})">驳回</button>`:''}<button class="btn" onclick="mkDel(${id})">删除</button></div>`)}
+function mkSt(id,st,review){run(async()=>{if(LIVE)await q('market_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:st,review:review||null,updated_at:new Date().toISOString()})});const x=S.MK.find(y=>y.id===id);if(x){x.status=st;x.review=review||null}
+  await API.log(st==='approved'?'通过二手信息':'驳回二手信息','market:'+id,{review});closeModal();try{bcAll()}catch(e){}},st==='approved'?'已通过并上架':'已驳回')}
+function mkRej(id){openModal(`<div class="ch">驳回二手信息 #${id}</div><div class="fld"><label>原因（发布者会在“我的发布”里看到）</label><input class="inp" id="mkNo" value="信息不完整或图片不清晰"></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${['信息不完整或图片不清晰','疑似虚假信息','违禁物品','价格明显不合理','联系方式无效'].map(t=>`<button class="btn sm" onclick="$('#mkNo').value='${t}'">${t}</button>`).join('')}</div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="mkSt(${id},'rejected',$('#mkNo').value.trim())">驳回</button></div>`)}
+function mkTop(id){const x=S.MK.find(y=>y.id===id);const s=x.sort>0?0:100;run(async()=>{if(LIVE)await q('market_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({sort:s})});x.sort=s},s?'已置顶':'已取消置顶')}
+function mkDel(id){confirmBox('确定永久删除这条二手信息？删除后无法恢复。',()=>run(async()=>{if(LIVE)await q('market_items?id=eq.'+id,{method:'DELETE'});S.MK=S.MK.filter(x=>x.id!==id);await API.log('删除二手信息','market:'+id,{});closeModal()},'已删除'),'删除')}
+
+/* ---------- 技能培训：课程 + 报名 ---------- */
+const CF=[['title','课程名称','text',2],['title_en','英文名称（选填，英文界面显示）','text',2],['cat','分类','sel:焊接,电工,驾驶,语言,机械,服装,安全,其他',1],['provider','培训机构','text',1],
+ ['city','城市','text',1],['addr','详细地址','text',1],['duration','培训时长','text',1,'4 周（全日制）'],['schedule','上课时间','text',1,'周一至周五 8:00–16:00'],['start','开课日期','text',1,'2026-12-01'],['fee','费用','text',1,'GH₵ 1,800 或 免费'],
+ ['fee_note','费用说明','text',1],['cert','获得证书','text',1],['seats','名额','num',1],['contact','咨询电话','text',1],['suits','适合人群','text',2],
+ ['desc','课程介绍','area',2],['desc_en','英文介绍（选填）','area',2],['syllabus','课程安排（每行一项）','area',2],['color','卡片颜色','sel:#F4A259,#5B8CFF,#2D6A4F,#DE2910,#20656E,#8E2C48,#B4581B,#3A3A3A,#1F4FB8',1]];
+const SUS={new:['新报名','st-pending'],contacted:['已联系',''],enrolled:['已入学','st-approved'],cancelled:['已取消','']};
+const coName=id=>{const c=S.CO.find(x=>x.id===id);return c?(c.data||{}).title:'#'+id};
+const suCnt=id=>S.SU.filter(s=>s.course_id===id&&s.status!=='cancelled').length;
+V.training=()=>{const tabs=`<div class="seg" style="margin-bottom:12px"><button class="${S.trTab==='courses'?'on':''}" onclick="S.trTab='courses';render()">课程管理 ${S.CO.length}</button><button class="${S.trTab==='signups'?'on':''}" onclick="S.trTab='signups';render()">报名名单 ${S.SU.length}</button></div>`;
+  const st=stat([['开放课程',S.CO.filter(c=>c.status==='on').length],['总报名',S.SU.length],['待联系',S.SU.filter(s=>s.status==='new').length],['已入学',S.SU.filter(s=>s.status==='enrolled').length]]);
+  if(S.trTab==='courses')return st+tabs+`<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn dark" onclick="coEdit(0)">＋ 新增课程</button></div>
+   <div class="card" style="padding:6px 12px;overflow-x:auto"><table class="tbl"><thead><tr><th>课程</th><th>机构 / 城市</th><th>开课</th><th>费用</th><th class="num">报名/名额</th><th>状态</th><th>操作</th></tr></thead><tbody>
+   ${S.CO.map(c=>{const d=c.data||{};return `<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${d.color||'#161616'};margin-right:6px"></span><b>${esc(d.title||'')}</b>${d.test?' <span class="etype" style="background:#FFE6A8;color:#8A5A00">示例</span>':''}<div style="font-size:12px;color:var(--muted)">${esc(d.cat||'')} · ${esc(d.duration||'')}</div></td>
+    <td>${esc(d.provider||'')}<div style="font-size:12px;color:var(--muted)">${esc(d.city||'')}</div></td><td>${esc(d.start||'—')}</td><td>${esc(d.fee||'—')}</td><td class="num"><a style="cursor:pointer;text-decoration:underline" onclick="S.trTab='signups';S.suc=${c.id};S.suf='all';render()">${suCnt(c.id)}</a> / ${d.seats||'—'}</td>
+    <td>${c.status==='on'?'<span class="chip st-approved">报名中</span>':'<span class="chip">已下架</span>'}</td>
+    <td style="white-space:nowrap"><button class="btn sm lime" onclick="coEdit(${c.id})">编辑</button><button class="btn sm" onclick="coToggle(${c.id})">${c.status==='on'?'下架':'上架'}</button><button class="btn sm" onclick="coDel(${c.id})">删除</button></td></tr>`}).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">暂无课程</td></tr>'}</tbody></table></div>`;
+  const l=S.SU.filter(s=>(S.suf==='all'||s.status===S.suf)&&(S.suc==='all'||s.course_id===S.suc));
+  return st+tabs+`<div class="filters" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><div class="seg">${[['new','新报名'],['contacted','已联系'],['enrolled','已入学'],['cancelled','已取消'],['all','全部']].map(t=>`<button class="${S.suf===t[0]?'on':''}" onclick="S.suf='${t[0]}';render()">${t[1]}</button>`).join('')}</div>
+   <select class="inp" style="max-width:260px" onchange="S.suc=this.value==='all'?'all':+this.value;render()"><option value="all">全部课程</option>${S.CO.map(c=>`<option value="${c.id}" ${S.suc===c.id?'selected':''}>${esc((c.data||{}).title||'')}</option>`).join('')}</select></div>
+  <div class="card" style="padding:6px 12px;overflow-x:auto;margin-top:12px"><table class="tbl"><thead><tr><th>报名时间</th><th>课程</th><th>姓名</th><th>电话 / WhatsApp</th><th>备注</th><th>状态</th><th>操作</th></tr></thead><tbody>
+  ${l.map(s=>{const d=s.data||{};return `<tr><td>${fmt(s.created_at)}</td><td>${esc(coName(s.course_id))}</td><td><b>${esc(d.name||'')}</b>${d.wid?`<div style="font-size:12px;color:var(--muted)">工人 #${d.wid}</div>`:''}</td><td class="mono">${esc(d.phone||'')}${d.whatsapp?`<div style="font-size:12px">WA ${esc(d.whatsapp)}</div>`:''}</td>
+   <td style="max-width:220px">${esc(d.note||'')}${s.note?`<div style="font-size:12px;color:#8A5A00">后台：${esc(s.note)}</div>`:''}</td>
+   <td><select class="inp" style="padding:6px 10px;min-width:96px" onchange="suSt(${s.id},this.value)">${Object.keys(SUS).map(k=>`<option value="${k}" ${s.status===k?'selected':''}>${SUS[k][0]}</option>`).join('')}</select></td>
+   <td style="white-space:nowrap"><button class="btn sm" onclick="suNote(${s.id})">备注</button><button class="btn sm" onclick="suDel(${s.id})">删除</button></td></tr>`}).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">暂无报名</td></tr>'}</tbody></table></div>`};
+function coEdit(id){const c=S.CO.find(x=>x.id===id);const d=c?{...c.data}:{cat:'焊接',color:'#F4A259'};
+  const inp=f=>{const v=d[f[0]]==null?'':String(d[f[0]]);const i='cf_'+f[0];
+    if(f[2].startsWith('sel:'))return `<select class="inp" id="${i}">${['',...f[2].slice(4).split(',')].concat(v&&!f[2].includes(v)?[v]:[]).map(o=>`<option value="${esc(o)}" ${o===v?'selected':''} ${f[0]==='color'&&o?`style="background:${o};color:#fff"`:''}>${esc(o)}</option>`).join('')}</select>`;
+    if(f[2]==='area')return `<textarea class="inp" id="${i}" rows="3" style="resize:vertical">${esc(v)}</textarea>`;
+    return `<input class="inp" id="${i}" value="${esc(v)}" placeholder="${esc(f[4]||'')}">`};
+  openModal(`<div class="ch">${c?'编辑课程':'新增课程'}</div>
+   <div style="display:flex;gap:12px;flex-wrap:wrap;margin:4px 0 10px;font-size:12.5px"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="cf_test" ${d.test?'checked':''}>示例课程（App 中不拨打电话）</label><label style="display:flex;gap:6px;align-items:center">排序 <input class="inp" id="cf_sort" style="width:70px;padding:6px 10px" value="${c?c.sort:S.CO.length+1}"></label></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${CF.map(f=>`<div class="fld" style="${f[3]===2?'grid-column:1/-1':''}"><label>${f[1]}</label>${inp(f)}</div>`).join('')}</div>
+   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;position:sticky;bottom:-22px;background:var(--bg);padding:10px 0"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="coSave(${id})">保存</button></div>`)}
+function coSave(id){const c=S.CO.find(x=>x.id===id);const d=c?{...c.data}:{};
+  CF.forEach(f=>{const e=document.getElementById('cf_'+f[0]);if(!e)return;let v=e.value.trim();if(f[2]==='num'&&v!=='')v=isNaN(+v)?v:+v;if(v==='')delete d[f[0]];else d[f[0]]=v});
+  d.test=$('#cf_test').checked;if(!d.title)return toast('请填写课程名称');const sort=parseInt($('#cf_sort').value)||0;
+  run(async()=>{if(LIVE){if(c)await q('courses?id=eq.'+id,{method:'PATCH',body:JSON.stringify({data:d,sort})});else await q('courses',{method:'POST',body:JSON.stringify({data:d,sort})})}else{if(c){c.data=d;c.sort=sort}else S.CO.push({id:Date.now(),status:'on',sort,data:d})}
+    await API.log(c?'编辑课程':'新增课程','course:'+(id||''),{title:d.title});closeModal();if(LIVE)await API.load()},c?'已保存':'已新增课程')}
+function coToggle(id){const c=S.CO.find(x=>x.id===id);const st=c.status==='on'?'off':'on';run(async()=>{if(LIVE)await q('courses?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:st})});c.status=st},st==='on'?'已上架':'已下架')}
+function coDel(id){const n=suCnt(id);confirmBox(`确定删除课程「${esc(coName(id))}」？${n?'该课程的 '+n+' 条报名记录也会一起删除。':''}如只是暂停报名，请用“下架”。`,()=>run(async()=>{if(LIVE)await q('courses?id=eq.'+id,{method:'DELETE'});S.CO=S.CO.filter(x=>x.id!==id);S.SU=S.SU.filter(s=>s.course_id!==id);await API.log('删除课程','course:'+id,{});closeModal()},'已删除'),'删除')}
+function suSt(id,st){const s=S.SU.find(x=>x.id===id);run(async()=>{if(LIVE)await q('course_signups?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:st})});s.status=st},'已更新')}
+function suNote(id){const s=S.SU.find(x=>x.id===id);openModal(`<div class="ch">报名备注</div><div class="fld"><label>${esc((s.data||{}).name||'')} · ${esc(coName(s.course_id))}</label><textarea class="inp" id="suN" rows="3">${esc(s.note||'')}</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="suNoteGo(${id})">保存</button></div>`)}
+function suNoteGo(id){const s=S.SU.find(x=>x.id===id);const n=$('#suN').value.trim();run(async()=>{if(LIVE)await q('course_signups?id=eq.'+id,{method:'PATCH',body:JSON.stringify({note:n||null})});s.note=n;closeModal()},'已保存')}
+function suDel(id){confirmBox('确定删除这条报名记录？',()=>run(async()=>{if(LIVE)await q('course_signups?id=eq.'+id,{method:'DELETE'});S.SU=S.SU.filter(x=>x.id!==id);closeModal()},'已删除'),'删除')}
 </script>
 </body>
 </html>
