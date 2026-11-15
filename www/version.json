@@ -1,6 +1,6 @@
 {
-  "version": "3.6.2",
-  "build": 68,
+  "version": "3.6.3",
+  "build": 69,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "运行更流畅：减少无效刷新，滑动时不再卡顿"
+      "VIP岗位卡片加高，更醒目"
     ],
     "en": [
-      "Smoother: fewer redraws, no jank while scrolling"
+      "Taller VIP job cards"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

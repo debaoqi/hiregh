@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.6.2',APP_BUILD=68;
+const APP_VER='3.6.3',APP_BUILD=69;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3432,6 +3432,16 @@ render=function(top){
   if(typeof f==='function'){V[v]=function(){if(memo===undefined)memo=f.apply(this,arguments);return memo}}
   try{return _r40.apply(this,arguments)}finally{if(typeof f==='function')V[v]=f}};
 })();
+</script>
+<script>
+/* ================= v3.6.3 VIP 岗位卡片加高约 25%：经验/工资/地点改为上下两行，内容不再被截断 ================= */
+(function(){const st=document.createElement('style');st.textContent=`
+.wc.wc.wc.wc.jc.vipc .top{padding-top:9px;padding-bottom:9px}
+.wc.wc.wc.wc.jc.vipc .cols{margin-top:6px}
+.wc.wc.wc.wc.jc.vipc .cols>div{display:block}
+.wc.wc.wc.wc.jc.vipc .cols .l{font-size:10px;line-height:1.25}
+.wc.wc.wc.wc.jc.vipc .cols .v{font-size:14px;line-height:1.25;margin-top:1px}
+`;document.head.appendChild(st)})();
 </script>
 </body>
 </html>
