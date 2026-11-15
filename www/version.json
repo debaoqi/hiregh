@@ -1,6 +1,6 @@
 {
-  "version": "3.5.2",
-  "build": 58,
+  "version": "3.5.3",
+  "build": 59,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "修复：首页色块样式丢失"
+      "今日推荐使用金色底色，突出新岗位和VIP岗位"
     ],
     "en": [
-      "Fix: home tiles styling"
+      "Today's picks highlighted in gold"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

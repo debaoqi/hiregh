@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.5.2',APP_BUILD=58;
+const APP_VER='3.5.3',APP_BUILD=59;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3289,6 +3289,16 @@ wJobCard=function(j){const h=_w(j);const d=document.createElement('div');d.inner
     tl.appendChild(tt);const sm=h3.querySelector('small');[...x.children].forEach(e=>(e.classList.contains('lime')&&sm?sm:tl).appendChild(e));h3.insertBefore(tl,h3.firstChild);x.remove()}
   return c.outerHTML};
 })();
+</script>
+<script>
+/* ================= v3.5.3 今日推荐：独立底色，突出 VIP/新岗位 ================= */
+(function(){const st=document.createElement('style');st.textContent=`
+div[style="position:relative"]>.wc.jc{background:linear-gradient(135deg,#FFF3CF 0%,#FFE4A3 100%);border-color:#E9B949;box-shadow:0 2px 6px rgba(160,110,0,.18)}
+div[style="position:relative"]>.wc.jc .jct .chip.sm,div[style="position:relative"]>.wc.jc .jct .badge:not(.lime){background:#fff!important;color:#5A4210}
+div[style="position:relative"]>.wc.jc .cols>div{border-right-color:#E2C379}
+div[style="position:relative"]>.wc.jc h3 small{color:#6E5A2C}
+div[style="position:relative"]>.wc.jc .cols .l{color:#8C7440}
+`;document.head.appendChild(st)})();
 </script>
 </body>
 </html>
