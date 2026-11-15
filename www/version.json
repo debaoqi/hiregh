@@ -1,6 +1,6 @@
 {
-  "version": "3.4.2",
-  "build": 54,
+  "version": "3.4.3",
+  "build": 55,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,7 +8,7 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "会员详情进一步精简"
+      "会员详情去掉工作经历"
     ],
     "en": [
       "Simplified member profiles"
