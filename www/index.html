@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.5.8',APP_BUILD=64;
+const APP_VER='3.5.9',APP_BUILD=65;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3385,6 +3385,20 @@ const st=document.createElement('style');st.textContent=`
 .wc.wc.wc.wc.jc.vipc{background:linear-gradient(135deg,#B04A32 0%,#8E3622 100%);border:1px solid #74291A;box-shadow:0 3px 10px rgba(116,41,26,.35)!important}
 .wc.wc.wc.wc.jc.vipc .jct .chip.sm,.wc.wc.wc.wc.jc.vipc .jct .badge:not(.lime){background:#fff!important;color:#8E3622!important}
 `;document.head.appendChild(st)})();
+</script>
+<script>
+/* ================= v3.5.9 首页岗位去重：今日推荐里出现过的岗位，下面不再重复 ================= */
+(function(){
+const _vh38=V.w_home;
+V.w_home=function(){const h=_vh38.apply(this,arguments);try{
+  const d=document.createElement('div');d.innerHTML=h;
+  const seen=new Set();const idOf=c=>(c.getAttribute('onclick')||'').replace(/\s/g,'');
+  d.querySelectorAll('div[style="position:relative"]>.wc').forEach(c=>seen.add(idOf(c)));
+  if(!seen.size)return h;
+  d.querySelectorAll('.wc').forEach(c=>{if(c.parentElement.matches('div[style="position:relative"]'))return;const k=idOf(c);if(k&&seen.has(k))c.remove();else if(k)seen.add(k)});
+  d.querySelectorAll('.sec-h').forEach(s=>{let n=s.nextElementSibling;if(!n||n.classList.contains('sec-h')||!(n.classList.contains('wc')||n.matches('div[style="position:relative"]')))s.remove()});
+  return d.innerHTML}catch(e){return h}};
+})();
 </script>
 </body>
 </html>

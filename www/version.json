@@ -1,6 +1,6 @@
 {
-  "version": "3.5.8",
-  "build": 64,
+  "version": "3.5.9",
+  "build": 65,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "VIP岗位改为土红色"
+      "首页岗位不再重复显示"
     ],
     "en": [
-      "VIP jobs in terracotta red"
+      "No duplicate jobs on home"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
