@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.5.5',APP_BUILD=61;
+const APP_VER='3.5.6',APP_BUILD=62;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3344,6 +3344,24 @@ window.fitTitles=fitTitles;
 const _r34=render;render=function(){const r=_r34.apply(this,arguments);fitTitles();setTimeout(fitTitles,60);return r};
 addEventListener('resize',()=>{key=null;setTimeout(fitTitles,60)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{key=null;fitTitles()});
+})();
+</script>
+<script>
+/* ================= v3.5.6 VIP 岗位卡片：黑金配色，与普通推荐区分 ================= */
+(function(){
+const st=document.createElement('style');st.textContent=`
+.wc.wc.jc.vipc{background:linear-gradient(135deg,#2B2519 0%,#171511 100%);border:1px solid #E0A923;box-shadow:0 0 0 1px #E0A923,0 3px 10px rgba(120,85,0,.28)!important;color:#fff}
+.wc.wc.jc.vipc h3,.wc.wc.jc.vipc .jct .tt{color:#fff}
+.wc.wc.jc.vipc h3 small{color:#E9C66A}
+.wc.wc.jc.vipc h3 small svg{stroke:#E9C66A}
+.wc.wc.jc.vipc .cols .l{color:#B5A47E}
+.wc.wc.jc.vipc .cols .v{color:#fff}
+.wc.wc.jc.vipc .cols>div{border-right-color:rgba(233,198,106,.28)}
+.wc.wc.jc.vipc .jct .chip.sm,.wc.wc.jc.vipc .jct .badge:not(.lime){background:rgba(233,198,106,.18)!important;color:#F3D88A!important}
+.wc.wc.jc.vipc+span{background:var(--lime)!important;color:#161616!important}
+`;document.head.appendChild(st);
+const _w35=wJobCard;
+wJobCard=function(j){const h=_w35(j);return (typeof isVipJob==='function'&&isVipJob(j))?h.replace('class="wc jc"','class="wc jc vipc"'):h};
 })();
 </script>
 </body>
