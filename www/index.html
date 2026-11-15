@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.4.1',APP_BUILD=53;
+const APP_VER='3.4.2',APP_BUILD=54;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2728,7 +2728,7 @@ V.member=()=>{const m=(MEM.list||[]).find(x=>x.id===S.params.id);if(!m)return me
   const rows=a=>a.map(x=>mRow(x[0],mv(x[1]))).join('');
   const works=String(m.works||'').split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const p=l.split('|').map(x=>x.trim());return `<div class="mwork"><div class="xs muted">${esc(p[0]||'')}</div><b>${esc(p[1]||'')}</b>${p[2]?`<div class="sm">${esc(p[2])}</div>`:''}${p[3]?`<div class="xs muted" style="margin-top:2px">${esc(p[3])}</div>`:''}</div>`}).join('');
   const chips=(s,bg,pre)=>`<div class="row gap6 wrap">${mList(s).map(x=>`<span class="chip sm" style="background:${bg};cursor:default">${pre||''}${esc(x)}</span>`).join('')||'—'}</div>`;
-  const body=`${mSec(L2('基本信息','Basic info'),rows([[L2('出生日期','Date of birth'),m.birth],[L2('身高 / 体重','Height / weight'),[m.height,m.weight].filter(Boolean).join(' / ')],[L2('婚姻状况','Marital status'),m.marital],[L2('学历','Education'),m.edu],[L2('语言','Languages'),m.langs],[L2('宗教','Religion'),m.religion],[L2('籍贯','Hometown'),m.hometown],[L2('证件','ID'),[m.id_type,m.id_no].filter(Boolean).join(' · ')]]))}
+  const body=`${mSec(L2('基本信息','Basic info'),rows([[L2('出生日期','Date of birth'),m.birth],[L2('身高 / 体重','Height / weight'),[m.height,m.weight].filter(Boolean).join(' / ')],[L2('语言','Languages'),m.langs]]))}
    ${mSec(L2('联系方式','Contact'),[[L2('手机','Mobile'),m.phone],['WhatsApp',m.whatsapp]].map(x=>mRow(x[0],`<span style="white-space:nowrap;color:var(--ink)">${mv(x[1])}</span>`)).join('')+rows([[L2('邮箱','Email'),m.email],[L2('详细住址','Address'),m.addr]]))}
    ${works?mSec(L2('工作经历','Work history'),works):''}
    ${mSec(L2('平台认证','Verification'),chips(m.verify,'#E3F5C8','✓ '))}`;

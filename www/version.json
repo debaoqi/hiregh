@@ -1,6 +1,6 @@
 {
-  "version": "3.4.1",
-  "build": 53,
+  "version": "3.4.2",
+  "build": 54,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "会员详情精简，电话与 WhatsApp 可直接联系"
+      "会员详情进一步精简"
     ],
     "en": [
-      "Simplified member profiles; call or WhatsApp directly"
+      "Simplified member profiles"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
