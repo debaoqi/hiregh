@@ -1,6 +1,6 @@
 {
-  "version": "3.5.1",
-  "build": 57,
+  "version": "3.5.2",
+  "build": 58,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "岗位卡片：人数放到职位后面，更紧凑、更清晰"
+      "修复：首页色块样式丢失"
     ],
     "en": [
-      "Tighter, clearer job cards"
+      "Fix: home tiles styling"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
