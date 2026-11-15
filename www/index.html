@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.5.3',APP_BUILD=59;
+const APP_VER='3.5.4',APP_BUILD=60;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3299,6 +3299,30 @@ div[style="position:relative"]>.wc.jc .cols>div{border-right-color:#E2C379}
 div[style="position:relative"]>.wc.jc h3 small{color:#6E5A2C}
 div[style="position:relative"]>.wc.jc .cols .l{color:#8C7440}
 `;document.head.appendChild(st)})();
+</script>
+<script>
+/* ================= v3.5.4 页面大标题与首页标题同字号；我的档案头部改为横排 ================= */
+(function(){
+const st=document.createElement('style');st.textContent=`
+.title{font-size:var(--welfs,28px)!important;letter-spacing:-.5px!important;line-height:1.2}
+.box.mebox{display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:2px;align-items:center;text-align:left!important;padding-top:14px;padding-bottom:14px}
+.box.mebox>:first-child{grid-row:1/span 3;grid-column:1;width:68px!important;height:68px!important;font-size:24px;margin:0!important;border-width:3px}
+.box.mebox>:not(:first-child){grid-column:2;margin-top:0!important;justify-self:start}
+.box.mebox>.b{font-size:20px!important;line-height:1.2}
+.box.mebox>.badge{margin-top:4px!important;padding:4px 10px;font-size:12px}
+`;document.head.appendChild(st);
+/* 计算首页“找工作/招工，很容易！”实际字号，作为各页大标题字号 */
+function calcWelFs(){try{const m=document.createElement('h1');m.className='hero';m.textContent=t('welcome_title');
+  const box=document.createElement('div');box.className='pad';box.style.cssText='position:absolute;left:-9999px;top:0;visibility:hidden;width:'+((document.querySelector('.phone')||document.body).clientWidth)+'px';
+  box.appendChild(m);document.body.appendChild(box);
+  m.style.cssText='white-space:nowrap;letter-spacing:-0.5px;overflow:hidden;margin:0';const w=box.clientWidth-parseFloat(getComputedStyle(box).paddingLeft)-parseFloat(getComputedStyle(box).paddingRight);
+  let fs=Math.min(30,w*0.085);m.style.fontSize=fs+'px';let n=0;while(m.scrollWidth>m.clientWidth+1&&fs>14&&n++<60){fs-=0.5;m.style.fontSize=fs+'px'}
+  box.remove();document.documentElement.style.setProperty('--welfs',fs+'px')}catch(e){}}
+window.calcWelFs=calcWelFs;
+const _r33=render;render=function(){const k=S.lang+'|'+((document.querySelector('.phone')||document.body).clientWidth);if(window._welk!==k){window._welk=k;calcWelFs()}const r=_r33.apply(this,arguments);if(S.view==='welcome'){const h=document.querySelector('h1.hero');if(h)document.documentElement.style.setProperty('--welfs',getComputedStyle(h).fontSize)}return r};
+addEventListener('resize',()=>{window._welk=null});
+const _vme33=V.w_me;V.w_me=()=>{const h=_vme33();return h.replace('<div class="box" style="text-align:center">','<div class="box mebox">')};
+})();
 </script>
 </body>
 </html>
