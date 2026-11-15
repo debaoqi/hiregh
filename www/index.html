@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.0.1',APP_BUILD=44;
+const APP_VER='3.1.0',APP_BUILD=45;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -2764,20 +2764,6 @@ function memberAct(k){const m=(MEM.list||[]).find(x=>x.id===S.params.id);if(!m)r
 document.addEventListener('input',e=>{const el=e.target;if(!el||el.tagName!=='INPUT'||!el.closest('.searchbar'))return;
   const v=(el.value||'').trim();if(!/^sn\d{8}$/i.test(v))return;e.stopPropagation();el.value='';el.blur();
   if(S.f)S.f.q='';S.wq='';clearTimeout(window._wq);memOpen(v.toUpperCase())},true);
-/* 3) 注册（求职或招人）后不再显示首页（选择身份页） */
-function regRole(){const w=!!S.me,e=!!(S.company&&S.company.registered);if(!w&&!e)return null;if(w&&e){const st=LS.get('state2',null);return st&&st.mode==='emp'?'emp':(S.mode==='emp'?'emp':'wk')}return w?'wk':'emp'}
-function enterRole(r){S.welForce=false;S.hist=[];if(r==='wk'){S.mode='wk';S.view='w_home';return render(true)}S.mode='emp';tab('home')}
-const _toWel22=toWelcome;
-toWelcome=function(force){const r=regRole();
-  if(force||!r){S.welForce=!!force;return _toWel22()}
-  const home=r==='wk'?'w_home':'home';
-  if(S.view===home&&S.mode===r){const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A&&A.exitApp)A.exitApp();return}
-  enterRole(r)};
-const _render22=render;
-render=function(top){if(S.view==='welcome'){const r=regRole();if(r&&!S.welForce)return enterRole(r)}else S.welForce=false;return _render22(top)};
-/* “切换身份”入口仍可回到选择页 */
-['settings','w_me','me'].forEach(k=>{if(!V[k])return;const f=V[k];V[k]=()=>f().split('onclick="toWelcome()"').join('onclick="toWelcome(1)"')});
-setTimeout(()=>{if(S.view==='welcome'&&!S.welForce){const r=regRole();if(r)enterRole(r)}},0);
 </script>
 <script>
 /* ===== v3.0.1 (p24)：审核通过后手机端状态即时更新 ===== */
@@ -2793,6 +2779,195 @@ syncDB=async function(force){await _syncDB24.apply(this,arguments);
     else if(S.myToken)syncMe()}catch(e){}};
 /* 实时通知（后台审核后会广播）到达时也立即检查 */
 setTimeout(()=>{try{syncDB(true)}catch(e){}},2500);
+</script>
+<script>
+/* ===== v3.1.0 (p25)：首页精简 + 二手买卖信息 + 职业技能培训 ===== */
+P.tag='<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>';
+P.cap='<path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/>';
+P.camera='<path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/>';
+P.box='<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>';
+const ZH=()=>S.mode==='emp'||S.lang==='zh';
+const L3=(zh,en)=>ZH()?zh:en;
+function rpc(fn,body){return DB.q('rpc/'+fn,{method:'POST',body:JSON.stringify(body||{})})}
+const ago=d=>{const m=Math.max(1,Math.round((Date.now()-Date.parse(d))/60000));if(m<60)return m+L3(' 分钟前','m ago');const h=Math.round(m/60);if(h<24)return h+L3(' 小时前','h ago');const dd=Math.round(h/24);return dd+L3(' 天前','d ago')};
+const mkMoney=n=>{n=+n;return isNaN(n)?'':'GH₵ '+n.toLocaleString('en-US')};
+
+/* ---------- 1) 首页：去掉两行标签、压低卡片高度、增加“二手买卖信息 / 职业技能培训” ---------- */
+const _vwel25=V.welcome;
+V.welcome=()=>{let h=_vwel25();
+  h=h.replace(/\s*<div class="row gap6 wrap" style="margin-top:12px">(?:(?!<\/div>)[\s\S])*<\/div>/g,'');
+  h=h.replace(/<div class="row between" style="align-items:flex-start">(<div class="ic"[^>]*>[\s\S]*?<\/div>)(<div class="go"[^>]*>[\s\S]*?<\/div>)<\/div>\s*<div>([\s\S]*?<\/div>)<\/div><\/div>/g,
+    (m,icn,go,body)=>`<div class="row gap" style="align-items:center;gap:14px">${icn}<div style="flex:1;min-width:0">${body}</div>${go}</div></div>`);
+  h=h.split('min-height:172px').join('min-height:0').split('padding:22px 20px').join('padding:18px 18px').split('font-size:26px;line-height:1.15').join('font-size:23px;line-height:1.15');
+  const tiles=`<div class="wtiles">
+   <div class="wtile" onclick="go('market')"><div class="wti" style="background:#FFE1A8;color:#8A4B00">${ic('tag',20)}</div><div style="min-width:0"><div class="b">${L3('二手买卖信息','Second-hand market')}</div><div class="xs muted">${L3('工具设备 · 车辆 · 家电','Tools · vehicles · home')}</div></div></div>
+   <div class="wtile" onclick="go('training')"><div class="wti" style="background:#D6E6FF;color:#1F4FB8">${ic('cap',20)}</div><div style="min-width:0"><div class="b">${L3('职业技能培训','Skills training')}</div><div class="xs muted">${L3('学技能 · 考证书 · 好就业','Learn · certify · get hired')}</div></div></div></div>`;
+  const i=h.indexOf('<div class="box row gap" style="margin-top:14px">');if(i<0)return h;const j=h.lastIndexOf('</div>',i);
+  return h.slice(0,j)+tiles+h.slice(j)};
+
+/* ---------- 2) 二手买卖信息 ---------- */
+const MK_CATS=[['工具设备','Tools & equipment','#F4A259'],['机械车辆','Machinery & vehicles','#5B8CFF'],['电子电器','Electronics','#9D84E0'],['家具家居','Furniture & home','#6CC3A0'],['建材五金','Building materials','#B4581B'],['服装鞋帽','Clothing & shoes','#E07AA5'],['其他','Other','#8A8A8A']];
+const MK_COND=[['全新','New'],['9成新','Like new'],['8成新','Good'],['有使用痕迹','Used']];
+const mkCat=c=>MK_CATS.find(x=>x[0]===c)||MK_CATS[MK_CATS.length-1];
+const mkCatN=c=>{const x=mkCat(c);return ZH()?x[0]:x[1]};
+const mkCondN=c=>{const x=MK_COND.find(y=>y[0]===c);return x?(ZH()?x[0]:x[1]):(c||'')};
+const MK={list:null,full:{},mine:null,cat:'all',q:'',form:null,busy:false};
+function mkTok(){let t=LS.get('mkt_tok',null);if(!t){t=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36))+Math.random().toString(36).slice(2);LS.set('mkt_tok',t)}return t}
+async function mkLoad(){try{const r=await rpc('market_list');if(Array.isArray(r))MK.list=r}catch(e){if(!MK.list)MK.list=[]}if(['market'].includes(S.view))mkUpd()}
+async function mkMine(){try{const r=await rpc('market_mine',{p_token:mkTok()});if(Array.isArray(r))MK.mine=r}catch(e){if(!MK.mine)MK.mine=[]}if(S.view==='mmine')render(false)}
+const mkPh=(d,big)=>d&&(big?(d.photos&&d.photos[0])||d.thumb:d.thumb)?`<img src="${big?(d.photos&&d.photos[0])||d.thumb:d.thumb}" style="width:100%;height:100%;object-fit:cover;display:block">`
+  :`<div style="width:100%;height:100%;display:grid;place-items:center;background:${mkCat(d&&d.cat)[2]}22;color:${mkCat(d&&d.cat)[2]}">${ic('box',big?64:34)}</div>`;
+function mkFiltered(){const q=MK.q.trim().toLowerCase();return (MK.list||[]).filter(x=>(MK.cat==='all'||x.data.cat===MK.cat)&&(!q||[x.data.title,x.data.desc,x.data.city,x.data.cat].join(' ').toLowerCase().includes(q)))}
+const mkCard=x=>{const d=x.data;return `<div class="mkc" onclick="go('mitem',{id:${x.id}})"><div class="mkph">${mkPh(d)}${x.status==='sold'?`<span class="mksold">${L3('已售出','Sold')}</span>`:''}</div>
+  <div style="padding:9px 10px 11px"><div class="mkt">${esc(d.title||'')}</div><div class="row between" style="margin-top:6px;align-items:baseline"><b style="color:#D2452F">${mkMoney(d.price)}</b>${d.nego?`<span class="xs muted">${L3('可议价','Negotiable')}</span>`:''}</div>
+  <div class="xs muted" style="margin-top:3px">${ic('pin',11)} ${esc(d.city||'')} · ${ago(x.created_at)}</div></div></div>`};
+function mkUpd(){const e=document.getElementById('mkList');if(!e)return;if(!MK.list){e.innerHTML=`<div class="empty">${L3('加载中…','Loading…')}</div>`;return}
+  const l=mkFiltered();e.innerHTML=l.length?`<div class="mkgrid">${l.map(mkCard).join('')}</div>`:`<div class="empty">${ic('tag',40)}<p style="margin-top:10px">${L3('暂时没有相关物品','Nothing here yet')}</p></div>`}
+const hdr2=(title,right)=>`<div class="hdr"><button class="icbtn" onclick="back()">${ic('back')}</button><b style="font-size:17px">${title}</b>${right||'<span style="width:44px"></span>'}</div>`;
+V.market=()=>{if(!MK.list)setTimeout(mkLoad,0);else if(!MK._t||Date.now()-MK._t>30000){MK._t=Date.now();setTimeout(mkLoad,0)}
+  return hdr2(L3('二手买卖信息','Second-hand market'),`<button class="icbtn" onclick="go('mmine')" title="${L3('我的发布','My posts')}">${ic('user')}</button>`)+`<div class="pad" style="padding-top:4px">
+  <div class="note" style="margin:0 0 12px;display:flex;gap:8px;align-items:flex-start">${ic('shield',16)}<span class="xs" style="line-height:1.55">${L3('信息经平台审核后展示。请当面验货、当面交易，不要提前转账或付定金。','Posts are reviewed by the platform. Inspect and pay in person — never send money in advance.')}</span></div>
+  <div class="msearch">${ic('search')}<input placeholder="${L3('搜索物品、城市','Search items, city')}" value="${esc(MK.q)}" oninput="MK.q=this.value;mkUpd()"></div>
+  <div class="chips" style="margin:10px 0 2px;flex-wrap:nowrap;overflow-x:auto"><span class="chip sm ${MK.cat==='all'?'on':''}" onclick="MK.cat='all';render(false)">${L3('全部','All')}</span>${MK_CATS.map(c=>`<span class="chip sm ${MK.cat===c[0]?'on':''}" onclick="MK.cat='${c[0]}';render(false)">${ZH()?c[0]:c[1]}</span>`).join('')}</div>
+  <div id="mkList" style="margin-top:10px"></div></div>
+  <div class="bbar"><button class="bigbtn" style="flex:1" onclick="mkNew()">${ic('plus',18)} ${L3('发布闲置','Post an item')}</button></div>`};
+function mkNew(){MK.form={photos:[],cat:'工具设备',cond:'9成新',nego:true,city:(S.me&&S.me.city)||(S.company&&S.company.city)||'',name:(S.me&&S.me.name)||(S.company&&S.company.contact)||'',phone:S.myPhone||(S.company&&S.company.phone)||''};MK.edit=null;go('mpost')}
+async function mkOpenItem(id){if(MK.full[id])return;try{const r=await rpc('market_get',{p_id:id});if(r&&r.data){MK.full[id]=r;if(S.view==='mitem'&&S.params.id===id)render(false)}}catch(e){}}
+V.mitem=()=>{const id=S.params.id;const x=MK.full[id]||(MK.list||[]).find(y=>y.id===id)||(MK.mine||[]).find(y=>y.id===id);
+  if(!x)return hdr2(L3('物品详情','Item'))+`<div class="pad"><div class="empty">${L3('信息不存在或已下架','This item is no longer available')}</div></div>`;
+  if(!MK.full[id])setTimeout(()=>mkOpenItem(id),0);const d=x.data;const ph=(d.photos&&d.photos.length?d.photos:d.thumb?[d.thumb]:[]);
+  const gal=ph.length?`<div class="mkgal">${ph.map(p=>`<img src="${p}">`).join('')}</div>${ph.length>1?`<div class="xs muted" style="text-align:center;margin-top:4px">${L3('左右滑动查看 '+ph.length+' 张图片','Swipe to see '+ph.length+' photos')}</div>`:''}`:`<div class="mkgal">${mkPh(d,true)}</div>`;
+  const row=(k,v)=>v?`<div class="mrow"><span>${k}</span><b>${v}</b></div>`:'';
+  return hdr2(L3('物品详情','Item'),`<button class="icbtn" onclick="mkReport(${id})" title="${L3('举报','Report')}">${ic('shield')}</button>`)+`<div class="pad" style="padding-top:4px">${gal}
+   <div style="margin-top:14px"><div style="font-size:21px;font-weight:900;line-height:1.3">${esc(d.title||'')}</div>
+   <div class="row gap6" style="margin-top:8px;align-items:baseline;flex-wrap:wrap"><b style="font-size:26px;color:#D2452F">${mkMoney(d.price)}</b>${d.nego?`<span class="chip sm" style="background:#FFE6A8;cursor:default">${L3('可议价','Negotiable')}</span>`:''}${x.status==='sold'?`<span class="chip sm" style="background:#161616;color:#fff;cursor:default">${L3('已售出','Sold')}</span>`:''}${d.test?`<span class="chip sm" style="background:#F1ECDF;cursor:default">${L3('示例','Sample')}</span>`:''}</div></div>
+   <div class="box msec">${row(L3('分类','Category'),mkCatN(d.cat))}${row(L3('成色','Condition'),mkCondN(d.cond))}${row(L3('所在地','Location'),esc(d.city||''))}${row(L3('发布时间','Posted'),ago(x.created_at))}${row(L3('卖家','Seller'),esc(d.name||''))}</div>
+   ${d.desc?`<div class="box msec"><h4>${L3('物品描述','Description')}</h4><div class="sm" style="line-height:1.7;white-space:pre-wrap">${esc(d.desc)}</div></div>`:''}
+   <div class="note" style="margin-top:12px;display:flex;gap:8px">${ic('shield',16)}<span class="xs" style="line-height:1.55">${L3('安全提示：当面验货、当面付款；车辆和大件设备请核对手续。任何要求先转账的都可能是骗局。','Safety: inspect and pay in person; check papers for vehicles and machines. Anyone asking for money first may be a scammer.')}</span></div></div>
+   ${x.status==='approved'?`<div class="bbar"><button class="bigbtn" style="flex:1;background:#fff;color:#161616" onclick="mkContact(${id},'wa')">WhatsApp</button><button class="bigbtn" style="flex:1" onclick="mkContact(${id},'call')">${ic('phone',18)} ${L3('联系卖家','Call seller')}</button></div>`:''}`};
+function mkContact(id,k){const x=MK.full[id]||(MK.list||[]).find(y=>y.id===id);if(!x)return;const d=x.data;
+  if(d.test)return toast(L3('这是示例信息，仅用于演示','Sample listing, demo only'));
+  const n=String((k==='wa'?d.whatsapp||d.phone:d.phone)||'').replace(/[^\d+]/g,'');if(!n)return toast(L3('卖家未留电话','No phone number'));
+  location.href=k==='wa'?'https://wa.me/'+n.replace('+','')+'?text='+encodeURIComponent((ZH()?'你好，我在 JobPaw 看到你发布的：':'Hi, I saw your JobPaw listing: ')+(d.title||'')):'tel:'+n}
+async function mkReport(id){const ok=await submitReport({type:'二手信息',content:L3('举报二手信息','Report listing')+' #'+id,target:'market:'+id});if(ok)toast(L3('已提交，平台会尽快处理','Reported, thank you'))}
+/* 发布 / 编辑 */
+const mf=()=>MK.form||{};
+function mkSet(k,v){MK.form[k]=v}
+V.mpost=()=>{const f=mf();const ed=!!MK.edit;
+  const chips=(list,key)=>`<div class="chips wrap">${list.map(c=>`<span class="chip sm ${f[key]===c[0]?'on':''}" onclick="mkSet('${key}','${c[0]}');render(false)">${ZH()?c[0]:c[1]}</span>`).join('')}</div>`;
+  return hdr2(ed?L3('编辑闲置','Edit item'):L3('发布闲置','Post an item'))+`<div class="pad" style="padding-top:4px">
+   <div class="fl">${L3('照片（最多 4 张，第一张为封面）','Photos (up to 4, first is the cover)')}</div>
+   <div class="mkups">${(f.photos||[]).map((p,i)=>`<div class="mkup"><img src="${p}"><button onclick="mkDelPh(${i})">×</button></div>`).join('')}${(f.photos||[]).length<4?`<div class="mkup add" onclick="mkAddPh()">${ic('camera',26)}<span class="xs">${L3('添加照片','Add photo')}</span></div>`:''}</div>
+   <div class="fl">${L3('标题','Title')}</div><input class="fi" id="mkTitle" maxlength="60" value="${esc(f.title||'')}" placeholder="${L3('例如：林肯电焊机 400A，九成新','e.g. Lincoln welder 400A, like new')}" oninput="mkSet('title',this.value)">
+   <div class="fl">${L3('分类','Category')}</div>${chips(MK_CATS,'cat')}
+   <div class="fl">${L3('价格（GH₵）','Price (GH₵)')}</div><div class="row gap" style="align-items:center"><input class="fi" id="mkPrice" inputmode="numeric" style="flex:1" value="${f.price!=null?esc(f.price):''}" placeholder="0" oninput="mkSet('price',this.value.replace(/[^\\d.]/g,''))"><label class="sm row gap6" style="align-items:center;white-space:nowrap"><input type="checkbox" ${f.nego?'checked':''} onchange="mkSet('nego',this.checked)">${L3('可议价','Negotiable')}</label></div>
+   <div class="fl">${L3('成色','Condition')}</div>${chips(MK_COND,'cond')}
+   <div class="fl">${L3('所在城市','City')}</div><input class="fi" maxlength="40" value="${esc(f.city||'')}" placeholder="Tema / Accra / Kumasi…" oninput="mkSet('city',this.value)">
+   <div class="fl">${L3('物品描述','Description')}</div><textarea class="fi" rows="4" maxlength="800" placeholder="${L3('品牌、型号、使用时间、有无毛病、交易方式等','Brand, model, age, any faults, how to trade')}" oninput="mkSet('desc',this.value)">${esc(f.desc||'')}</textarea>
+   <div class="fl">${L3('联系人','Contact name')}</div><input class="fi" maxlength="30" value="${esc(f.name||'')}" oninput="mkSet('name',this.value)">
+   <div class="fl">${L3('联系电话','Phone')}</div><input class="fi" inputmode="tel" maxlength="20" value="${esc(f.phone||'')}" placeholder="+233 …" oninput="mkSet('phone',this.value)">
+   <div class="fl">WhatsApp <span class="xs muted">${L3('（不填则与电话相同）','(optional, defaults to phone)')}</span></div><input class="fi" inputmode="tel" maxlength="20" value="${esc(f.whatsapp||'')}" oninput="mkSet('whatsapp',this.value)">
+   <div class="note" style="margin-top:14px"><span class="xs" style="line-height:1.55">${L3('提交后由平台审核，通过后展示在“二手买卖信息”。禁止发布违禁品、虚假信息和招聘收费信息。','Your post is reviewed before it appears. No prohibited goods, fake info or job-fee ads.')}</span></div>
+   <div style="height:20px"></div></div>
+   <div class="bbar"><button class="bigbtn" style="flex:1" onclick="mkSubmit()" ${MK.busy?'disabled':''}>${MK.busy?L3('提交中…','Submitting…'):(ed?L3('保存并重新提交审核','Save & resubmit'):L3('提交审核','Submit'))}</button></div>`};
+function mkAddPh(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.multiple=true;i.onchange=async()=>{for(const f of [...i.files]){if((MK.form.photos||[]).length>=4)break;try{MK.form.photos.push(await resizeImg(f,1000))}catch(e){}}render(false)};i.click()}
+function mkDelPh(i){MK.form.photos.splice(i,1);render(false)}
+function mkThumb(src){return new Promise(res=>{const im=new Image();im.onload=()=>{const s=360;const c=document.createElement('canvas');c.width=s;c.height=s;const k=Math.max(s/im.width,s/im.height);const w=im.width*k,h=im.height*k;c.getContext('2d').drawImage(im,(s-w)/2,(s-h)/2,w,h);res(c.toDataURL('image/jpeg',.78))};im.onerror=()=>res(null);im.src=src})}
+async function mkSubmit(){const f=mf();if(MK.busy)return;
+  if(!(f.title||'').trim())return toast(L3('请填写标题','Please add a title'));
+  if(f.price===undefined||f.price===''||isNaN(+f.price))return toast(L3('请填写价格','Please add a price'));
+  if(String(f.phone||'').replace(/\D/g,'').length<7)return toast(L3('请填写正确的电话','Please add a valid phone'));
+  if(!DB.on)return toast(L3('网络未连接','Offline'));
+  MK.busy=true;render(false);
+  try{const d={title:f.title.trim(),cat:f.cat,price:+f.price,nego:!!f.nego,cond:f.cond,city:(f.city||'').trim(),desc:(f.desc||'').trim(),name:(f.name||'').trim(),phone:f.phone.trim(),whatsapp:(f.whatsapp||'').trim()||f.phone.trim(),photos:f.photos||[],lang:S.lang,country:S.country};
+    d.thumb=d.photos[0]?await mkThumb(d.photos[0]):null;
+    if(MK.edit)await rpc('market_edit',{p_id:MK.edit,p_token:mkTok(),p_data:d});else await rpc('market_post',{p_token:mkTok(),p_data:d});
+    MK.busy=false;MK.form=null;const ed=MK.edit;MK.edit=null;if(S.hist.length)S.hist.pop();S.view='mmine';S.params={};render(true);mkMine();
+    openSheet(`<div class="b" style="font-size:19px">${ed?L3('已重新提交','Resubmitted'):L3('已提交审核','Submitted for review')}</div><p class="sm" style="line-height:1.7;margin:8px 0 0">${L3('平台审核通过后会展示在“二手买卖信息”，你可以在“我的发布”查看状态。','Once approved it will appear in the market. Check the status in “My posts”.')}</p><button class="bigbtn" style="width:100%;margin-top:16px" onclick="closeSheet()">${L3('好的','OK')}</button>`)}
+  catch(e){MK.busy=false;render(false);toast(/rate/.test(String(e&&e.message||e))?L3('发布太频繁，请稍后再试','Too many posts, try later'):/size/.test(String(e&&e.message||e))?L3('图片太大，请减少照片','Photos too large'):L3('提交失败，请检查网络','Failed, check your network'))}}
+const MK_ST={pending:['审核中','In review','var(--gold)'],approved:['已上架','Live','var(--lime)'],rejected:['未通过','Rejected','#FAD2CB'],sold:['已售出','Sold','#E3E0DA']};
+V.mmine=()=>{if(!MK.mine||!MK._mt||Date.now()-MK._mt>15000){MK._mt=Date.now();setTimeout(mkMine,0)}const l=MK.mine||[];
+  return hdr2(L3('我的发布','My posts'))+`<div class="pad" style="padding-top:4px">${!MK.mine?`<div class="empty">${L3('加载中…','Loading…')}</div>`:l.length?l.map(x=>{const d=x.data,st=MK_ST[x.status]||MK_ST.pending;return `<div class="mkrow"><div class="mkrph" onclick="${x.status==='approved'||x.status==='sold'?`go('mitem',{id:${x.id}})`:''}">${mkPh(d)}</div><div style="flex:1;min-width:0">
+     <div class="b" style="line-height:1.3">${esc(d.title||'')}</div><div class="sm" style="margin-top:3px;color:#D2452F;font-weight:800">${mkMoney(d.price)}</div>
+     <div class="row gap6" style="margin-top:6px;flex-wrap:wrap"><span class="chip sm" style="background:${st[2]};cursor:default">${ZH()?st[0]:st[1]}</span><span class="xs muted">${ago(x.created_at)}</span></div>
+     ${x.status==='rejected'&&x.review?`<div class="xs" style="margin-top:6px;color:#B3261E">${L3('原因：','Reason: ')}${esc(x.review)}</div>`:''}
+     <div class="row gap6" style="margin-top:8px;flex-wrap:wrap">${x.status!=='sold'?`<button class="chip sm" onclick="mkEdit(${x.id})">${L3('编辑','Edit')}</button>`:''}${x.status==='approved'?`<button class="chip sm" onclick="mkSetSt(${x.id},'sold')">${L3('标记已售出','Mark sold')}</button>`:''}<button class="chip sm" onclick="mkSetSt(${x.id},'removed')">${L3('删除','Delete')}</button></div></div></div>`}).join('')
+    :`<div class="empty">${ic('tag',40)}<p style="margin-top:10px">${L3('你还没有发布过闲置','You have no posts yet')}</p></div>`}</div>
+   <div class="bbar"><button class="bigbtn" style="flex:1" onclick="mkNew()">${ic('plus',18)} ${L3('发布闲置','Post an item')}</button></div>`};
+function mkEdit(id){const x=(MK.mine||[]).find(y=>y.id===id);if(!x)return;MK.form={...x.data,photos:[...(x.data.photos||[])]};MK.edit=id;go('mpost')}
+function mkSetSt(id,st){const go2=async()=>{closeSheet();try{await rpc('market_set',{p_id:id,p_token:mkTok(),p_status:st});toast(st==='sold'?L3('已标记为已售出','Marked as sold'):L3('已删除','Deleted'));MK.list=null;await mkMine()}catch(e){toast(L3('操作失败','Failed'))}};
+  if(st==='removed'){window._mkGo=go2;openSheet(`<div class="b" style="font-size:18px">${L3('确定删除这条信息？','Delete this post?')}</div><div class="row gap" style="margin-top:16px"><button class="bigbtn" style="flex:1;background:#fff;color:#161616" onclick="closeSheet()">${L3('取消','Cancel')}</button><button class="bigbtn" style="flex:1" onclick="_mkGo()">${L3('删除','Delete')}</button></div>`)}else go2()}
+if(typeof FORM_VIEWS!=='undefined')FORM_VIEWS.push('mpost');
+
+/* ---------- 3) 职业技能培训 ---------- */
+const TR={list:null,cat:'all',busy:false};
+const TR_ICON={焊接:'factory',电工:'gear',驾驶:'tr',语言:'globe',机械:'gear',服装:'user',安全:'shield'};
+async function trLoad(){try{const r=await rpc('course_list');if(Array.isArray(r))TR.list=r.map(x=>({...x.data,id:x.id,signups:x.signups}))}catch(e){if(!TR.list)TR.list=[]}if(['training','course'].includes(S.view))render(false)}
+const trT=c=>ZH()||!c.title_en?c.title:c.title_en;
+const trD=c=>ZH()||!c.desc_en?c.desc:c.desc_en;
+const trSigned=()=>LS.get('tr_signed',[]);
+const trLeft=c=>c.seats?Math.max(0,c.seats-(c.signups||0)):null;
+const trIcon=c=>`<div class="trico" style="background:${c.color||'#161616'}">${ic(TR_ICON[c.cat]||'cap',22)}</div>`;
+V.training=()=>{if(!TR.list||!TR._t||Date.now()-TR._t>30000){TR._t=Date.now();setTimeout(trLoad,0)}
+  const cats=[...new Set((TR.list||[]).map(c=>c.cat).filter(Boolean))];const l=(TR.list||[]).filter(c=>TR.cat==='all'||c.cat===TR.cat);const sg=trSigned();
+  return hdr2(L3('职业技能培训','Skills training'))+`<div class="pad" style="padding-top:4px">
+   <div class="trban"><div><div style="font-size:19px;font-weight:900">${L3('学技能 · 考证书 · 好就业','Learn a skill, get certified, get hired')}</div><div class="xs" style="margin-top:4px;opacity:.85">${L3('合作培训机构 · 结业推荐就业 · 报名后机构会主动联系你','Partner schools · job referrals · the school will contact you')}</div></div>${ic('cap',40)}</div>
+   <div class="chips" style="margin:12px 0 2px;flex-wrap:nowrap;overflow-x:auto"><span class="chip sm ${TR.cat==='all'?'on':''}" onclick="TR.cat='all';render(false)">${L3('全部','All')}</span>${cats.map(c=>`<span class="chip sm ${TR.cat===c?'on':''}" onclick="TR.cat='${esc(c)}';render(false)">${esc(c)}</span>`).join('')}</div>
+   ${!TR.list?`<div class="empty">${L3('加载中…','Loading…')}</div>`:l.length?l.map(c=>{const left=trLeft(c);return `<div class="trc" onclick="go('course',{id:${c.id}})">${trIcon(c)}<div style="flex:1;min-width:0">
+     <div class="b" style="line-height:1.3">${esc(trT(c))}</div><div class="xs muted" style="margin-top:3px">${esc(c.provider||'')} · ${esc(c.city||'')}</div>
+     <div class="row gap6" style="margin-top:7px;flex-wrap:wrap"><span class="mtag">${esc(c.duration||'')}</span>${c.start?`<span class="mtag">${L3('开课','Starts')} ${esc(c.start)}</span>`:''}${sg.includes(c.id)?`<span class="mtag" style="background:#E3F5C8">✓ ${L3('已报名','Signed up')}</span>`:''}</div></div>
+     <div style="text-align:right;flex:none"><div class="b" style="color:${c.fee==='免费'?'#2D6A4F':'#D2452F'}">${c.fee==='免费'?L3('免费','Free'):esc(c.fee||'')}</div>${left!=null?`<div class="xs muted" style="margin-top:4px">${left>0?L3('剩 '+left+' 名额',left+' seats left'):L3('名额已满','Full')}</div>`:''}</div></div>`}).join('')
+   :`<div class="empty">${ic('cap',40)}<p style="margin-top:10px">${L3('暂时没有开放的课程','No courses open right now')}</p></div>`}</div>`};
+V.course=()=>{const c=(TR.list||[]).find(x=>x.id===S.params.id);if(!c){if(!TR.list)setTimeout(trLoad,0);return hdr2(L3('课程详情','Course'))+`<div class="pad"><div class="empty">${L3('加载中…','Loading…')}</div></div>`}
+  const left=trLeft(c),signed=trSigned().includes(c.id);const row=(k,v)=>v?`<div class="mrow"><span>${k}</span><b>${esc(String(v))}</b></div>`:'';
+  return hdr2(L3('课程详情','Course'))+`<div class="pad" style="padding-top:4px">
+   <div class="trhero" style="background:${c.color||'#161616'}"><div class="row between" style="align-items:flex-start"><span class="mtag" style="background:rgba(255,255,255,.2);color:#fff">${esc(c.cat||'')}</span>${c.test?`<span class="mtag" style="background:rgba(255,255,255,.2);color:#fff">${L3('示例','Sample')}</span>`:''}</div>
+    <div style="font-size:22px;font-weight:900;line-height:1.3;margin-top:14px">${esc(trT(c))}</div><div class="sm" style="opacity:.85;margin-top:6px">${esc(c.provider||'')}</div>
+    <div class="row between" style="margin-top:16px;align-items:flex-end"><div><div class="xs" style="opacity:.75">${L3('费用','Fee')}</div><div style="font-size:24px;font-weight:900">${c.fee==='免费'?L3('免费','Free'):esc(c.fee||'')}</div></div>${left!=null?`<div style="text-align:right"><div class="xs" style="opacity:.75">${L3('已报名','Signed up')}</div><div class="b">${c.signups||0} / ${c.seats}</div></div>`:''}</div></div>
+   <div class="box msec">${row(L3('上课地点','Location'),[c.city,c.addr].filter(Boolean).join(' · '))}${row(L3('培训时长','Duration'),c.duration)}${row(L3('上课时间','Schedule'),c.schedule)}${row(L3('开课日期','Start date'),c.start)}${row(L3('费用说明','Fee details'),c.fee_note)}${row(L3('获得证书','Certificate'),c.cert)}${row(L3('适合人群','Who it is for'),c.suits)}${row(L3('咨询电话','Contact'),c.contact)}</div>
+   ${trD(c)?`<div class="box msec"><h4>${L3('课程介绍','About')}</h4><div class="sm" style="line-height:1.7;white-space:pre-wrap">${esc(trD(c))}</div></div>`:''}
+   ${c.syllabus?`<div class="box msec"><h4>${L3('课程安排','Syllabus')}</h4>${String(c.syllabus).split('\n').filter(s=>s.trim()).map((s,i)=>`<div class="row gap" style="padding:7px 0;align-items:flex-start"><span class="trn">${i+1}</span><span class="sm" style="line-height:1.5">${esc(s)}</span></div>`).join('')}</div>`:''}
+   <div class="note" style="margin-top:12px;display:flex;gap:8px">${ic('shield',16)}<span class="xs" style="line-height:1.55">${L3('报名免费，费用在开课时直接交给培训机构并索取收据。任何人以“包分配工作”为由提前收费，请举报。','Signing up is free. Pay the school directly at the start and ask for a receipt. Report anyone charging a fee for a guaranteed job.')}</span></div></div>
+   <div class="bbar"><button class="bigbtn" style="flex:1;background:#fff;color:#161616" onclick="trCall(${c.id})">${ic('phone',18)} ${L3('咨询','Call')}</button><button class="bigbtn" style="flex:1.4" onclick="trSign(${c.id})" ${signed||left===0?'disabled':''}>${signed?L3('已报名','Signed up'):left===0?L3('名额已满','Full'):L3('立即报名','Sign up')}</button></div>`};
+function trCall(id){const c=(TR.list||[]).find(x=>x.id===id);if(!c)return;if(c.test)return toast(L3('这是示例课程，仅用于演示','Sample course, demo only'));const n=String(c.contact||'').replace(/[^\d+]/g,'');if(n)location.href='tel:'+n}
+function trSign(id){const c=(TR.list||[]).find(x=>x.id===id);if(!c)return;const me=S.me||{};
+  openSheet(`<div class="b" style="font-size:19px">${L3('报名','Sign up')} · ${esc(trT(c))}</div>
+   <div class="fl">${L3('姓名','Name')}</div><input class="fi" id="trName" maxlength="40" value="${esc(me.name||'')}">
+   <div class="fl">${L3('电话','Phone')}</div><input class="fi" id="trPhone" inputmode="tel" maxlength="20" value="${esc(S.myPhone||me.phone||'')}" placeholder="+233 …">
+   <div class="fl">WhatsApp <span class="xs muted">${L3('（选填）','(optional)')}</span></div><input class="fi" id="trWa" inputmode="tel" maxlength="20">
+   <div class="fl">${L3('备注（选填）','Note (optional)')}</div><input class="fi" id="trNote" maxlength="200" placeholder="${L3('例如：有 1 年焊接经验，想考 3G 证','e.g. 1 year welding experience')}">
+   <button class="bigbtn" style="width:100%;margin-top:16px" id="trBtn" onclick="trSubmit(${id})">${L3('提交报名','Submit')}</button>`)}
+async function trSubmit(id){if(TR.busy)return;const name=$('#trName').value.trim(),phone=$('#trPhone').value.trim();
+  if(!name)return toast(L3('请填写姓名','Please enter your name'));if(phone.replace(/\D/g,'').length<7)return toast(L3('请填写正确的电话','Please enter a valid phone'));
+  TR.busy=true;const b=$('#trBtn');if(b){b.disabled=true;b.textContent=L3('提交中…','Submitting…')}
+  try{await rpc('course_signup',{p_course:id,p_data:{name,phone,whatsapp:$('#trWa').value.trim(),note:$('#trNote').value.trim(),wid:S.me&&S.me.dbid||null,lang:S.lang,country:S.country}});
+    LS.set('tr_signed',[...new Set([...trSigned(),id])]);TR.busy=false;closeSheet();await trLoad();render(false);
+    openSheet(`<div style="font-size:40px">🎉</div><div class="b" style="font-size:19px;margin-top:6px">${L3('报名成功','You are signed up')}</div><p class="sm" style="line-height:1.7;margin:8px 0 0">${L3('培训机构会在 1–2 个工作日内电话或 WhatsApp 联系你，确认开课时间和费用。','The school will call or WhatsApp you within 1–2 working days to confirm the start date and fee.')}</p><button class="bigbtn" style="width:100%;margin-top:16px" onclick="closeSheet()">${L3('好的','OK')}</button>`)}
+  catch(e){TR.busy=false;if(b){b.disabled=false;b.textContent=L3('提交报名','Submit')}toast(L3('报名失败，请检查网络','Failed, check your network'))}}
+
+/* ---------- 样式 ---------- */
+(function(){const st=document.createElement('style');st.textContent=`
+.wtiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wtile{background:var(--card);border-radius:24px;padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;min-width:0}
+.wtile .b{font-size:15px;line-height:1.25}.wti{width:40px;height:40px;border-radius:14px;display:grid;place-items:center}
+.mkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mkc{background:var(--card);border-radius:18px;overflow:hidden;cursor:pointer}
+.mkph{position:relative;aspect-ratio:1/1;background:#eee}.mksold{position:absolute;inset:auto 8px 8px auto;background:#161616;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:10px}
+.mkt{font-size:14px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px}
+.mkgal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:22px;aspect-ratio:4/3;background:#eee}.mkgal img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:start}.mkgal>div{flex:0 0 100%}
+.mkups{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.mkup{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:var(--card)}
+.mkup img{width:100%;height:100%;object-fit:cover}.mkup button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:11px;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:1}
+.mkup.add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1.5px dashed #CFC7B6;color:var(--muted);cursor:pointer}
+.mkrow{display:flex;gap:12px;background:var(--card);border-radius:18px;padding:10px;margin-bottom:10px}.mkrph{width:84px;height:84px;border-radius:14px;overflow:hidden;flex:none}
+.trban{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#1F4FB8;color:#fff;border-radius:24px;padding:18px}
+.trc{display:flex;gap:12px;align-items:center;background:var(--card);border-radius:20px;padding:12px;margin-top:10px;cursor:pointer}
+.trico{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:#fff;flex:none}
+.trhero{color:#fff;border-radius:26px;padding:18px}
+.note{background:#F1ECDF;border-radius:16px;padding:12px 14px;color:var(--ink)}
+.bigbtn:disabled{opacity:.5}
+textarea.fi{resize:vertical;font-family:inherit}
+.trc .mtag,.trhero .mtag{font-size:11.5px;padding:3px 8px;margin:0;font-weight:700}
+.trn{width:22px;height:22px;border-radius:11px;background:#161616;color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;flex:none}`;document.head.appendChild(st)})();
 </script>
 </body>
 </html>
