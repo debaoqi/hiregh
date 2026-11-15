@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.3.1',APP_BUILD=51;
+const APP_VER='3.4.0',APP_BUILD=52;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3164,6 +3164,79 @@ V.w_co=()=>{const c=coAll().find(x=>x.key===S.params.key);
 /* 防跳动：外框不允许被浏览器“滚动显示”（输入框聚焦、scrollIntoView 时整个界面会被顶上去） */
 document.head.insertAdjacentHTML('beforeend','<style>.phone{overflow:clip!important}</style>');
 (function(){const ph=document.querySelector('.phone');if(!ph)return;ph.addEventListener('scroll',()=>{if(ph.scrollTop||ph.scrollLeft){ph.scrollTop=0;ph.scrollLeft=0}},{passive:true})})();
+</script>
+<script>
+/* ===== v3.4.0 (p29)：我的申请 长按/左滑 隐藏或删除 + 招人端跟随英文 ===== */
+Object.assign(T,{
+  app_tip:['Tip: press and hold, or swipe left, to hide or delete','Mẹo: nhấn giữ hoặc vuốt trái để ẩn hoặc xóa','提示：长按或向左滑动，可隐藏或删除申请'],
+  app_hide:['Hide','Ẩn','隐藏'],app_del:['Delete','Xóa','删除'],app_cancel:['Cancel','Hủy','取消'],
+  app_hidden_n:['{n} hidden · Show all','Đã ẩn {n} · Hiện tất cả','已隐藏 {n} 个 · 全部显示'],
+  app_del_q:['Delete this application?','Xóa đơn ứng tuyển này?','删除这条申请记录？'],
+  app_del_d:['It will be removed from your list and you can apply for this job again.','Đơn sẽ bị xóa khỏi danh sách, bạn có thể ứng tuyển lại.','删除后将从列表移除，之后可以重新申请这个岗位。'],
+  app_hidden_ok:['Hidden','Đã ẩn','已隐藏'],app_del_ok:['Deleted','Đã xóa','已删除'],app_show_ok:['All applications shown','Đã hiện tất cả','已全部显示'],
+  app_more:['Options','Tùy chọn','操作']});
+const appHid=()=>new Set(LS.get('apps_hidden',[]));
+function appSetHid(s){LS.set('apps_hidden',[...s])}
+V.w_apps=()=>{const hid=appHid();const all=S.jobs.filter(j=>S.applied.has(j.id));const l=all.filter(j=>!hid.has(j.id));const nh=all.length-l.length;
+  const row=j=>{const ind=IND.find(i=>i.id===j.ind)||IND[0];return `<div class="swr" data-id="${j.id}"><div class="swa"><button class="swh" onclick="appHide(${j.id})">${ic('x',18)}<span>${t('app_hide')}</span></button><button class="swd" onclick="appDelAsk(${j.id})">${ic('trash',18)}<span>${t('app_del')}</span></button></div>
+    <div class="ivc swi" onclick="appTap(${j.id})"><div class="datebox" style="background:${ind.color}">${ic(ind.icon)}</div><div style="flex:1;min-width:0"><div class="b">${roleT(j.title)}</div><div class="sm muted">${esc(coT(j))} · ${cityT(j.city)}</div><div class="sm" style="margin-top:3px">${ic('clock',13)} ${t('status_sent')}</div></div></div></div>`};
+  return `<div class="pad"><div class="title" style="margin-top:6px">${t('my_apps')}</div>
+   ${l.length?`<div class="xs muted" style="margin-top:6px">${t('app_tip')}</div>`:''}
+   <div style="margin-top:12px">${l.length?l.map(row).join(''):`<div class="empty">${t('no_apps')}</div>`}</div>
+   ${nh?`<div style="text-align:center;margin-top:14px"><button class="chip sm" onclick="appShowAll()">${t('app_hidden_n').replace('{n}',nh)}</button></div>`:''}</div>`};
+let _swOpen=null,_swMoved=false;
+function appTap(id){if(_swMoved){_swMoved=false;return}if(_swOpen){swClose();return}go('w_job',{id})}
+function swClose(){if(_swOpen){const i=_swOpen.querySelector('.swi');if(i)i.style.transform='';_swOpen.classList.remove('open');_swOpen=null}}
+function appHide(id){const s=appHid();s.add(id);appSetHid(s);swClose();closeSheet();render(false);toast(t('app_hidden_ok'))}
+function appShowAll(){appSetHid(new Set());render(false);toast(t('app_show_ok'))}
+function appDelAsk(id){swClose();openSheet(`<div class="b" style="font-size:19px">${t('app_del_q')}</div><p class="sm muted" style="line-height:1.7;margin:8px 0 0">${t('app_del_d')}</p>
+  <div class="row gap" style="margin-top:16px"><button class="bigbtn" style="flex:1;background:#fff;color:#161616" onclick="closeSheet()">${t('app_cancel')}</button><button class="bigbtn" style="flex:1;background:#E5483B" onclick="appDel(${id})">${t('app_del')}</button></div>`)}
+function appDel(id){S.applied.delete(id);const s=appHid();s.delete(id);appSetHid(s);closeSheet();try{persist()}catch(e){}render(false);toast(t('app_del_ok'))}
+function appMenu(id){const j=S.jobs.find(x=>x.id===id);openSheet(`<div class="b" style="font-size:18px">${j?esc(roleT(j.title)):t('app_more')}</div>${j?`<div class="sm muted" style="margin-top:2px">${esc(coT(j))}</div>`:''}
+  <button class="bigbtn" style="width:100%;margin-top:16px;background:#fff;color:#161616" onclick="appHide(${id})">${t('app_hide')}</button>
+  <button class="bigbtn" style="width:100%;margin-top:10px;background:#E5483B" onclick="appDelAsk(${id})">${t('app_del')}</button>
+  <button class="bigbtn" style="width:100%;margin-top:10px;background:transparent;color:var(--muted)" onclick="closeSheet()">${t('app_cancel')}</button>`)}
+/* 手势：左滑露出按钮，长按弹出菜单 */
+(function(){let el=null,x0=0,y0=0,dx=0,lp=null,dir=null;const W=150;
+  const sc=document.getElementById('screen');if(!sc)return;
+  sc.addEventListener('touchstart',e=>{const r=e.target.closest('.swr');if(!r||e.target.closest('.swa'))return;el=r;x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;dir=null;_swMoved=false;
+    if(_swOpen&&_swOpen!==r)swClose();clearTimeout(lp);lp=setTimeout(()=>{if(el&&!dir){_swMoved=true;try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}appMenu(+el.dataset.id);el=null}},550)},{passive:true});
+  sc.addEventListener('touchmove',e=>{if(!el)return;const x=e.touches[0].clientX-x0,y=e.touches[0].clientY-y0;
+    if(!dir&&(Math.abs(x)>8||Math.abs(y)>8)){dir=Math.abs(x)>Math.abs(y)?'h':'v';clearTimeout(lp)}
+    if(dir!=='h')return;const base=el.classList.contains('open')?-W:0;dx=Math.max(-W-30,Math.min(0,base+x));const i=el.querySelector('.swi');i.style.transition='none';i.style.transform=`translateX(${dx}px)`;_swMoved=true},{passive:true});
+  sc.addEventListener('touchend',()=>{clearTimeout(lp);if(_swMoved)setTimeout(()=>{_swMoved=false},80);if(!el)return;const i=el.querySelector('.swi');if(dir==='h'){i.style.transition='';if(dx<-60){i.style.transform=`translateX(${-W}px)`;el.classList.add('open');_swOpen=el}else{i.style.transform='';el.classList.remove('open');if(_swOpen===el)_swOpen=null}setTimeout(()=>{_swMoved=false},60)}el=null},{passive:true});
+  sc.addEventListener('contextmenu',e=>{const r=e.target.closest('.swr');if(!r)return;e.preventDefault();appMenu(+r.dataset.id)});
+  sc.addEventListener('scroll',()=>swClose(),{passive:true})})();
+(function(){const st=document.createElement('style');st.textContent=`
+.swr{position:relative;margin-bottom:10px;border-radius:22px;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.swr .ivc{margin:0;position:relative;z-index:1;transition:transform .22s ease;background:var(--card)}
+.swa{position:absolute;inset:0;display:flex;justify-content:flex-end}
+.swa button{width:75px;border:0;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700}
+.swh{background:#8A8578}.swd{background:#E5483B}`;document.head.appendChild(st)})();
+
+/* ---------- 招人端跟随所选语言：中文界面自动翻译成英文（或所选语言） ---------- */
+const ZT={l:null,map:{},q:new Set(),busy:false,t:null};
+const HAN=/[㐀-鿿]/;
+function ztNeed(){return S.mode==='emp'&&S.lang&&S.lang!=='zh'}
+function ztLoad(l){if(ZT.l!==l){ZT.l=l;ZT.map=LS.get('zt_'+l,{})||{}}}
+function ztApply(root){if(!ztNeed()||!root)return;ztLoad(S.lang);const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>HAN.test(n.nodeValue)&&!(n.parentNode&&n.parentNode.closest&&n.parentNode.closest('script,style,textarea,[data-notr]'))?1:3});
+  let n;const nodes=[];while((n=w.nextNode()))nodes.push(n);
+  nodes.forEach(n=>{const raw=n.nodeValue,k=raw.trim();const v=ZT.map[k];if(v){n.nodeValue=raw.replace(k,v)}else ZT.q.add(k)});
+  root.querySelectorAll&&root.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(e=>{const k=e.getAttribute('placeholder');if(!HAN.test(k))return;const v=ZT.map[k];if(v)e.setAttribute('placeholder',v);else ZT.q.add(k)});
+  if(ZT.q.size){clearTimeout(ZT.t);ZT.t=setTimeout(ztFetch,120)}}
+async function ztFetch(){if(ZT.busy||!ZT.q.size)return;ZT.busy=true;const l=S.lang;const tl=l==='zh'?'zh-CN':l;const keys=[...ZT.q].filter(k=>!ZT.map[k]).slice(0,120);ZT.q.clear();
+  try{let chunk=[],len=0;const send=async c=>{try{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl='+tl+'&dt=t&q='+encodeURIComponent(c.join('\n')));const j=await r.json();
+        const res=(j[0]||[]).map(x=>x[0]).join('').split('\n');if(res.length===c.length)c.forEach((k,i)=>{const v=res[i].trim();if(v)ZT.map[k]=v})}catch(e){}};
+    for(const s of keys){if(len+s.length>1200&&chunk.length){await send(chunk);chunk=[];len=0}chunk.push(s.replace(/\n/g,' '));len+=s.length+1}
+    if(chunk.length)await send(chunk);
+    const ks=Object.keys(ZT.map);if(ks.length>4000)ks.slice(0,ks.length-4000).forEach(k=>delete ZT.map[k]);LS.set('zt_'+l,ZT.map)}finally{ZT.busy=false}
+  if(ztNeed()&&S.lang===l)ztAll();if(ZT.q.size)setTimeout(ztFetch,300)}
+function ztAll(){['screen','fixed','navwrap','sheet','toast'].forEach(id=>{const e=document.getElementById(id);if(e)ztApply(e)})}
+(function(){const ph=document.querySelector('.phone')||document.body;let busy=false;
+  const mo=new MutationObserver(()=>{if(busy||!ztNeed())return;busy=true;try{ztAll()}finally{mo.takeRecords();busy=false}});
+  mo.observe(ph,{subtree:true,childList:true,characterData:true})})();
+/* 招人端导航栏、页面跟随语言（招人端原本固定中文） */
+const _setLang29=setLang;setLang=function(l){const r=_setLang29(l);setTimeout(ztAll,0);return r};
 </script>
 </body>
 </html>

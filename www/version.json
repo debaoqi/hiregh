@@ -1,6 +1,6 @@
 {
-  "version": "3.3.1",
-  "build": 51,
+  "version": "3.4.0",
+  "build": 52,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,12 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页入口改名为“法律咨询，企业服务”"
+      "我的申请：长按或向左滑动可隐藏、删除申请",
+      "选择英文后，招人端页面也跟随显示英文"
     ],
     "en": [
-      "Renamed: Legal advice & business services"
+      "Applications: hold or swipe left to hide or delete",
+      "Language choice now applies everywhere"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
