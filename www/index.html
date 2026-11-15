@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.6.0',APP_BUILD=66;
+const APP_VER='3.6.1',APP_BUILD=67;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3120,7 +3120,7 @@ function cosUpd(){const e=document.getElementById('cosList');if(!e)return;const 
   e.innerHTML=l.length?l.map(coCard).join(''):`<div class="empty">${ic('building',40)}<p style="margin-top:10px">${COS.list?L3('没有找到相关企业','No companies found'):L3('加载中…','Loading…')}</p></div>`}
 V.w_cos=()=>{if(!COS.list||Date.now()-COS._t>60000){COS._t=Date.now();setTimeout(cosLoad,0)}
   const l=coAll();const q=COS.q.trim().toLowerCase();const f=l.filter(c=>!q||[c.d.name,c.d.en,c.d.industry,c.d.city].join(' ').toLowerCase().includes(q));
-  return `<div class="pad"><div class="title" style="margin-top:6px">${L3('企业','Companies')}</div><div class="sm muted" style="margin-top:4px">${L3('在平台发布招工的企业 · 共 '+l.length+' 家',l.length+' hiring companies on JobPaw')}</div>
+  return `<div class="pad"><div class="title" style="margin-top:6px">${L3('招聘中的企业','Hiring companies')}</div><div class="sm muted" style="margin-top:4px">${L3('在平台发布招工的企业 · 共 '+l.length+' 家',l.length+' hiring companies on JobPaw')}</div>
    <div class="msearch" style="margin-top:14px">${ic('search')}<input placeholder="${L3('搜索企业名称、行业、城市','Search company, industry, city')}" value="${esc(COS.q)}" oninput="COS.q=this.value;cosUpd()"></div>
    <div id="cosList" style="margin-top:12px">${f.length?f.map(coCard).join(''):`<div class="empty">${ic('building',40)}<p style="margin-top:10px">${COS.list?L3('没有找到相关企业','No companies found'):L3('加载中…','Loading…')}</p></div>`}</div></div>`};
 V.w_co=()=>{const c=coAll().find(x=>x.key===S.params.key);

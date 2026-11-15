@@ -1,6 +1,6 @@
 {
-  "version": "3.6.0",
-  "build": 66,
+  "version": "3.6.1",
+  "build": 67,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "页面标题字号缩小"
+      "“企业”页标题改为“招聘中的企业”"
     ],
     "en": [
-      "Smaller page titles"
+      "Companies page renamed to Hiring companies"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
