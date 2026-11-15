@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.6.1',APP_BUILD=67;
+const APP_VER='3.6.2',APP_BUILD=68;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1507,8 +1507,8 @@ async function syncDB(force){
     // 岗位：云端岗位重新对齐；自己发布的岗位不重复显示
     const mineDb=new Set(S.jobs.filter(j=>j.owner==='me'&&j.dbid&&!isRemoteJob(j)).map(j=>j.dbid));
     const remote=js.filter(r=>!mineDb.has(r.id)).map(r=>({...r.data,id:100000+r.id,dbid:r.id,owner:'other'}));
-    const before=JSON.stringify(S.jobs.filter(isRemoteJob));
-    if(before!==JSON.stringify(remote)){S.jobs=[...remote.reverse(),...S.jobs.filter(j=>!isRemoteJob(j))];changed=true}
+    const _jk=a=>JSON.stringify([...a].sort((x,y)=>x.id-y.id));const before=_jk(S.jobs.filter(isRemoteJob));
+    if(before!==_jk(remote)){S.jobs=[...remote.reverse(),...S.jobs.filter(j=>!isRemoteJob(j))];changed=true}
     _syncAt=Date.now();
     if(changed){persist();if(!FORM_VIEWS.includes(S.view)){
       // 正在看的人/岗位已被删除时，返回上一页
@@ -2523,7 +2523,7 @@ function gsConnect(){if(!DB.on||!window.WebSocket)return;if(GS.ws&&GS.ws.readySt
 function gsLater(){clearTimeout(GS.rt);GS.rt=setTimeout(gsConnect,Math.min(30000,1500*Math.pow(2,GS.retry++)))}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){gsConnect();syncDB(true)}});
 window.addEventListener('online',()=>{gsConnect();syncDB(true)});
-if(DB.on){gsConnect();setTimeout(()=>syncDB(true),1200);setInterval(()=>{if(document.visibilityState==='visible')syncDB(true)},GS.ok?30000:12000)}
+if(DB.on){gsConnect();setTimeout(()=>syncDB(true),1200);setInterval(()=>{if(document.visibilityState==='visible'&&!(GS.ok&&Date.now()-_syncAt<28000))syncDB(true)},12000)}
 /* 4) 工人首页：顶部“今日推荐”= 最新上线的岗位（72 小时内），带“新”标记 */
 Object.assign(T,{today_pick:["Today's picks","Today's picks",'今日推荐'],new_tag:['NEW','NEW','新']});
 const isFresh=(x,ms)=>x&&x.postedAt&&Date.now()-Date.parse(x.postedAt)<ms;
@@ -3403,6 +3403,35 @@ V.w_home=function(){const h=_vh38.apply(this,arguments);try{
 <script>
 /* ================= v3.6.0 页面大标题（企业/我的申请/我的档案等）缩小为原字号 70% ================= */
 (function(){const st=document.createElement('style');st.textContent=`.title{font-size:calc(var(--ttlfs,var(--welfs,28px)) * .7)!important;letter-spacing:-.3px!important}`;document.head.appendChild(st)})();
+</script>
+<script>
+/* ================= v3.6.2 流畅度优化 =================
+   1) 同一次渲染里，页面内容只生成一次（之前要算 2~3 遍）
+   2) 岗位卡片结果缓存，数据没变就不重复生成
+   3) 手指滑动/惯性滚动中不做后台刷新，停下后再刷新，避免滚动卡顿、跳动 */
+(function(){
+/* 2) 岗位卡片缓存 */
+const _wjc40=wJobCard;const JC=new Map();
+wJobCard=function(j){let k;try{k=JSON.stringify(j)+'|'+S.lang+'|'+S.translate+'|'+S.applied.has(j.id)+'|'+(typeof isVipJob==='function'&&isVipJob(j))}catch(e){return _wjc40(j)}
+  const c=JC.get(k);if(c!==undefined)return c;const h=_wjc40(j);if(JC.size>600)JC.clear();JC.set(k,h);return h};
+/* 3) 滚动状态 */
+let lastScroll=0,touching=false,pend=null;
+const sc0=document.getElementById('screen');
+if(sc0){sc0.addEventListener('scroll',()=>{lastScroll=performance.now()},{passive:true})}
+addEventListener('touchstart',()=>{touching=true},{passive:true,capture:true});
+addEventListener('touchend',()=>{touching=false},{passive:true,capture:true});
+addEventListener('touchcancel',()=>{touching=false},{passive:true,capture:true});
+const busy=()=>touching||performance.now()-lastScroll<220;
+/* 1) 渲染：页面内容只生成一次 */
+const _r40=render;
+render=function(top){
+  if(!top&&!window.event&&busy()){ /* 后台刷新：等滚动停下来再做 */
+    if(!pend)pend=setInterval(()=>{if(!busy()){clearInterval(pend);pend=null;render(false)}},120);return}
+  if(pend&&top){clearInterval(pend);pend=null}
+  const v=S.view,f=V[v];let memo;
+  if(typeof f==='function'){V[v]=function(){if(memo===undefined)memo=f.apply(this,arguments);return memo}}
+  try{return _r40.apply(this,arguments)}finally{if(typeof f==='function')V[v]=f}};
+})();
 </script>
 </body>
 </html>
