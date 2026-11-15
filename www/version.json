@@ -1,6 +1,6 @@
 {
-  "version": "3.5.6",
-  "build": 62,
+  "version": "3.5.7",
+  "build": 63,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "VIP岗位使用黑金配色，更醒目"
+      "VIP岗位改为爱马仕橙，文字更清晰"
     ],
     "en": [
-      "VIP jobs in black & gold"
+      "VIP jobs in Hermès orange"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
