@@ -1,6 +1,6 @@
 {
-  "version": "3.2.0",
-  "build": 46,
+  "version": "3.2.1",
+  "build": 47,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,14 +8,11 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页新增“法律援助 · 企业法律咨询”：华商（加纳）律师事务所",
-      "二手买卖、技能培训改为彩色卡片",
-      "修复页面闪动、跳动"
+      "首页标题改为“找工作/招工，很容易!”",
+      "企业示例名称改为“加纳黄金电视台广告运营中心”"
     ],
     "en": [
-      "New: legal help (Huashang Ghana Law Firm)",
-      "Colour tiles on home",
-      "Fixed screen flicker"
+      "New home title"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
