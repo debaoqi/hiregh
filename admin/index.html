@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=29;let ADM_NEW=false;
+const ADMIN_BUILD=30;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -854,6 +854,10 @@ const _mbEdit28=mbEdit;mbEdit=function(id){_mbEdit28(id);const t=document.getEle
 <script>
 /* ================= 后台 v29：求职会员去掉 婚姻状况、学历、宗教、籍贯、证件 ================= */
 (function(){['marital','edu','religion','hometown','id_type','id_no'].forEach(k=>{const i=MF.findIndex(f=>f[0]===k);if(i>=0)MF.splice(i,1)})})();
+</script>
+<script>
+/* ================= 后台 v30：求职会员去掉“工作经历” ================= */
+(function(){const i=MF.findIndex(f=>f[0]==='works');if(i>=0)MF.splice(i,1)})();
 </script>
 </body>
 </html>
