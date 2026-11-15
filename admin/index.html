@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=27;let ADM_NEW=false;
+const ADMIN_BUILD=28;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -845,6 +845,11 @@ function suSt(id,st){const s=S.SU.find(x=>x.id===id);run(async()=>{if(LIVE)await
 function suNote(id){const s=S.SU.find(x=>x.id===id);openModal(`<div class="ch">报名备注</div><div class="fld"><label>${esc((s.data||{}).name||'')} · ${esc(coName(s.course_id))}</label><textarea class="inp" id="suN" rows="3">${esc(s.note||'')}</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="suNoteGo(${id})">保存</button></div>`)}
 function suNoteGo(id){const s=S.SU.find(x=>x.id===id);const n=$('#suN').value.trim();run(async()=>{if(LIVE)await q('course_signups?id=eq.'+id,{method:'PATCH',body:JSON.stringify({note:n||null})});s.note=n;closeModal()},'已保存')}
 function suDel(id){confirmBox('确定删除这条报名记录？',()=>run(async()=>{if(LIVE)await q('course_signups?id=eq.'+id,{method:'DELETE'});S.SU=S.SU.filter(x=>x.id!==id);closeModal()},'已删除'),'删除')}
+</script>
+<script>
+/* ================= 后台 v28：求职会员去掉“紧急联系人”和“测试数据” ================= */
+(function(){const i=MF.findIndex(f=>f[0]==='emergency');if(i>=0)MF.splice(i,1)})();
+const _mbEdit28=mbEdit;mbEdit=function(id){_mbEdit28(id);const t=document.getElementById('mf_test');if(t){t.checked=false;const l=t.closest('label');if(l)l.style.display='none'}};
 </script>
 </body>
 </html>
