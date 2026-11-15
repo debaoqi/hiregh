@@ -1,6 +1,6 @@
 {
-  "version": "3.4.0",
-  "build": 52,
+  "version": "3.4.1",
+  "build": 53,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,12 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "我的申请：长按或向左滑动可隐藏、删除申请",
-      "选择英文后，招人端页面也跟随显示英文"
+      "会员详情精简，电话与 WhatsApp 可直接联系"
     ],
     "en": [
-      "Applications: hold or swipe left to hide or delete",
-      "Language choice now applies everywhere"
+      "Simplified member profiles; call or WhatsApp directly"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
