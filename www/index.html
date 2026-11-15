@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.5.4',APP_BUILD=60;
+const APP_VER='3.5.5',APP_BUILD=61;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3322,6 +3322,28 @@ window.calcWelFs=calcWelFs;
 const _r33=render;render=function(){const k=S.lang+'|'+((document.querySelector('.phone')||document.body).clientWidth);if(window._welk!==k){window._welk=k;calcWelFs()}const r=_r33.apply(this,arguments);if(S.view==='welcome'){const h=document.querySelector('h1.hero');if(h)document.documentElement.style.setProperty('--welfs',getComputedStyle(h).fontSize)}return r};
 addEventListener('resize',()=>{window._welk=null});
 const _vme33=V.w_me;V.w_me=()=>{const h=_vme33();return h.replace('<div class="box" style="text-align:center">','<div class="box mebox">')};
+})();
+</script>
+<script>
+/* ================= v3.5.5 大标题字号：在标题所在位置按首页标题同样的算法实测，保证与首页“找工作/招工，很容易！”完全一致 ================= */
+(function(){
+const st=document.createElement('style');st.textContent=`.title{font-size:var(--ttlfs,var(--welfs,28px))!important}`;document.head.appendChild(st);
+function fitHeroIn(par){const m=document.createElement('h1');m.className='hero';m.textContent=t('welcome_title');
+  const sp=(k,v)=>m.style.setProperty(k,v,'important');
+  par.appendChild(m);const w=par.clientWidth||innerWidth-40;
+  sp('position','absolute');sp('visibility','hidden');sp('left','0');sp('top','0');sp('margin','0');sp('white-space','nowrap');sp('letter-spacing','-0.5px');sp('overflow','hidden');const cs=getComputedStyle(par);sp('width',(w-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight))+'px');sp('max-width','none');
+  let fs=Math.min(30,w*0.085);sp('font-size',fs+'px');let n=0;
+  while(m.scrollWidth>m.clientWidth+1&&fs>14&&n++<60){fs-=0.5;sp('font-size',fs+'px')}m.remove();return fs}
+let key=null,val=null;
+function fitTitles(){try{const h=S.view==='welcome'&&document.querySelector('#screen h1.hero');
+  if(h){const fs=parseFloat(getComputedStyle(h).fontSize);if(fs){key=S.lang+'|'+h.parentElement.clientWidth;val=fs;document.documentElement.style.setProperty('--ttlfs',fs+'px')}return}
+  const tt=document.querySelector('#screen .title');if(!tt)return;const par=tt.parentElement;const k=S.lang+'|'+par.clientWidth;
+  if(k!==key){const pos=getComputedStyle(par).position;if(pos==='static')par.style.position='relative';val=fitHeroIn(par);if(pos==='static')par.style.position='';key=k}
+  document.documentElement.style.setProperty('--ttlfs',val+'px')}catch(e){}}
+window.fitTitles=fitTitles;
+const _r34=render;render=function(){const r=_r34.apply(this,arguments);fitTitles();setTimeout(fitTitles,60);return r};
+addEventListener('resize',()=>{key=null;setTimeout(fitTitles,60)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{key=null;fitTitles()});
 })();
 </script>
 </body>

@@ -1,6 +1,6 @@
 {
-  "version": "3.5.4",
-  "build": 60,
+  "version": "3.5.5",
+  "build": 61,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "页面标题字号统一；我的档案头部更紧凑"
+      "页面大标题字号与首页标题完全一致"
     ],
     "en": [
-      "Unified page titles; compact profile header"
+      "Page titles match the home title size"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
