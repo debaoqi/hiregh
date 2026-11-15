@@ -1,6 +1,6 @@
 {
-  "version": "3.5.0",
-  "build": 56,
+  "version": "3.5.1",
+  "build": 57,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "岗位卡片更紧凑，一屏显示更多岗位"
+      "岗位卡片：人数放到职位后面，更紧凑、更清晰"
     ],
     "en": [
-      "Compact job cards: more jobs per screen"
+      "Tighter, clearer job cards"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

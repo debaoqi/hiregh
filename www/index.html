@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.5.0',APP_BUILD=56;
+const APP_VER='3.5.1',APP_BUILD=57;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3258,6 +3258,34 @@ wJobCard=function(j){const h=_wjc(j);const d=document.createElement('div');d.inn
   if(top&&bot){const x=document.createElement('div');x.className='jcx';
     bot.querySelectorAll('.chip').forEach(e=>x.appendChild(e));const ap=bot.querySelector('.badge');if(ap)x.appendChild(ap);
     if(x.children.length)top.appendChild(x);bot.remove()}
+  return c.outerHTML};
+})();
+</script>
+<script>
+/* ================= v3.5.1 岗位卡片：人数等标签移到职位后面，高度再减，增强对比 ================= */
+(function(){
+const st=document.createElement('style');st.textContent=`
+.wc.jc{background:#fff;border:1px solid #D9CFB8;box-shadow:0 1px 3px rgba(60,45,10,.10);margin-bottom:8px}
+.wc.jc .top{padding:7px 12px 7px}
+.wc.jc .jct{display:flex;align-items:center;gap:5px;min-width:0;flex-wrap:nowrap;overflow:hidden}
+.wc.jc .jct>.tt{flex:none;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wc.jc .jct .chip.sm,.wc.jc .jct .badge{padding:1px 7px!important;font-size:10.5px!important;font-weight:700;letter-spacing:0;border-radius:9px;background:#E3D7BC!important;color:#4A3A12;flex:none;line-height:1.5}
+.wc.jc small .badge.lime{padding:0 7px;font-size:10px;font-weight:700;border-radius:9px;color:#161616;display:inline-flex;align-items:center;gap:2px;margin-left:4px;line-height:1.6}
+.wc.jc small .badge.lime svg{width:10px;height:10px}
+.wc.jc .jct .badge.lime{background:var(--lime)!important;color:#161616}
+.wc.jc .jct .badge svg{width:10px;height:10px}
+.wc.jc h3 small{margin-top:1px;color:#7A725F;gap:5px}
+.wc.jc h3 small .vipb{margin-right:1px}
+.wc.jc .cols{margin-top:4px}
+.wc.jc .cols .l{color:#8E8672}
+.wc.jc .cols>div{border-right-color:#D9CFB8}
+.wc.jc .row.between>.badge{font-weight:700;filter:saturate(1.25) brightness(.95)}
+`;document.head.appendChild(st);
+const _w=wJobCard;
+wJobCard=function(j){const h=_w(j);const d=document.createElement('div');d.innerHTML=h.trim();const c=d.firstElementChild;if(!c)return h;
+  const x=c.querySelector('.jcx'),h3=c.querySelector('h3');
+  if(x&&h3&&h3.firstChild&&h3.firstChild.nodeType===3){const tl=document.createElement('div');tl.className='jct';const tt=document.createElement('span');tt.className='tt';tt.textContent=h3.firstChild.textContent.trim();h3.firstChild.remove();
+    tl.appendChild(tt);const sm=h3.querySelector('small');[...x.children].forEach(e=>(e.classList.contains('lime')&&sm?sm:tl).appendChild(e));h3.insertBefore(tl,h3.firstChild);x.remove()}
   return c.outerHTML};
 })();
 </script>
