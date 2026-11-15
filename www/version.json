@@ -1,6 +1,6 @@
 {
-  "version": "3.6.3",
-  "build": 69,
+  "version": "3.6.4",
+  "build": 70,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "VIP岗位卡片加高，更醒目"
+      "英文岗位卡片标签缩短，内容完整显示"
     ],
     "en": [
-      "Taller VIP job cards"
+      "Job cards: shorter labels, nothing cut off"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

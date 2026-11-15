@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.6.3',APP_BUILD=69;
+const APP_VER='3.6.4',APP_BUILD=70;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3442,6 +3442,28 @@ render=function(top){
 .wc.wc.wc.wc.jc.vipc .cols .l{font-size:10px;line-height:1.25}
 .wc.wc.wc.wc.jc.vipc .cols .v{font-size:14px;line-height:1.25;margin-top:1px}
 `;document.head.appendChild(st)})();
+</script>
+<script>
+/* ================= v3.6.4 英文岗位卡片：标签缩短，内容完整显示 ================= */
+(function(){
+const _w42=wJobCard;
+wJobCard=function(j){let h=_w42(j);if(S.lang!=='en')return h;
+  return h.replace('<div class="l">Experience</div>','<div class="l">Exp</div>')
+   .replace('<div class="l">GH₵/month</div>','<div class="l">GH₵/mo</div>')
+   .replace('<div class="l">Location</div>','<div class="l">City</div>')
+   .replace(/>Accommodation</g,'>Housing<').replace(/>Chinese needed</g,'>Chinese<')
+   .replace(/>(\d+) openings</g,(m,n)=>'>'+n+(n==='1'?' job':' jobs')+'<')};
+const st=document.createElement('style');st.textContent=`
+.wc.jc h3 small{text-overflow:ellipsis}
+.wc.jc .jct .chip.sm,.wc.jc .jct .badge{flex-shrink:0}
+.wc.jc .jct{flex-wrap:wrap;row-gap:3px;overflow:visible}
+.wc.jc .jct>.tt{max-width:100%}
+.wc.jc .cols>div:first-child{flex:1}
+.wc.jc .cols>div:nth-child(2){flex:1.7}
+.wc.jc .cols>div:last-child{flex:1.2}
+@media (max-width:375px){.wc.jc .cols>div{padding-right:5px;margin-right:6px}.wc.jc .cols .v{font-size:12.5px}.wc.jc .cols .l{font-size:9.5px}}
+`;document.head.appendChild(st);
+})();
 </script>
 </body>
 </html>
