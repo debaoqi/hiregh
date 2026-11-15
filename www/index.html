@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.5.9',APP_BUILD=65;
+const APP_VER='3.6.0',APP_BUILD=66;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3399,6 +3399,10 @@ V.w_home=function(){const h=_vh38.apply(this,arguments);try{
   d.querySelectorAll('.sec-h').forEach(s=>{let n=s.nextElementSibling;if(!n||n.classList.contains('sec-h')||!(n.classList.contains('wc')||n.matches('div[style="position:relative"]')))s.remove()});
   return d.innerHTML}catch(e){return h}};
 })();
+</script>
+<script>
+/* ================= v3.6.0 页面大标题（企业/我的申请/我的档案等）缩小为原字号 70% ================= */
+(function(){const st=document.createElement('style');st.textContent=`.title{font-size:calc(var(--ttlfs,var(--welfs,28px)) * .7)!important;letter-spacing:-.3px!important}`;document.head.appendChild(st)})();
 </script>
 </body>
 </html>

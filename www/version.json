@@ -1,6 +1,6 @@
 {
-  "version": "3.5.9",
-  "build": 65,
+  "version": "3.6.0",
+  "build": 66,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页岗位不再重复显示"
+      "页面标题字号缩小"
     ],
     "en": [
-      "No duplicate jobs on home"
+      "Smaller page titles"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
