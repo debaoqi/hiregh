@@ -1,6 +1,6 @@
 {
-  "version": "3.2.2",
-  "build": 48,
+  "version": "3.2.3",
+  "build": 49,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页标题缩小，中英文都保持一行"
+      "招人首页标题改为一行：“在加纳，找靠谱的人！”"
     ],
     "en": [
-      "Home title fits on one line"
+      "Employer home title on one line"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

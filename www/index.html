@@ -451,7 +451,7 @@ V.home=()=>{
   return `<div class="pad">
   <div class="row between"><div class="row gap"><div class="av" style="background:var(--gold)">王</div><div><div class="muted sm">早上好 · Maakye</div><div class="b">王经理 · ${typeof coShort==='function'?coShort():'黄金电视台'}</div></div></div>
    <div class="row gap6"><button class="icbtn" onclick="tab('browse');setTimeout(()=>$('#q')&&$('#q').focus(),50)">${ic('search')}</button><button class="icbtn" onclick="openNotifs()">${ic('bell')}<span class="dot"></span></button></div></div>
-  <h1 class="hero">在加纳<br>找<span class="hl">靠谱</span>的人</h1>
+  <h1 class="hero" id="empHero">在加纳，找<span class="hl">靠谱</span>的人！</h1>
   <div class="searchbar" onclick="tab('browse')">${ic('search')}<span style="flex:1">搜索工种、技能、城市…</span><span class="pill dark">${ic('filter',16)}筛选</span></div>
   <div class="stats"><div class="stat"><div class="n">${VW.length}</div><div class="xs muted">在册工人</div></div>
    <div class="stat"><div class="n">${VW.length?Math.round(VW.filter(w=>w.card).length/VW.length*100):0}%</div><div class="xs muted">证件已核验</div></div>
@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.2.2',APP_BUILD=48;
+const APP_VER='3.2.3',APP_BUILD=49;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3034,6 +3034,13 @@ fitWelTitle=function(){if(S.view!=='welcome')return;const h=document.querySelect
   while(h.scrollWidth>h.clientWidth+1&&fs>14&&n++<60){fs-=0.5;h.style.setProperty('font-size',fs+'px','important')}};
 const _render27=render;render=function(){const r=_render27.apply(this,arguments);try{fitWelTitle()}catch(e){}return r};
 addEventListener('resize',()=>{try{fitWelTitle()}catch(e){}});
+/* 招人首页大标题：一行显示，放不下时自动缩小 */
+function fitEmpHero(){if(S.view!=='home')return;const h=document.getElementById('empHero');if(!h)return;
+  h.style.setProperty('white-space','nowrap','important');h.style.setProperty('overflow','hidden','important');
+  const w=h.parentElement.clientWidth||innerWidth-40;let fs=Math.min(34,w*0.095);h.style.setProperty('font-size',fs+'px','important');let n=0;
+  while(h.scrollWidth>h.clientWidth+1&&fs>14&&n++<60){fs-=0.5;h.style.setProperty('font-size',fs+'px','important')}}
+const _render27b=render;render=function(){const r=_render27b.apply(this,arguments);try{fitEmpHero()}catch(e){}return r};
+addEventListener('resize',()=>{try{fitEmpHero()}catch(e){}});
 </script>
 </body>
 </html>
