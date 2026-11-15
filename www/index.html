@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.2.1',APP_BUILD=47;
+const APP_VER='3.2.2',APP_BUILD=48;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3027,6 +3027,13 @@ T.welcome_title=['Find work or hire — easy!','Tìm việc, tuyển người th
 const _vwel27=V.welcome;
 V.welcome=()=>_vwel27().replace(/<div id="welSub"[^>]*>[\s\S]*?<\/div>/,'').replace('margin:24px 0 12px','margin:24px 0 10px');
 if(S.company&&!S.company.registered&&/鑫源/.test(S.company.name||'')){S.company.name='加纳黄金电视台广告运营中心';S.company.en='Ghana Golden TV Advertising Operation Center';try{LS.set('company',S.company)}catch(e){}}
+/* 首页大标题：中英文都保持一行，放不下就自动缩小字号 */
+fitWelTitle=function(){if(S.view!=='welcome')return;const h=document.querySelector('h1.hero');if(!h)return;
+  h.style.setProperty('white-space','nowrap','important');h.style.setProperty('letter-spacing','-0.5px','important');h.style.setProperty('overflow','hidden','important');
+  const w=h.parentElement.clientWidth||innerWidth-40;let fs=Math.min(30,w*0.085);h.style.setProperty('font-size',fs+'px','important');let n=0;
+  while(h.scrollWidth>h.clientWidth+1&&fs>14&&n++<60){fs-=0.5;h.style.setProperty('font-size',fs+'px','important')}};
+const _render27=render;render=function(){const r=_render27.apply(this,arguments);try{fitWelTitle()}catch(e){}return r};
+addEventListener('resize',()=>{try{fitWelTitle()}catch(e){}});
 </script>
 </body>
 </html>
