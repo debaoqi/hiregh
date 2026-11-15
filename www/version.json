@@ -1,6 +1,6 @@
 {
-  "version": "3.1.0",
-  "build": 45,
+  "version": "3.2.0",
+  "build": 46,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,15 +8,14 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页精简：卡片更紧凑",
-      "新增“二手买卖信息”：发布、浏览闲置物品，平台审核后展示",
-      "新增“职业技能培训”：查看课程并在线报名",
-      "首页一直保留，打开 App 先看到首页"
+      "首页新增“法律援助 · 企业法律咨询”：华商（加纳）律师事务所",
+      "二手买卖、技能培训改为彩色卡片",
+      "修复页面闪动、跳动"
     ],
     "en": [
-      "Cleaner home page",
-      "New: second-hand market",
-      "New: skills training courses"
+      "New: legal help (Huashang Ghana Law Firm)",
+      "Colour tiles on home",
+      "Fixed screen flicker"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
