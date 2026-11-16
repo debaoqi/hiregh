@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.9.1',APP_BUILD=84;
+const APP_VER='3.9.2',APP_BUILD=85;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3681,6 +3681,19 @@ function fixLangs(){try{const c=C();const off=(c.langs||['en']).slice();const ls
 window.fixLangs=fixLangs;
 const _apC=applyCountry;applyCountry=function(){const r=_apC.apply(this,arguments);fixLangs();return r};
 fixLangs();setTimeout(()=>{fixLangs();render(false)},0);
+/* 岗位详情底栏：所有招聘企业都可“与企业交流”（不再只限 VIP）；交流按钮醒目，“已申请”缩小 */
+window.jobChat=function(id){const j=S.jobs.find(x=>x.id===id);if(!j)return;
+  if(!S.me){startWorker();return}
+  if(j.emp){if(typeof msgCred==='function'&&msgCred('w')){wOpenChat(+j.emp)}else toast(L3('完成求职注册后即可与企业交流','Finish your worker profile to chat with employers'));return}
+  toast(L3('该企业暂未开通在线消息，申请后企业会通过电话联系你','This employer is not on chat yet. Apply and they will call you.'))};
+const _vwjC=V.w_job;V.w_job=()=>{let h=_vwjC();const j=S.jobs.find(x=>x.id===S.params.id);if(!j)return h;
+  const i=h.lastIndexOf('<div class="bbar">');if(i<0)return h;
+  let bar=h.slice(i);bar=bar.replace(/<button class="sqbtn" onclick="wOpenChat\([^)]*\)"[^>]*>[\s\S]*?<\/button>/,'');
+  const own=j.owner==='me'||(j.emp&&S.company&&+S.company.dbid===+j.emp);const ap=S.applied.has(j.id);
+  const chat=own?'':`<button class="bigbtn jchat" onclick="jobChat(${j.id})">${ic('chat',19)} ${L3('与企业交流','Chat with employer')}</button>`;
+  bar=bar.replace('<div class="bbar">',`<div class="bbar jbar${ap?' jap':''}">`+chat);
+  return h.slice(0,i)+bar};
+const stC=document.createElement('style');stC.textContent='.jbar{gap:10px}.jbar .jchat{flex:1.25;background:#E8703F;color:#fff;box-shadow:0 6px 16px rgba(232,112,63,.35);white-space:nowrap}.jbar .bigbtn{white-space:nowrap}.jbar>.bigbtn:not(.jchat){flex:1}.jbar.jap>.bigbtn:not(.jchat){flex:0 0 auto;padding-left:16px;padding-right:16px;font-size:14px}';document.head.appendChild(stC);
 /* 首页：语言切换合并为一个按钮（放在定位前面） */
 window.langBtn=()=>{const cur=S.lang;const i=LANG_LIST.findIndex(l=>l[0]===cur);const nx=LANG_LIST[(i+1)%LANG_LIST.length];const lab=nx[0]==='zh'?'中':nx[0].toUpperCase();
   return `<button class="langbtn" data-notr onclick="setLang('${nx[0]}')" title="${esc(nx[1])}">${lab}</button>`};
