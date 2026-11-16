@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=31;let ADM_NEW=false;
+const ADMIN_BUILD=32;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -858,6 +858,54 @@ const _mbEdit28=mbEdit;mbEdit=function(id){_mbEdit28(id);const t=document.getEle
 <script>
 /* ================= 后台 v30：求职会员去掉“工作经历” ================= */
 (function(){const i=MF.findIndex(f=>f[0]==='works');if(i>=0)MF.splice(i,1)})();
+</script>
+<script>
+/* ================= 后台 v32：培训全流程（入学→培训→考核→发证→推荐→入职）+ 课程字段扩充 ================= */
+(function(){
+CF[2][2]='sel:焊接,电工,驾驶,语言,机械,服装,安全,中餐烹饪,电脑培训,家政管家,酒店服务,商超零售,美业,维修,财务,安保,其他';
+const at=CF.findIndex(f=>f[0]==='syllabus');
+CF.splice(at+1,0,['provider_en','机构英文名','text',1],['provider_intro','机构介绍','area',2],['provider_intro_en','机构英文介绍（选填）','area',2],
+ ['exam','考核方式','text',1,'理论笔试 + 实操考核'],['pass_rule','合格标准','text',1,'出勤率 ≥ 90%，考核 ≥ 60 分'],
+ ['refer','结业推荐就业','sel:是,否',1],['jobs','对口岗位（逗号分隔）','text',1,'中餐厨师,厨房帮工'],['partners','推荐去向','text',1,'中餐馆、企业食堂'],['salary','参考月薪','text',1,'GH₵ 2,500–4,000/月']);
+const NS={new:['新报名','st-pending'],contacted:['已联系',''],enrolled:['已入学','st-approved'],studying:['培训中','st-approved'],passed:['考核通过','st-approved'],failed:['未通过',''],certified:['已发证','st-approved'],referred:['已推荐工作','st-approved'],hired:['已入职','st-approved'],cancelled:['已取消','']};
+Object.keys(SUS).forEach(k=>delete SUS[k]);Object.assign(SUS,NS);
+const certNo=id=>'CP-'+new Date().getFullYear()+'-'+String(id).padStart(5,'0');
+window.suCert=function(id){const s=S.SU.find(x=>x.id===id);const d=s.data||{};
+  openModal(`<div class="ch">颁发结业证书</div><div style="font-size:13px;color:var(--muted);margin-bottom:10px">${esc(d.name||'')} · ${esc(coName(s.course_id))}</div>
+   <div class="fld"><label>考核成绩（0–100）</label><input class="inp" id="scS" inputmode="numeric" value="${s.score!=null?s.score:''}"></div>
+   <div class="fld"><label>证书编号（自动生成，可修改）</label><input class="inp" id="scN" value="${esc(s.cert_no||certNo(id))}"></div>
+   <div style="font-size:12px;color:var(--muted);line-height:1.6">发证后学员可在 App「我的学习」里查看证书；雇主可用编号查询真伪；证书会显示在该工人的求职档案中。请确认学员出勤与考核均已达标。</div>
+   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="suCertGo(${id})">确认发证</button></div>`)};
+window.suCertGo=function(id){const s=S.SU.find(x=>x.id===id);const sc=parseInt($('#scS').value);const no=$('#scN').value.trim().toUpperCase();
+  if(isNaN(sc)||sc<0||sc>100)return toast('请填写 0–100 的成绩');if(!no)return toast('请填写证书编号');
+  const body={status:'certified',score:sc,cert_no:no,cert_at:s.cert_at||new Date().toISOString(),updated_at:new Date().toISOString()};
+  run(async()=>{if(LIVE)await q('course_signups?id=eq.'+id,{method:'PATCH',body:JSON.stringify(body)});Object.assign(s,body);await API.log('颁发培训证书','signup:'+id,{cert_no:no,score:sc});closeModal()},'已发证')};
+window.suRef=function(id){const s=S.SU.find(x=>x.id===id);const r=s.ref||{};const d=s.data||{};
+  openModal(`<div class="ch">推荐工作</div><div style="font-size:13px;color:var(--muted);margin-bottom:10px">${esc(d.name||'')} · ${esc(coName(s.course_id))}${s.cert_no?' · '+esc(s.cert_no):''}</div>
+   <div class="fld"><label>推荐企业</label><input class="inp" id="rfC" value="${esc(r.company||'')}" placeholder="例如：华联超市"></div>
+   <div class="fld"><label>岗位</label><input class="inp" id="rfJ" value="${esc(r.job||'')}" placeholder="例如：收银员"></div>
+   <div class="fld"><label>面试 / 报到时间</label><input class="inp" id="rfD" value="${esc(r.date||'')}" placeholder="2026-12-20 9:00"></div>
+   <div class="fld"><label>给学员的说明</label><textarea class="inp" id="rfN" rows="2">${esc(r.note||'')}</textarea></div>
+   <div style="font-size:12px;color:var(--muted)">保存后学员在 App「我的学习」中立即看到推荐信息。推荐就业不得向学员收取任何费用。</div>
+   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">取消</button><button class="btn dark" onclick="suRefGo(${id})">保存推荐</button></div>`)};
+window.suRefGo=function(id){const s=S.SU.find(x=>x.id===id);const ref={company:$('#rfC').value.trim(),job:$('#rfJ').value.trim(),date:$('#rfD').value.trim(),note:$('#rfN').value.trim(),at:new Date().toISOString()};
+  if(!ref.company)return toast('请填写推荐企业');const body={ref,status:s.status==='hired'?'hired':'referred',updated_at:new Date().toISOString()};
+  run(async()=>{if(LIVE)await q('course_signups?id=eq.'+id,{method:'PATCH',body:JSON.stringify(body)});Object.assign(s,body);await API.log('推荐工作','signup:'+id,{company:ref.company,job:ref.job});closeModal()},'已保存推荐')};
+const _st=window.suSt;window.suSt=function(id,st){const s=S.SU.find(x=>x.id===id);
+  if(st==='certified'&&!s.cert_no){render();return suCert(id)}if(st==='referred'&&!s.ref){render();return suRef(id)}return _st(id,st)};
+const _vt=V.training;V.training=()=>{let h=_vt();if(S.trTab!=='signups'){return h}
+  const tabsNew=[['new','新报名'],['contacted','已联系'],['enrolled','已入学'],['studying','培训中'],['passed','考核通过'],['failed','未通过'],['certified','已发证'],['referred','已推荐'],['hired','已入职'],['cancelled','已取消'],['all','全部']];
+  h=h.replace(/<div class="seg">(<button[^>]*onclick="S\.suf=[\s\S]*?)<\/div>/,`<div class="seg" style="flex-wrap:wrap">${tabsNew.map(t=>`<button class="${S.suf===t[0]?'on':''}" onclick="S.suf='${t[0]}';render()">${t[1]} ${t[0]==='all'?S.SU.length:S.SU.filter(x=>x.status===t[0]).length}</button>`).join('')}</div>`);
+  h=h.replace(/<button class="btn sm" onclick="suNote\((\d+)\)">备注<\/button>/g,(m,id)=>{const s=S.SU.find(x=>x.id===+id)||{};
+    const b=[];if(['enrolled','studying','passed'].includes(s.status)||(s.status==='certified'&&!s.cert_no))b.push(`<button class="btn sm lime" onclick="suCert(${id})">发证</button>`);
+    if(['certified','referred'].includes(s.status))b.push(`<button class="btn sm lime" onclick="suRef(${id})">${s.ref?'改推荐':'推荐工作'}</button>`);
+    if(s.cert_no)b.push(`<button class="btn sm" onclick="suCert(${id})">证书</button>`);return b.join('')+m});
+  h=h.replace(/(<select class="inp" style="padding:6px 10px;min-width:96px" onchange="suSt\((\d+),this\.value\)">[\s\S]*?<\/select>)/g,(m,sel,id)=>{const s=S.SU.find(x=>x.id===+id)||{};
+    return sel+(s.cert_no?`<div style="font-size:11.5px;margin-top:4px" class="mono">${esc(s.cert_no)} · ${s.score!=null?s.score+'分':''}</div>`:'')+(s.ref?`<div style="font-size:11.5px;color:#2D6A4F">→ ${esc(s.ref.company||'')} ${esc(s.ref.job||'')}</div>`:'')});
+  return h};
+const _stat=V.training;V.training=()=>{let h=_stat();const extra=[['已发证',S.SU.filter(s=>s.cert_no).length],['已推荐',S.SU.filter(s=>s.ref).length],['已入职',S.SU.filter(s=>s.status==='hired').length]];
+  const i=h.indexOf('</div>',h.indexOf('class="seg"')>0?0:0);return h.replace(/(<div class="seg" style="margin-bottom:12px">)/,stat(extra)+'$1')};
+})();
 </script>
 </body>
 </html>
