@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ChinaPaw"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#EDE8DC">
 <title>ChinaPaw</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.9.3',APP_BUILD=86;
+const APP_VER='3.9.4',APP_BUILD=87;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1143,7 +1143,7 @@ const updNotes=v=>`<div class="xs muted b" style="margin:14px 0 6px">${t('upd_ne
 async function checkUpdate(manual){
   if(UPD.busy)return;UPD.busy=true;
   try{
-    const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
+    const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
     const nb=isNative()?await nativeBuild():0;
     // 1) 需要新安装包（原生外壳有变化时才会出现）
     if(isNative()&&v.minNative&&nb&&nb<v.minNative){showUpd(v,'apk');return}
@@ -1181,7 +1181,7 @@ const _close0=closeSheet;closeSheet=function(){if($('#sheet').dataset.force==='1
 /* 更新完成后，告诉用户更新了什么（只显示一次） */
 (function afterUpdate(){const from=LS.get('updFrom',null);const seen=LS.get('seenVer',null);LS.set('seenVer',APP_VER);
   if(!from||from===APP_VER)return;LS.set('updFrom',null);
-  setTimeout(async()=>{let v=null;try{v=await (await fetch('/version.json?t='+Date.now(),{cache:'no-store'})).json()}catch(e){}
+  setTimeout(async()=>{let v=null;try{v=await (await fetch('version.json?t='+Date.now(),{cache:'no-store'})).json()}catch(e){}
     openSheet(`<div class="b" style="font-size:20px">✓ ${t('upd_done')} v${APP_VER}</div>${v&&v.version===APP_VER?updNotes(v):''}<button class="bigbtn" style="width:100%;margin-top:18px" onclick="closeSheet()">${t('ok')}</button>`)},600)})();
 /* 何时检查：启动后、回到前台、每 30 分钟 */
 if(location.protocol==='https:'){
@@ -1596,7 +1596,7 @@ V.browse=()=>{
 async function checkUpdate(manual){
   if(UPD.busy)return;UPD.busy=true;
   try{
-    const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
+    const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
     if((+v.build||0)>APP_BUILD){
       if(!manual&&!v.force){const d=LS.get('updLater',null);if(d&&d.b===v.build&&Date.now()-d.t<6*3600e3)return}
       showUpd(v,'web');return}
@@ -2384,7 +2384,7 @@ const apkKey=v=>'n'+(v.minNative||0);
 updLater=function(b){const v=UPD.remote||{};LS.set('updLater',{b,t:Date.now()});LS.set('apkLater2',{k:apkKey(v),t:Date.now()});closeSheet()};
 checkUpdate=async function(manual){
   if(UPD.busy)return;UPD.busy=true;
-  try{const r=await fetch('/version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
+  try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();UPD.remote=v;
     let kind=null;
     if((+v.build||0)>APP_BUILD)kind='web';
     else if(isNative()&&v.minNative){const nb=await nativeBuild();if(nb&&nb<v.minNative)kind='apk'}
@@ -3725,6 +3725,45 @@ window.fitWTiles=fitWTiles;
 const _rLg=render;render=function(){const r=_rLg.apply(this,arguments);if(S.view==='welcome'){try{fitWelSlo();fitWelTiles();fitWTiles()}catch(e){}setTimeout(()=>{try{fitWelSlo();fitWelTiles();fitWTiles()}catch(e){}},120)}if(S.view==='legal'){try{fitLgHead();packAreas()}catch(e){}setTimeout(()=>{try{fitLgHead()}catch(e){}},80);setTimeout(()=>{try{fitLgHead()}catch(e){}},400)}return r};
 addEventListener('resize',()=>{if(S.view==='legal'){fitLgHead();render(false)}});
 const st=document.createElement('style');st.textContent='.lghero .lgdesc{text-align:justify;text-justify:inter-character}.langbtn{display:inline-grid;place-items:center;border:0;border-radius:50%;background:var(--card);cursor:pointer;font-weight:800;font-size:13px;width:36px;height:36px;padding:0;color:#161616;flex:none}.lgareas{display:flex;flex-direction:column;gap:8px}.lgareas .lgrow{display:flex;gap:8px}.lgareas .chip{justify-content:center;margin:0}';document.head.appendChild(st);
+})();
+</script><script>(function(){
+/* PWA：苹果 / 安卓手机浏览器打开后可“安装到桌面”；网站更新后自动更新 */
+const isStandalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
+const inShell=()=>!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+const ua=navigator.userAgent||'';
+const isIOS=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isAndroid=/Android/i.test(ua);
+const inApp=/MicroMessenger|WeChat|QQ\/|FBAN|FBAV|Instagram|Line\/|WhatsApp/i.test(ua);
+const iosSafari=isIOS&&/Safari/.test(ua)&&!/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua)&&!inApp;
+let deferred=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;try{pwaBar()}catch(_){}});
+addEventListener('appinstalled',()=>{LS.set('pwaInstalled',1);deferred=null;try{pwaBar()}catch(_){};try{toast(L3('已安装到手机桌面','Installed on your home screen'))}catch(_){}});
+const canShow=()=>!isStandalone()&&!inShell()&&(isIOS||isAndroid||!!deferred)&&!LS.get('pwaInstalled',0);
+window.pwaInfo=()=>({standalone:isStandalone(),shell:inShell(),ios:isIOS,android:isAndroid,inApp,iosSafari,prompt:!!deferred,show:canShow()});
+const SHARE='<svg viewBox="0 0 24 24" style="width:18px;height:18px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3v12M8 7l4-4 4 4"/><rect x="4" y="10" width="16" height="11" rx="2"/></svg>';
+const step=(n,h)=>`<div class="row gap" style="align-items:flex-start;margin-top:12px"><span style="flex:none;width:26px;height:26px;border-radius:50%;background:#161616;color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px">${n}</span><div style="font-size:15px;line-height:1.55;padding-top:2px">${h}</div></div>`;
+window.pwaGuide=function(){let body='';
+  if(deferred&&!isIOS){openSheet(`<div class="row gap" style="align-items:center"><img src="icon-192.png" alt="" style="width:52px;height:52px;border-radius:14px"><div><div class="b" style="font-size:20px">${L3('安装 ChinaPaw 到手机桌面','Install ChinaPaw on your phone')}</div><div class="xs muted" style="margin-top:2px">${L3('像普通 App 一样从桌面打开，更新自动完成','Opens like a normal app. Updates install automatically')}</div></div></div><button class="bigbtn" style="width:100%;margin-top:18px" onclick="closeSheet();pwaInstall()">${L3('立即安装','Install now')}</button><button class="bigbtn" style="width:100%;margin-top:10px;background:var(--card);color:#161616" onclick="closeSheet()">${L3('以后再说','Later')}</button>`);return}
+  if(isIOS&&!iosSafari){body=step(1,L3('点右上角「···」，选择「在 Safari 中打开」','Tap “···” at the top right and choose “Open in Safari”'))+step(2,L3('在 Safari 底部点「分享」'+SHARE,'In Safari, tap Share '+SHARE+' at the bottom'))+step(3,L3('选择「添加到主屏幕」，再点右上角「添加」','Choose “Add to Home Screen”, then tap “Add”'))}
+  else if(isIOS){body=step(1,L3('点屏幕底部的「分享」按钮 '+SHARE,'Tap the Share button '+SHARE+' at the bottom'))+step(2,L3('向上滑动，选择「添加到主屏幕」','Scroll and choose “Add to Home Screen”'))+step(3,L3('点右上角「添加」，桌面就会出现 ChinaPaw 图标','Tap “Add”. The ChinaPaw icon appears on your home screen'))}
+  else if(inApp){body=step(1,L3('点右上角「···」，选择「在浏览器打开」','Tap “···” at the top right and choose “Open in browser”'))+step(2,L3('在浏览器里点「安装到桌面」','In the browser, tap “Install”'))}
+  else{body=step(1,L3('点浏览器右上角「⋮」菜单','Tap the browser menu “⋮” at the top right'))+step(2,L3('选择「安装应用」或「添加到主屏幕」','Choose “Install app” or “Add to Home screen”'))+step(3,L3('确认安装，桌面就会出现 ChinaPaw 图标','Confirm. The ChinaPaw icon appears on your home screen'))}
+  const apk=isAndroid?`<div class="xs muted" style="margin-top:14px;line-height:1.6">${L3('安卓手机也可以','Android phones can also')} <a href="https://hiregh.pages.dev/app/JobPaw.apk" style="color:#161616;font-weight:700">${L3('下载安装包 (APK)','download the APK')}</a></div>`:'';
+  openSheet(`<div class="row gap" style="align-items:center"><img src="icon-192.png" alt="" style="width:52px;height:52px;border-radius:14px"><div><div class="b" style="font-size:20px">${L3('安装 ChinaPaw 到手机桌面','Install ChinaPaw on your phone')}</div><div class="xs muted" style="margin-top:2px">${L3('像普通 App 一样从桌面打开，更新自动完成','Opens like a normal app. Updates install automatically')}</div></div></div>${body}${apk}
+    <button class="bigbtn" style="width:100%;margin-top:18px" onclick="closeSheet()">${L3('知道了','Got it')}</button>`)};
+window.pwaInstall=async function(){if(deferred){const d=deferred;deferred=null;try{d.prompt();const r=await d.userChoice;if(r&&r.outcome==='accepted')LS.set('pwaInstalled',1)}catch(e){pwaGuide()}pwaBar();return}pwaGuide()};
+function pwaBar(){const sc=document.getElementById('screen');let el=document.getElementById('pwaBar');
+  const show=sc&&S.view==='welcome'&&canShow()&&!document.getElementById('sheet').classList.contains('on');
+  if(!show){if(el)el.remove();return}
+  if(!el||el.parentNode!==sc){if(el)el.remove();el=document.createElement('div');el.id='pwaBar';el.setAttribute('data-notr','');sc.appendChild(el)}
+  el.innerHTML=`<button onclick="pwaInstall()">${ic('arrow',16)} ${L3('安装到手机桌面','Install on home screen')}</button>`}
+window.pwaBar=pwaBar;
+const st=document.createElement('style');st.textContent='#pwaBar{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));z-index:30;display:flex;justify-content:center;padding:6px 20px 0;pointer-events:none}#pwaBar button{pointer-events:auto;border:0;border-radius:999px;background:#161616;color:#fff;font-weight:800;font-size:14px;padding:12px 20px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 22px rgba(0,0,0,.22);cursor:pointer}#pwaBar svg{transform:rotate(135deg)}';document.head.appendChild(st);
+const _rP=render;render=function(){const r=_rP.apply(this,arguments);try{pwaBar()}catch(e){}return r};
+/* 首次在手机浏览器打开（或网址带 ?install）时，自动弹出安装说明，每台设备只弹一次 */
+setTimeout(()=>{try{if(!canShow())return;const q=/[?&]install\b/.test(location.search);if(q||!LS.get('pwaGuided',0)){LS.set('pwaGuided',1);if(!document.getElementById('sheet').classList.contains('on'))pwaGuide()}}catch(e){}},1800);
+/* 已安装的 PWA：回到前台时检查新版本，网站更新后自动刷新内容 */
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&isStandalone()&&typeof checkUpdate==='function'){clearTimeout(window._pwaU);window._pwaU=setTimeout(()=>checkUpdate(false),1500)}});
 })();
 </script></body>
 </html>
