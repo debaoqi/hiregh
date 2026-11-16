@@ -1,0 +1,32 @@
+name: Deploy PWA to GitHub Pages
+# 每次 www/ 有修改（网页更新）就自动发布到 https://debaoqi.github.io/hiregh/
+on:
+  push:
+    branches: [main]
+    paths: ['www/**', '!www/app/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build site (PWA, without APK files)
+        run: |
+          mkdir -p _site && cp -r www/. _site/ && rm -rf _site/app
+          touch _site/.nojekyll
+          grep -o "APP_BUILD=[0-9]*" _site/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: deployment
+        uses: actions/deploy-pages@v4
