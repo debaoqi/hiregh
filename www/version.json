@@ -1,6 +1,6 @@
 {
-  "version": "3.6.4",
-  "build": 70,
+  "version": "3.7.0",
+  "build": 71,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "英文岗位卡片标签缩短，内容完整显示"
+      "语言统一：英文界面不再出现中文，中文界面不再出现英文"
     ],
     "en": [
-      "Job cards: shorter labels, nothing cut off"
+      "Consistent language across the whole app"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
