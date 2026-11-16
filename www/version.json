@@ -1,6 +1,6 @@
 {
-  "version": "3.9.2",
-  "build": 85,
+  "version": "3.9.3",
+  "build": 86,
   "date": "2026-11-16",
   "force": false,
   "minNative": 104,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "所有招聘企业都可在岗位详情“与企业交流”"
+      "岗位详情底部两个按钮等宽，交流按钮在右"
     ],
     "en": [
-      "Chat with any employer from the job page"
+      "Job page buttons equal width"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
