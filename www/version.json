@@ -1,6 +1,6 @@
 {
-  "version": "3.10.2",
-  "build": 91,
+  "version": "3.10.3",
+  "build": 92,
   "date": "2026-11-16",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "求职者首页卡片：审核状态移到岗位名右侧"
+      "VIP 岗位卡片改为青绿色"
     ],
     "en": [
-      "Worker home card: review status next to the job title"
+      "VIP job cards are now teal"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
