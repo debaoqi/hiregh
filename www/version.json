@@ -1,17 +1,17 @@
 {
-  "version": "3.8.6",
-  "build": 79,
-  "date": "2026-11-15",
+  "version": "3.8.7",
+  "build": 80,
+  "date": "2026-11-16",
   "force": false,
   "minNative": 104,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页广告语对齐标题；语言切换合并为一个按钮"
+      "语言切换按钮只显示目标语言：中文时显示 EN，英文时显示 中"
     ],
     "en": [
-      "Tagline aligned; single language switch"
+      "Language switch shows only the target language"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
