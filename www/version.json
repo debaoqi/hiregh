@@ -1,6 +1,6 @@
 {
-  "version": "3.7.1",
-  "build": 72,
+  "version": "3.8.0",
+  "build": 73,
   "date": "2026-11-15",
   "force": false,
   "minNative": 104,
@@ -8,10 +8,11 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "新版安装包：桌面图标名称改为 ChinaPaw"
+      "职业技能培训升级：16 门新课程、10 家机构，结业发证书并推荐就业",
+      "法律咨询卡片换新图标"
     ],
     "en": [
-      "New app package: home-screen name is now ChinaPaw"
+      "Skills training: new courses and schools, certificates and job referrals"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
