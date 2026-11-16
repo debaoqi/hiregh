@@ -3,15 +3,15 @@
   "build": 90,
   "date": "2026-11-16",
   "force": false,
-  "minNative": 104,
+  "minNative": 128,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "更新为最终版 ChinaPaw 熊猫 logo"
+      "更新为最终版 ChinaPaw 熊猫 logo（含手机桌面图标）"
     ],
     "en": [
-      "New final ChinaPaw panda logo"
+      "New final ChinaPaw panda logo, including the home screen icon"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
