@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>JobPaw 管理后台</title>
+<title>ChinaPaw 管理后台</title>
 <style>
 :root{--bg:#EDE8DC;--card:#FBF9F4;--ink:#161616;--ink2:#55524B;--muted:#9C978B;--line:#E7E1D4;--soft:#F3EFE6;
 --lime:#CFE36B;--gold:#F8C94A;--red:#EE5A47;--lilac:#E2B2FA;--blue:#5B8CFF;--bar:#2E3A12;--side:#161616}
@@ -220,7 +220,7 @@ function render(){
   $('#tip').style.opacity=0;
   if(!S.session){$('#root').innerHTML=loginView();return}
   const cnt={review:S.W.filter(w=>w.status==='pending').length,jobs:S.J.filter(j=>j.status==='pending').length,employers:S.E.filter(e=>e.status==='pending').length,reports:S.R.filter(r=>r.status==='open').length};
-  $('#root').innerHTML=`<div class="app"><aside class="side"><div class="brand"><img class="logo" src="../logo.svg" alt="JobPaw">JobPaw 后台</div>
+  $('#root').innerHTML=`<div class="app"><aside class="side"><div class="brand"><img class="logo" src="../logo.svg" alt="ChinaPaw">ChinaPaw 后台</div>
    <nav class="nav">${NAV.map(n=>`<a class="${S.page===n[0]?'on':''}" onclick="go('${n[0]}')">${ic(n[2])}${n[1]}${cnt[n[0]]?`<span class="cnt">${cnt[n[0]]}</span>`:''}</a>`).join('')}</nav>
    <div class="foot">${LIVE?'● 已连接云端数据库':'● 演示模式（示例数据）'}<br>${esc(S.session.email)}</div></aside>
    <main class="main"><div class="top"><h1>${TITLE[S.page]}</h1>
@@ -233,7 +233,7 @@ function render(){
 async function reload(){try{await API.load();toast('已刷新');render()}catch(e){toast(e.message)}}
 
 /* ---------- login ---------- */
-function loginView(){return `<div class="login"><div class="lbox"><div class="brand" style="color:var(--ink);padding:0 0 16px"><img class="logo" src="../logo.svg" alt="JobPaw">JobPaw 管理后台</div>
+function loginView(){return `<div class="login"><div class="lbox"><div class="brand" style="color:var(--ink);padding:0 0 16px"><img class="logo" src="../logo.svg" alt="ChinaPaw">ChinaPaw 管理后台</div>
  ${LIVE?`<form onsubmit="event.preventDefault();doLogin()"><div class="fld"><label>管理员邮箱</label><input class="inp" id="em" type="email" autocomplete="username" required></div>
   <div class="fld" style="margin-top:12px"><label>密码</label><input class="inp" id="pw" type="password" autocomplete="current-password" required></div>
   <button class="btn dark" style="width:100%;justify-content:center;margin-top:18px;padding:13px">登录</button></form>
@@ -475,7 +475,7 @@ async function arTick(manual){
     if(n){for(const k in add)AR.fresh[k]+=add[k];arBeep();
       const msg=[add.W&&`工人 ${add.W}`,add.E&&`招聘方 ${add.E}`,add.J&&`岗位 ${add.J}`,add.R&&`举报/反馈 ${add.R}`].filter(Boolean).join('、');
       toast('新提交：'+msg);
-      try{if('Notification' in window&&Notification.permission==='granted')new Notification('JobPaw 新提交',{body:msg})}catch(e){}}
+      try{if('Notification' in window&&Notification.permission==='granted')new Notification('ChinaPaw 新提交',{body:msg})}catch(e){}}
     arTitle();if(!ui)render();else arBar()}
   catch(e){console.error(e)}finally{AR.busy=false}}
 function arTitle(){const t=AR.fresh.W+AR.fresh.E+AR.fresh.J+AR.fresh.R;document.title=t?`(${t}) 新提交 · ${AR.baseTitle}`:AR.baseTitle}
@@ -506,7 +506,7 @@ if(S.session){AR.seen=arSnap();arStart()}
 
 
 /* 后台自身版本检查：后台更新后提示刷新页面，避免一直使用旧版本 */
-const ADMIN_BUILD=30;let ADM_NEW=false;
+const ADMIN_BUILD=31;let ADM_NEW=false;
 async function admVerCheck(){try{const h=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=/ADMIN_BUILD=(\d+)/.exec(h);if(m&&+m[1]>ADMIN_BUILD){ADM_NEW=true;admVerBar()}}catch(e){}}
 function admVerBar(){if(!ADM_NEW)return;if(document.getElementById('admNew'))return;const d=document.createElement('div');d.id='admNew';
   d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:99;background:#161616;color:#fff;border-radius:16px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:14px';
@@ -633,7 +633,7 @@ V.vip=()=>{const l=S.V.filter(o=>S.vf==='all'||o.status===S.vf);const sum=S.V.fi
       ${qr[c[0]]?`<img src="${qr[c[0]]}" style="width:150px;height:150px;object-fit:contain;margin-top:8px;border-radius:10px;background:#fff">`:'<div style="height:150px;display:grid;place-items:center;color:var(--muted);font-size:13px">未上传</div>'}
       <div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><button class="btn sm" onclick="payQr('${c[0]}')">${qr[c[0]]?'更换':'上传'}</button>${qr[c[0]]?`<button class="btn sm" onclick="payQrDel('${c[0]}')">删除</button>`:''}</div>
       <label style="display:flex;gap:6px;align-items:center;justify-content:center;margin-top:8px;font-size:12px;color:var(--ink2)"><input type="checkbox" ${api[c[0]]?'checked':''} onchange="payApi('${c[0]}',this.checked)">启用官方接口自动到账</label></div>`).join('')}
-    <div><div class="fld"><label>收款人名称（显示在付款页）</label><input class="inp" id="payee" value="${esc(P2.payee||'')}" placeholder="例如：JobPaw 平台"></div>
+    <div><div class="fld"><label>收款人名称（显示在付款页）</label><input class="inp" id="payee" value="${esc(P2.payee||'')}" placeholder="例如：ChinaPaw 平台"></div>
      <button class="btn dark" style="margin-top:10px" onclick="paySave({payee:$('#payee').value.trim()})">保存</button>
      <div class="note" style="margin-top:10px">企业在 App 中选择套餐 → 扫你的收款码付款并备注订单号 → 提交付款单号或截图 → 在下方“待确认”里核对后点“确认到账”，VIP 立即生效。<br>“官方接口自动到账”需先在 Supabase 的 Edge Functions → Secrets 中配置微信支付/支付宝商户密钥，再勾选。</div></div>
    </div></div>
