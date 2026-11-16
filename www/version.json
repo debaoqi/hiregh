@@ -1,6 +1,6 @@
 {
-  "version": "3.10.1",
-  "build": 90,
+  "version": "3.10.2",
+  "build": 91,
   "date": "2026-11-16",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "更新为最终版 ChinaPaw 熊猫 logo（含手机桌面图标）"
+      "求职者首页卡片：审核状态移到岗位名右侧"
     ],
     "en": [
-      "New final ChinaPaw panda logo, including the home screen icon"
+      "Worker home card: review status next to the job title"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

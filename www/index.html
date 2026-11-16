@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.10.1',APP_BUILD=90;
+const APP_VER='3.10.2',APP_BUILD=91;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3811,6 +3811,12 @@ const addBlockBtn=(h,role,id)=>{if(id==null)return h;const k='<button class="icb
   return out};
 const _vwc=V.w_chat;V.w_chat=()=>addBlockBtn(_vwc(),'w',S.params.eid);
 const _vch=V.chat;V.chat=()=>{const h=_vch();try{if(typeof realW==='function'&&realW(S.params.id)){const w=EW(S.params.id-100000);if(w)return addBlockBtn(h,'e',w.dbid)}}catch(e){}return h};
+
+/* ---------- 求职者首页卡片：审核状态放在岗位名右侧，缩小 ---------- */
+const _vwhS=V.w_home;V.w_home=()=>{const h=_vwhS();
+  return h.replace(/<div class="row between"><span class="pill" style="([^"]*)">([\s\S]*?)<\/span><span class="b">([\s\S]*?)<\/span><\/div>\s*<div class="cn">([\s\S]*?)<\/div>/,
+   (m,st,pill,fl,role)=>`<div class="row between wsthead"><div class="wstl"><div class="cn">${role}</div><span class="pill wst" style="${st}">${pill.replace("Documents under review","Under review")}</span></div><span class="b wstf">${fl}</span></div>`)};
+const stS=document.createElement('style');stS.textContent='.wsthead{align-items:center;gap:10px}.wstl{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0}.wstl .cn{margin:0;min-width:0}.wst{flex:none;white-space:nowrap;padding:4px 10px!important;font-size:12px;gap:4px}.wst svg{width:12px!important;height:12px!important}.wstf{flex:none;align-self:flex-start;margin-top:4px}';document.head.appendChild(stS);
 
 /* ---------- Google Play 版专用 ---------- */
 if(PLAY){
