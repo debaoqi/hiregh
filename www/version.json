@@ -1,6 +1,6 @@
 {
-  "version": "3.8.2",
-  "build": 75,
+  "version": "3.8.3",
+  "build": 76,
   "date": "2026-11-15",
   "force": false,
   "minNative": 104,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "律所卡片与页面排版优化"
+      "律所页面文字两端对齐"
     ],
     "en": [
-      "Law firm layout tweaks"
+      "Law firm page alignment"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
