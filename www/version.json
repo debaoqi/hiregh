@@ -1,6 +1,6 @@
 {
-  "version": "3.9.4",
-  "build": 87,
+  "version": "3.9.5",
+  "build": 88,
   "date": "2026-11-16",
   "force": false,
   "minNative": 104,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "支持苹果和安卓手机“安装到桌面”（PWA），更新自动完成"
+      "手机安装版：安卓一键安装，不再出现 APK 下载链接"
     ],
     "en": [
-      "Install on iPhone and Android home screen (PWA) with automatic updates"
+      "PWA: one-tap install on Android, no APK link"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
