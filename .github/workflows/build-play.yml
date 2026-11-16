@@ -1,0 +1,115 @@
+name: Build Google Play version
+# Google Play 专用版：包名 com.chinapaw.app，与原版 com.hiregh.app 同时存在、互不影响。
+# 两个版本加载同一个网站（hiregh.pages.dev），网页内容一改，两个版本同时更新；
+# Play 版通过 User-Agent “ChinaPawPlay” 自动启用 Play 规则（不自更新安装包、不在 App 内购买 VIP、不显示演示数据）。
+# 签名：如在仓库 Secrets 中设置了 PLAY_KEYSTORE_B64 / PLAY_KEYSTORE_PASSWORD / PLAY_KEY_ALIAS / PLAY_KEY_PASSWORD，
+#       就用你的上传密钥签名（可上传 Play）；没有设置时用测试密钥签名，只用于手机安装测试。
+on:
+  push:
+    paths:
+      - '.github/workflows/build-play.yml'
+      - 'make_icons.py'
+      - 'logo-1024.png'
+      - 'package.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: play-build
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keep mirrored APKs out of the app bundle
+        run: rm -rf www/app
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm install
+      - run: pip install pillow
+      - name: Play app config
+        run: |
+          printf '{"appId":"com.chinapaw.app","appName":"ChinaPaw","webDir":"www","appendUserAgent":"ChinaPawPlay","server":{"url":"https://hiregh.pages.dev/","errorPath":"offline.html","androidScheme":"https"},"android":{"backgroundColor":"#EDE8DC","appendUserAgent":"ChinaPawPlay"}}\n' > capacitor.config.json
+          cat capacitor.config.json
+      - run: python3 make_icons.py www
+      - run: npx cap add android
+      - run: python3 make_icons.py android
+      - name: Permissions (location only; no self-update, no install-packages)
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n</manifest>#' $M
+          ! grep -q REQUEST_INSTALL_PACKAGES $M
+          grep -n "permission" $M
+      - name: Target Android 16 (API 36)
+        run: |
+          V=android/variables.gradle
+          sed -i -E 's/(compileSdkVersion *= *)[0-9]+/\136/; s/(targetSdkVersion *= *)[0-9]+/\136/' $V
+          grep -E "minSdk|compileSdk|targetSdk" $V
+      - name: Set app version
+        run: |
+          VER=$(node -p "require('./www/version.json').version")
+          echo "VER=$VER" >> $GITHUB_ENV
+          sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"$VER\"/" android/app/build.gradle
+          grep -E "versionCode|versionName" android/app/build.gradle
+      - name: Release signing
+        env:
+          KS_B64: ${{ secrets.PLAY_KEYSTORE_B64 }}
+          KS_PASS: ${{ secrets.PLAY_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.PLAY_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.PLAY_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > android/app/release.keystore; echo "SIGN=upload" >> $GITHUB_ENV
+          else
+            base64 -d android-test-signing.b64 > android/app/release.keystore
+            KS_PASS=android; KEY_ALIAS=androiddebugkey; KEY_PASS=android; echo "SIGN=test" >> $GITHUB_ENV
+          fi
+          KS_PASS="$KS_PASS" KEY_ALIAS="$KEY_ALIAS" KEY_PASS="$KEY_PASS" python3 - <<'PY'
+          import os
+          p='android/app/build.gradle'; s=open(p).read()
+          q=lambda v: v.replace('\\','\\\\').replace('"','\\"')
+          cfg='''android {
+              signingConfigs {
+                  release {
+                      storeFile file("release.keystore")
+                      storePassword "%s"
+                      keyAlias "%s"
+                      keyPassword "%s"
+                  }
+              }''' % (q(os.environ['KS_PASS']), q(os.environ['KEY_ALIAS']), q(os.environ['KEY_PASS']))
+          s=s.replace('android {',cfg,1)
+          import re
+          s=re.sub(r'(buildTypes\s*\{\s*release\s*\{)', r'\1\n            signingConfig signingConfigs.release', s, count=1)
+          assert 'signingConfig signingConfigs.release' in s
+          open(p,'w').write(s)
+          PY
+      - run: npx cap sync android
+      - run: cd android && chmod +x gradlew && ./gradlew assembleRelease bundleRelease --no-daemon
+      - name: Collect outputs
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk ChinaPaw-Play.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab ChinaPaw-Play.aab
+          T=$ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)
+          $T/apksigner verify --print-certs ChinaPaw-Play.apk | head -3
+          $T/aapt2 dump badging ChinaPaw-Play.apk | grep -E "package:|targetSdkVersion|uses-permission" || true
+      - uses: actions/upload-artifact@v4
+        with: { name: ChinaPaw-Play, path: "ChinaPaw-Play.*" }
+      - name: Publish release (not marked latest)
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          gh release create "play-${{ github.run_number }}" ChinaPaw-Play.apk ChinaPaw-Play.aab --title "ChinaPaw Google Play v${VER} (play build ${{ github.run_number }}, ${SIGN} key)" --notes "Google Play version (com.chinapaw.app). Signed with: ${SIGN} key. Upload the .aab to Play Console only when signed with your upload key." --latest=false
+      - name: Mirror test APK to Cloudflare
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          for i in 1 2 3; do
+            rm -rf mirror && git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" mirror && cd mirror
+            git config user.name "jobpaw-bot"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            mkdir -p www/app && cp ../ChinaPaw-Play.apk www/app/ChinaPaw-Play.apk
+            SZ=$(stat -c%s www/app/ChinaPaw-Play.apk); SHA=$(sha256sum www/app/ChinaPaw-Play.apk | cut -d' ' -f1)
+            printf '{"build":%s,"version":"%s","size":%s,"sha256":"%s","sign":"%s"}\n' "${{ github.run_number }}" "$VER" "$SZ" "$SHA" "$SIGN" > www/app/play-apk.json
+            git add www/app && git commit -q -m "Play APK build ${{ github.run_number }} mirror" && git push -q origin HEAD:main && break
+            cd .. ; sleep 5
+          done
