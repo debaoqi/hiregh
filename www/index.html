@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.8.4',APP_BUILD=77;
+const APP_VER='3.8.5',APP_BUILD=78;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3670,8 +3670,13 @@ window.fitLgHead=fitLgHead;
 /* 执业领域：按文字长短装箱，每行铺满、两端对齐 */
 function packAreas(){const box=document.getElementById('lgAreas');if(!box)return;const W=box.clientWidth;if(!W)return;const gap=8;
   const items=[...box.querySelectorAll('.chip')];box.innerHTML='';box.style.flexDirection='row';box.style.flexWrap='wrap';box.style.alignItems='flex-start';items.forEach(e=>{e.style.flex='0 0 auto';box.appendChild(e)});const w=new Map(items.map(e=>[e,e.offsetWidth]));
-  const rows=[];[...items].sort((a,b)=>w.get(b)-w.get(a)).forEach(e=>{let best=null,bl=1e9;for(const r of rows){const left=W-r.w-gap-w.get(e);if(left>=0&&left<bl){bl=left;best=r}}
-    if(best){best.items.push(e);best.w+=gap+w.get(e)}else rows.push({items:[e],w:w.get(e)})});
+  const its=[...items].sort((a,b)=>w.get(b)-w.get(a)),ws=its.map(e=>w.get(e));const tot=ws.reduce((a,b)=>a+b+gap,0);let rows=null;
+  for(let k=Math.max(1,Math.ceil(tot/(W+gap)));k<=its.length&&!rows;k++){const bins=Array.from({length:k},()=>({items:[],w:-gap}));let steps=0;
+    const ok=()=>bins.every(b=>b.items.length>=2||b.w>W*0.55);
+    const dfs=i=>{if(++steps>20000)return false;if(i===its.length)return ok();const seen=new Set();for(const b of bins){const key=b.w+':'+b.items.length;if(seen.has(key))continue;seen.add(key);
+        if(b.w+gap+ws[i]<=W){b.items.push(its[i]);b.w+=gap+ws[i];if(dfs(i+1))return true;b.items.pop();b.w-=gap+ws[i]}}return false};
+    if(dfs(0))rows=bins.map(b=>({items:b.items,w:b.w}))}
+  if(!rows){rows=[];its.forEach(e=>{let best=null,bl=1e9;for(const r of rows){const left=W-r.w-gap-w.get(e);if(left>=0&&left<bl){bl=left;best=r}}if(best){best.items.push(e);best.w+=gap+w.get(e)}else rows.push({items:[e],w:w.get(e)})})}
   rows.sort((a,b)=>b.items.length-a.items.length||b.w-a.w);box.innerHTML='';box.style.flexDirection='column';box.style.flexWrap='nowrap';box.style.alignItems='stretch';
   rows.forEach(r=>{const d=document.createElement('div');d.className='lgrow';r.items.forEach(e=>{e.style.flex='1 1 auto';d.appendChild(e)});box.appendChild(d)})}
 window.packAreas=packAreas;
