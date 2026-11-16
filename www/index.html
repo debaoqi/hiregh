@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.9.0',APP_BUILD=83;
+const APP_VER='3.9.1',APP_BUILD=84;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3700,7 +3700,16 @@ function fitWelTiles(){const ts=[...document.querySelectorAll('#screen .sc .t')]
   let m=f;ts.forEach(t=>{let g=f,k=0;while(t.scrollWidth>t.clientWidth&&k++<40){g-=.25;t.style.fontSize=g+'px'}m=Math.min(m,g)});ts.forEach(t=>t.style.fontSize=m+'px');
   document.querySelectorAll('#screen .sc .roles').forEach(r=>{r.style.whiteSpace='nowrap';r.style.overflow='hidden';r.style.textOverflow='ellipsis';r.style.fontSize='14px';const W=r.clientWidth,w=r.scrollWidth;if(W&&w>W)r.style.fontSize=Math.max(12.5,Math.floor(14*W/w*4)/4)+'px'})}
 window.fitWelTiles=fitWelTiles;
-const _rLg=render;render=function(){const r=_rLg.apply(this,arguments);if(S.view==='welcome'){try{fitWelSlo();fitWelTiles()}catch(e){}setTimeout(()=>{try{fitWelSlo();fitWelTiles()}catch(e){}},120)}if(S.view==='legal'){try{fitLgHead();packAreas()}catch(e){}setTimeout(()=>{try{fitLgHead()}catch(e){}},80);setTimeout(()=>{try{fitLgHead()}catch(e){}},400)}return r};
+/* 两张小方块（二手买卖 / 技能培训）：标题、副标题各一行，必要时统一缩小字号 */
+function fitOne(els,max,min){if(!els.length)return;els.forEach(e=>{e.style.whiteSpace='nowrap';e.style.overflow='hidden';e.style.textOverflow='clip';e.style.fontSize=max+'px';e.style.letterSpacing='0px'});
+  let f=max;els.forEach(e=>{const W=e.clientWidth,w=e.scrollWidth;if(W&&w>W)f=Math.min(f,Math.floor(max*W/w*4)/4)});f=Math.max(min,f);els.forEach(e=>e.style.fontSize=f+'px');
+  els.forEach(e=>{let k=0;while(e.scrollWidth>e.clientWidth&&k++<40&&f>min){f-=.25;els.forEach(x=>x.style.fontSize=f+'px')}})}
+function fitWTiles(){const ts=[...document.querySelectorAll('#screen .wtile')];if(!ts.length)return;
+  const b=ts.map(t=>t.querySelector('.b')).filter(Boolean),s=ts.map(t=>t.querySelector('.wsub')).filter(Boolean);
+  const bf=parseFloat(getComputedStyle(b[0]).fontSize)||18;if(!fitWTiles.bf)fitWTiles.bf=bf;
+  fitOne(b,fitWTiles.bf,12);fitOne(s,12,8.5)}
+window.fitWTiles=fitWTiles;
+const _rLg=render;render=function(){const r=_rLg.apply(this,arguments);if(S.view==='welcome'){try{fitWelSlo();fitWelTiles();fitWTiles()}catch(e){}setTimeout(()=>{try{fitWelSlo();fitWelTiles();fitWTiles()}catch(e){}},120)}if(S.view==='legal'){try{fitLgHead();packAreas()}catch(e){}setTimeout(()=>{try{fitLgHead()}catch(e){}},80);setTimeout(()=>{try{fitLgHead()}catch(e){}},400)}return r};
 addEventListener('resize',()=>{if(S.view==='legal'){fitLgHead();render(false)}});
 const st=document.createElement('style');st.textContent='.lghero .lgdesc{text-align:justify;text-justify:inter-character}.langbtn{display:inline-grid;place-items:center;border:0;border-radius:50%;background:var(--card);cursor:pointer;font-weight:800;font-size:13px;width:36px;height:36px;padding:0;color:#161616;flex:none}.lgareas{display:flex;flex-direction:column;gap:8px}.lgareas .lgrow{display:flex;gap:8px}.lgareas .chip{justify-content:center;margin:0}';document.head.appendChild(st);
 })();

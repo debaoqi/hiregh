@@ -1,6 +1,6 @@
 {
-  "version": "3.9.0",
-  "build": 83,
+  "version": "3.9.1",
+  "build": 84,
   "date": "2026-11-16",
   "force": false,
   "minNative": 104,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "修正“检查更新”中安装包编号的错误翻译"
+      "首页小方块文字一行显示"
     ],
     "en": [
-      "Fixed build number label in Check for updates"
+      "Home tile captions fit on one line"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
