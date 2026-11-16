@@ -107,7 +107,7 @@ textarea.inp{min-height:80px;resize:vertical}
 @media (max-width:900px){.app{flex-direction:column}.side{width:auto;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:10px}.brand{padding:4px 8px}.nav{display:flex;gap:4px}.nav a{white-space:nowrap}.side .foot{display:none}
  .main{padding:14px}.row2,.row3{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.hide-sm{display:none}.f2{grid-template-columns:1fr}}
 </style>
-<link rel="icon" type="image/svg+xml" href="../logo.svg">
+<link rel="icon" type="image/svg+xml" href="../logo.svg?v=2">
 </head>
 <body>
 <div id="root"></div>
@@ -220,7 +220,7 @@ function render(){
   $('#tip').style.opacity=0;
   if(!S.session){$('#root').innerHTML=loginView();return}
   const cnt={review:S.W.filter(w=>w.status==='pending').length,jobs:S.J.filter(j=>j.status==='pending').length,employers:S.E.filter(e=>e.status==='pending').length,reports:S.R.filter(r=>r.status==='open').length};
-  $('#root').innerHTML=`<div class="app"><aside class="side"><div class="brand"><img class="logo" src="../logo.svg" alt="ChinaPaw">ChinaPaw 后台</div>
+  $('#root').innerHTML=`<div class="app"><aside class="side"><div class="brand"><img class="logo" src="../logo.svg?v=2" alt="ChinaPaw">ChinaPaw 后台</div>
    <nav class="nav">${NAV.map(n=>`<a class="${S.page===n[0]?'on':''}" onclick="go('${n[0]}')">${ic(n[2])}${n[1]}${cnt[n[0]]?`<span class="cnt">${cnt[n[0]]}</span>`:''}</a>`).join('')}</nav>
    <div class="foot">${LIVE?'● 已连接云端数据库':'● 演示模式（示例数据）'}<br>${esc(S.session.email)}</div></aside>
    <main class="main"><div class="top"><h1>${TITLE[S.page]}</h1>
@@ -233,7 +233,7 @@ function render(){
 async function reload(){try{await API.load();toast('已刷新');render()}catch(e){toast(e.message)}}
 
 /* ---------- login ---------- */
-function loginView(){return `<div class="login"><div class="lbox"><div class="brand" style="color:var(--ink);padding:0 0 16px"><img class="logo" src="../logo.svg" alt="ChinaPaw">ChinaPaw 管理后台</div>
+function loginView(){return `<div class="login"><div class="lbox"><div class="brand" style="color:var(--ink);padding:0 0 16px"><img class="logo" src="../logo.svg?v=2" alt="ChinaPaw">ChinaPaw 管理后台</div>
  ${LIVE?`<form onsubmit="event.preventDefault();doLogin()"><div class="fld"><label>管理员邮箱</label><input class="inp" id="em" type="email" autocomplete="username" required></div>
   <div class="fld" style="margin-top:12px"><label>密码</label><input class="inp" id="pw" type="password" autocomplete="current-password" required></div>
   <button class="btn dark" style="width:100%;justify-content:center;margin-top:18px;padding:13px">登录</button></form>
