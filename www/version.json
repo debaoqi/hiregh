@@ -1,6 +1,6 @@
 {
-  "version": "3.9.5",
-  "build": 88,
+  "version": "3.10.0",
+  "build": 89,
   "date": "2026-11-16",
   "force": false,
   "minNative": 104,
@@ -8,10 +8,12 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "手机安装版：安卓一键安装，不再出现 APK 下载链接"
+      "新增：注销账号、屏蔽用户、隐私政策",
+      "支持 Google Play 版本"
     ],
     "en": [
-      "PWA: one-tap install on Android, no APK link"
+      "New: delete account, block users, privacy policy",
+      "Google Play version support"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",

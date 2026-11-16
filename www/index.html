@@ -232,10 +232,11 @@ textarea.fi{border-radius:24px;min-height:90px;resize:none}
 
 <script>
 /* ==== 云端配置：填入 Supabase 项目信息即可让数据真实保存（留空=本地演示模式） ==== */
+window.IS_PLAY=/ChinaPawPlay/.test(navigator.userAgent);
 window.HIREGH_CONFIG = window.HIREGH_CONFIG || {
   supabaseUrl: 'https://vctokfjzgjtvsqftadeh.supabase.co',
   supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjdG9rZmp6Z2p0dnNxZnRhZGVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0ODU3NjAsImV4cCI6MjExMDA2MTc2MH0.4yA4ijyvz9F60W2yOCaVLi-tJmCLHHLslx5TbYo-ASA',  // 公开 anon key（受数据库权限规则保护）
-  showDemoData: true      // true = 企业端同时显示示例工人；改为 false 只显示真实注册且审核通过的工人
+  showDemoData: !window.IS_PLAY      // true = 企业端同时显示示例工人；改为 false 只显示真实注册且审核通过的工人
 };
 </script>
 <script>
@@ -1120,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.9.5',APP_BUILD=88;
+const APP_VER='3.10.0',APP_BUILD=89;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3764,6 +3765,72 @@ const _rP=render;render=function(){const r=_rP.apply(this,arguments);try{pwaBar(
 let _pw=0;const _pwT=setInterval(()=>{_pw+=300;if(!deferred&&_pw<4500)return;clearInterval(_pwT);try{if(!canShow())return;const q=/[?&]install\b/.test(location.search);if(q||!LS.get('pwaGuided',0)){LS.set('pwaGuided',1);if(!document.getElementById('sheet').classList.contains('on'))pwaGuide()}}catch(e){}},300);
 /* 已安装的 PWA：回到前台时检查新版本，网站更新后自动刷新内容 */
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&isStandalone()&&typeof checkUpdate==='function'){clearTimeout(window._pwaU);window._pwaU=setTimeout(()=>checkUpdate(false),1500)}});
+})();
+</script><script>(function(){
+/* ===== v3.10 · Google Play 版兼容 + 注销账号 + 屏蔽用户 + 隐私政策（两个版本共用） ===== */
+const PLAY=!!window.IS_PLAY;
+const POL={"zh": "<h2>适用范围</h2><p>本政策适用于 ChinaPaw（含安卓 App、Google Play 版本、网页版和手机安装版，以下统称“本平台”）。本平台为非洲的求职者和招聘企业提供岗位信息、在线沟通、面试邀请、二手信息、职业技能培训和法律咨询信息服务。</p><h2>我们收集的信息</h2><ul><li>求职者：姓名、手机号、国籍、性别、年龄、所在城市、行业与工种、工作经验、期望薪资、语言能力、头像照片；您自愿上传的证件照片（如身份证件、工作许可）。</li><li>招聘企业：企业名称、联系人、手机号、行业、地址与企业位置、营业执照等资质信息（如提供）。</li><li>沟通内容：您在平台内与对方发送的消息、面试邀请及回复。</li><li>位置信息：仅在您允许后，用于标注企业位置或显示附近岗位；您可随时在手机设置中关闭。</li><li>设备信息：用于消息推送的推送令牌，以及 App 版本号、设备随机标识等运行信息（用于统计在线设备、排查故障）。</li><li>培训报名：姓名、手机号、所报课程、考核成绩与证书编号。</li></ul><h2>我们如何使用信息</h2><p>为您匹配岗位或求职者；在求职者与招聘企业之间传递消息和面试邀请；审核岗位与账号、防止诈骗和违规内容；发送您开启的消息提醒；改进服务质量。我们不会出售您的个人信息，也不会用于与本平台无关的广告。</p><h2>信息的共享</h2><ul><li>平台内展示：求职者档案（不含证件照片和完整手机号）会向已注册的招聘企业展示；岗位与企业信息向所有用户展示。</li><li>服务提供商：数据存储与服务器（Supabase）、消息推送（Google Firebase）、网站托管（Cloudflare、GitHub）。它们仅为提供上述服务处理数据。</li><li>法律要求：在法律法规要求或为保护用户人身财产安全时，依法提供必要信息。</li></ul><h2>数据安全与保存</h2><p>数据通过加密连接（HTTPS）传输，数据库按权限规则保护，证件照片仅平台审核人员可见。账号存续期间保存您的信息；注销账号后，我们会删除您的档案、证件、消息和推送令牌，法律要求保留的记录除外。</p><h2>您的权利与注销账号</h2><ul><li>查看与修改：在 App“我的”页面查看和修改档案。</li><li>注销账号：在 App“我的 / 设置”中点“注销账号”，确认后立即删除账号及相关数据。</li><li>无法登录 App 时，可在网页 https://hiregh.pages.dev/delete-account.html 提交注销申请，我们会在 7 个工作日内处理。</li></ul><h2>未成年人</h2><p>本平台仅面向年满 18 周岁的用户，不面向未成年人提供招聘服务。</p><h2>联系我们与政策更新</h2><p>如有任何问题，可在 App 内“意见反馈 / 举报”或通过注销申请网页联系我们。本政策更新时，我们会在本页面公布新版本。</p>", "en": "<h2>Scope</h2><p>This policy applies to ChinaPaw (the Android app, the Google Play version, the website and the installable web app, together “the Platform”). The Platform provides job listings, in-app messaging, interview invitations, second-hand listings, vocational training and legal information for job seekers and employers in Africa.</p><h2>Information we collect</h2><ul><li>Job seekers: name, phone number, nationality, gender, age, city, industry and trade, experience, expected salary, languages, profile photo; ID or work-permit photos you choose to upload.</li><li>Employers: company name, contact person, phone number, industry, address and company location, business documents (if provided).</li><li>Messages: messages, interview invitations and replies you send on the Platform.</li><li>Location: only with your permission, to mark a company location or show nearby jobs. You can turn it off in phone settings at any time.</li><li>Device data: a push-notification token, app version and a random device identifier used to count active devices and fix problems.</li><li>Training sign-ups: name, phone number, course, exam result and certificate number.</li></ul><h2>How we use information</h2><p>To match jobs and job seekers, deliver messages and interview invitations, review jobs and accounts to prevent fraud, send notifications you turned on, and improve the service. We do not sell personal information or use it for unrelated advertising.</p><h2>Sharing</h2><ul><li>On the Platform: job-seeker profiles (without ID photos or full phone number) are shown to registered employers; jobs and company information are shown to all users.</li><li>Service providers: database hosting (Supabase), push notifications (Google Firebase), website hosting (Cloudflare, GitHub), only to provide these services.</li><li>Legal: when required by law or to protect the safety of users.</li></ul><h2>Security and retention</h2><p>Data is sent over encrypted connections (HTTPS) and protected by database access rules; ID photos are visible only to Platform reviewers. We keep your data while your account exists. When you delete your account we delete your profile, documents, messages and push tokens, except records we must keep by law.</p><h2>Your rights and account deletion</h2><ul><li>View and edit: open “Me” in the app.</li><li>Delete account: in the app go to “Me / Settings” and tap “Delete account”. Your account and related data are deleted immediately.</li><li>If you cannot sign in, request deletion at https://hiregh.pages.dev/delete-account.html. We process requests within 7 working days.</li></ul><h2>Children</h2><p>The Platform is only for users aged 18 or older.</p><h2>Contact and updates</h2><p>Contact us through “Feedback / Report” in the app or the deletion request page. We publish updates to this policy on this page.</p>", "upd": "2026-11-16"};
+P.ban='<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>';
+P.trash='<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>';
+P.doc='<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>';
+
+/* ---------- 隐私政策（App 内页面） ---------- */
+V.privacy=()=>pageHdr(L3('隐私政策','Privacy Policy'))+`<div class="pad"><div class="box pol" style="margin-top:0;line-height:1.7">${ZH()?POL.zh:POL.en}<div class="xs muted" style="margin-top:14px">${L3('更新日期：','Last updated: ')+POL.upd}</div></div></div>`;
+const st=document.createElement('style');st.textContent='.pol h2{font-size:16px;margin:16px 0 4px}.pol ul{padding-left:18px;margin:4px 0}.pol p{margin:4px 0}';document.head.appendChild(st);
+
+/* ---------- 注销账号 ---------- */
+window.delAccount=function(){const c=msgCred('w')||msgCred('e');
+  openSheet(`<div class="b" style="font-size:20px">${L3('注销账号','Delete account')}</div>
+   <p class="sm" style="line-height:1.7;margin:10px 0 0">${L3('注销后将立即删除你的账号、档案、证件照片、聊天消息和推送设置；招聘企业还会删除已发布的岗位。此操作无法撤销。','Your account, profile, ID photos, messages and notification settings will be deleted immediately. For employers, posted jobs are deleted too. This cannot be undone.')}</p>
+   <button class="bigbtn" style="width:100%;margin-top:16px;background:#EE5A47" onclick="delAccountGo()">${L3('确认注销','Delete my account')}</button>
+   <button class="bigbtn" style="width:100%;margin-top:10px;background:var(--card);color:#161616" onclick="closeSheet()">${L3('取消','Cancel')}</button>`)};
+window.delAccountGo=async function(){const c=msgCred('w')||msgCred('e');
+  try{if(c&&DB.on)await rpc('delete_my_account',{p_role:c.role,p_id:c.id,p_token:c.token})}
+  catch(e){toast(L3('网络异常，请稍后再试','Network error, please try again'));return}
+  const ct=LS.get('country',null),lm=LS.get('langManual',null);LS.clear();if(ct)LS.set('country',ct);if(lm)LS.set('langManual',lm);LS.set('state',null);
+  closeSheet();toast(L3('账号已注销','Account deleted'));setTimeout(()=>location.reload(),900)};
+const accRows=()=>{const reg=!!(msgCred('w')||msgCred('e')||S.me||(S.company&&S.company.registered));
+  return `<div class="li" style="cursor:pointer" onclick="go('privacy')">${ic('doc')}<span style="flex:1">${L3('隐私政策','Privacy Policy')}</span></div>`+
+   (reg?`<div class="li" style="cursor:pointer;color:#C8412F" onclick="delAccount()">${ic('trash')}<span style="flex:1">${L3('注销账号','Delete account')}</span></div>`:'')};
+const _vwmA=V.w_me;V.w_me=()=>{const h=_vwmA();const k='<div class="li" style="cursor:pointer" onclick="toWelcome()">';const i=h.lastIndexOf(k);return i<0?h:h.slice(0,i)+accRows()+h.slice(i)};
+const _vsetA=V.settings;V.settings=()=>{const h=_vsetA();const i=h.lastIndexOf('</div>');return i<0?h:h.slice(0,i)+`<div class="box">${accRows()}</div>`+h.slice(i)};
+
+/* ---------- 屏蔽用户（聊天） ---------- */
+const BL=()=>LS.get('blocked',{w:[],e:[]});
+const isBlocked=(role,id)=>(BL()[role]||[]).includes(+id);
+window.blockPeer=function(role,id,on){const b=BL();b[role]=(b[role]||[]).filter(x=>x!==+id);if(on)b[role].push(+id);LS.set('blocked',b);closeSheet();
+  toast(on?L3('已屏蔽，对方消息将不再显示','Blocked. Messages from this user are hidden'):L3('已取消屏蔽','Unblocked'));if(on)back();else render(false)};
+window.blockAsk=function(role,id){openSheet(`<div class="b" style="font-size:20px">${L3('屏蔽此用户？','Block this user?')}</div>
+  <p class="sm" style="line-height:1.7;margin:10px 0 0">${L3('屏蔽后不再显示对方的消息和会话。如遇诈骗或骚扰，请同时举报，平台会核查处理。','You will no longer see messages or the chat from this user. If it is fraud or harassment, please also report it so we can review.')}</p>
+  <button class="bigbtn" style="width:100%;margin-top:16px;background:#EE5A47" onclick="blockPeer('${role}',${+id},true)">${L3('屏蔽','Block')}</button>
+  <button class="bigbtn" style="width:100%;margin-top:10px;background:var(--card);color:#161616" onclick="closeSheet()">${L3('取消','Cancel')}</button>`)};
+const _thr=threads;threads=function(c){const l=_thr(c);if(!c)return l;return l.filter(t=>!isBlocked(c.role,t.peer))};
+const addBlockBtn=(h,role,id)=>{if(id==null)return h;const k='<button class="icbtn" onclick="reportSheet(';const i=h.indexOf(k);if(i<0)return h;
+  const btn=`<button class="icbtn" onclick="blockAsk('${role}',${+id})" title="Block">${ic('ban')}</button>`;let out=h.slice(0,i)+btn+h.slice(i);
+  if(isBlocked(role,id)){const j=out.indexOf('<div class="msgs">');if(j>=0)out=out.slice(0,j)+`<div class="empty" style="margin-top:40px">${L3('你已屏蔽此用户','You blocked this user')}<div style="margin-top:12px"><button class="bigbtn" style="padding:10px 18px;font-size:14px;background:var(--card);color:#161616" onclick="blockPeer('${role}',${+id},false)">${L3('取消屏蔽','Unblock')}</button></div></div>`}
+  return out};
+const _vwc=V.w_chat;V.w_chat=()=>addBlockBtn(_vwc(),'w',S.params.eid);
+const _vch=V.chat;V.chat=()=>{const h=_vch();try{if(typeof realW==='function'&&realW(S.params.id)){const w=EW(S.params.id-100000);if(w)return addBlockBtn(h,'e',w.dbid)}}catch(e){}return h};
+
+/* ---------- Google Play 版专用 ---------- */
+if(PLAY){
+  document.documentElement.classList.add('is-play');
+  /* 1) 只通过 Google Play 更新安装包：忽略网站上的安装包版本要求（网页内容仍自动更新） */
+  const _f=window.fetch;window.fetch=async function(u,o){const r=await _f.apply(this,arguments);
+    try{if(String(u&&u.url||u).includes('version.json')){const v=await r.clone().json();['minNative','forceNative','apk','apkMirror','apkExt'].forEach(k=>delete v[k]);return new Response(JSON.stringify(v),{status:r.status,headers:{'Content-Type':'application/json'}})}}catch(e){}return r};
+  /* 2) VIP 不在 Play 版内购买（已开通的权益照常有效） */
+  V.vip=()=>pageHdr(L3('VIP 企业会员','VIP membership'))+`<div class="pad"><div class="box" style="margin-top:0;line-height:1.8">
+    <div class="b" style="font-size:17px">${L3('VIP 权益','VIP benefits')}</div>
+    <div class="sm" style="margin-top:6px">${L3('岗位置顶 · 金色 VIP 标识 · 优先推送给工人 · 不限在招岗位','Top placement · gold VIP badge · priority push to workers · unlimited open jobs')}</div>
+    <div class="sm muted" style="margin-top:12px">${isVip()?L3('你的 VIP 有效期至 ','Your VIP is active until ')+fmtD(VIP.until):L3('此版本暂不提供 VIP 开通。','VIP cannot be purchased in this version of the app.')}</div></div></div>`;
+  V.vippay=()=>V.vip();
+  /* 3) 不显示演示数据（只显示真实注册的企业、岗位和求职者） */
+  const stripDemo=()=>{try{for(let i=S.jobs.length-1;i>=0;i--){const j=S.jobs[i];if(!j.dbid&&j.owner!=='me')S.jobs.splice(i,1)}
+    for(let i=WORKERS.length-1;i>=0;i--){const w=WORKERS[i];if(w.id<100000&&!(S.me&&w.id===S.me.id))WORKERS.splice(i,1)}
+    S.chats=(S.chats||[]).filter(c=>W(c.wid));S.interviews=(S.interviews||[]).filter(iv=>W(iv.wid))}catch(e){}};
+  stripDemo();const _sdb=syncDB;syncDB=async function(){const r=await _sdb.apply(this,arguments);stripDemo();return r};
+  setTimeout(()=>{stripDemo();render(false)},0);
+}
 })();
 </script></body>
 </html>
