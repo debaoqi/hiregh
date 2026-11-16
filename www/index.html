@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#EDE8DC">
-<title>JobPaw</title>
+<title>ChinaPaw</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
@@ -181,7 +181,7 @@ textarea.fi{border-radius:24px;min-height:90px;resize:none}
 .seg button.on{background:#161616;color:#fff}
 /* me (ref 6) */
 .ccard{border-radius:30px;padding:20px;background:linear-gradient(135deg,#D9EE7A,#9CC437);position:relative;overflow:hidden}
-.ccard:after{content:"JobPaw";position:absolute;right:-6px;bottom:-14px;font-size:64px;font-weight:900;opacity:.08;letter-spacing:-2px}
+.ccard:after{content:"ChinaPaw";position:absolute;right:-6px;bottom:-14px;font-size:64px;font-weight:900;opacity:.08;letter-spacing:-2px}
 .ccard .cn{font-size:22px;font-weight:800;line-height:1.2;margin-top:10px}
 .ccard .row3{display:flex;margin-top:18px;gap:8px}
 .ccard .row3 div{flex:1;background:rgba(255,255,255,.4);border-radius:18px;padding:10px}
@@ -618,7 +618,7 @@ V.me=()=>{
   const qa=[['heart','收藏人才','#FFD9D2',"go('saved')"],['cal','面试安排','#FCEBB0',"go('interviews')"],['doc','用工合同','#E9DDFF',"go('contract')"],['shield','工作许可','#DDF0A8',"go('permit')"],
     ['tr','翻译服务','#CFE0FF',"go('translate')"],['brief','我的岗位','#F1ECDF',"tab('jobs')"],['help','帮助中心','#F1ECDF',"go('help')"],['gear','设置','#F1ECDF',"go('settings')"]];
   return `<div class="pad"><div class="row between" style="margin-top:6px"><div class="title">我的</div><button class="icbtn" onclick="langSheet()">${ic('globe')}</button></div>
-  <div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('shield',14)} 企业已认证</span><span class="b">JobPaw</span></div>
+  <div class="ccard" style="margin-top:14px"><div class="row between"><span class="pill" style="background:#161616;color:var(--lime);padding:6px 12px">${ic('shield',14)} 企业已认证</span><span class="b">ChinaPaw</span></div>
    <div class="row between" style="align-items:flex-start;gap:10px"><div style="min-width:0"><div class="cn">${esc(S.company.name)}</div><div class="sm" style="opacity:.7;margin-top:4px">${esc(S.company.en)}</div></div><button class="pill" style="background:#161616;color:#fff;border:0;padding:7px 12px;flex:none" onclick="go('company')">${ic('edit',14)} 修改</button></div><div class="sm" style="margin-top:8px;cursor:pointer;text-decoration:underline" onclick="openExt(mapLink(S.company.loc))">${ic('pin',14)} ${esc((S.company.loc&&S.company.loc.addr)||'设置企业位置')} · 谷歌地图</div>
    <div class="row3"><div><b>${S.jobs.filter(j=>j.owner==='me'&&j.status==='open').length}</b><span class="xs">在招岗位</span></div><div><b>${S.jobs.filter(j=>j.owner==='me').reduce((a,j)=>a+j.apps,0)}</b><span class="xs">收到申请</span></div><div><b>${S.interviews.length}</b><span class="xs">待面试</span></div></div></div>
   <div class="sec-h">常用功能</div>
@@ -673,12 +673,12 @@ const T={"welcome_title":["Finding work is easy","Tìm việc thật dễ dàng"
 "id_type":["ID document","Giấy tờ tùy thân","身份证件"],
 "passport":["Passport","Hộ chiếu","护照"],
 "id_photo":["Photo of your ID","Ảnh giấy tờ tùy thân","证件照片"],
-"id_note":["Kept private. Only the JobPaw review team can see it.","Được bảo mật. Chỉ đội xét duyệt JobPaw xem được.","仅平台审核人员可见，不对雇主公开"],
+"id_note":["Kept private. Only the ChinaPaw review team can see it.","Được bảo mật. Chỉ đội xét duyệt ChinaPaw xem được.","仅平台审核人员可见，不对雇主公开"],
 "permit":["Do you have a Ghana work permit?","Bạn có giấy phép lao động Ghana không?","是否持有加纳工作许可？"],
 "health":["Do you have a health certificate?","Bạn có giấy khám sức khỏe không?","是否有健康证明？"],
 "yes":["Yes","Có","有"],
 "no":["No","Không","没有"],
-"consent":["I agree that JobPaw shares my profile with verified employers, as described under Ghana’s Data Protection Act, 2012 (Act 843). I can ask for it to be deleted at any time.","Tôi đồng ý để JobPaw chia sẻ hồ sơ với nhà tuyển dụng đã xác minh, theo Luật Bảo vệ Dữ liệu Ghana 2012 (Act 843). Tôi có thể yêu cầu xóa bất cứ lúc nào.","我同意 JobPaw 按加纳《2012年数据保护法》(Act 843) 将我的档案提供给已认证雇主，并可随时要求删除。"],
+"consent":["I agree that ChinaPaw shares my profile with verified employers, as described under Ghana’s Data Protection Act, 2012 (Act 843). I can ask for it to be deleted at any time.","Tôi đồng ý để ChinaPaw chia sẻ hồ sơ với nhà tuyển dụng đã xác minh, theo Luật Bảo vệ Dữ liệu Ghana 2012 (Act 843). Tôi có thể yêu cầu xóa bất cứ lúc nào.","我同意 ChinaPaw 按加纳《2012年数据保护法》(Act 843) 将我的档案提供给已认证雇主，并可随时要求删除。"],
 "next":["Next","Tiếp theo","下一步"],
 "submit":["Create my profile","Tạo hồ sơ","提交档案"],
 "required":["Please fill in the required fields","Vui lòng điền các mục bắt buộc","请填写必填项"],
@@ -765,7 +765,7 @@ function resizeImg(f,max){return new Promise(res=>{const r=new FileReader();r.on
 function pickPhoto(k){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;S.reg[k]=await resizeImg(f,k==='photo'?360:1000);render(false)};i.click()}
 
 V.welcome=()=>`<div class="pad" style="padding-top:18px">
- <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="JobPaw"><b style="font-size:18px">JobPaw</b></div>
+ <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="ChinaPaw"><b style="font-size:18px">ChinaPaw</b></div>
   <select class="select" onchange="setLang(this.value)">${LANG_LIST.map(l=>`<option value="${l[0]}" ${S.lang===l[0]?'selected':''}>${l[1]}</option>`).join('')}</select></div>
  <h1 class="hero" style="font-size:34px">${t('welcome_title')}</h1>
  <div class="sm muted row gap6">${ic('globe',14)} ${t('detected')}: <b style="color:var(--ink)">${LANG_LIST.find(l=>l[0]===S.detected)[1]}</b></div>
@@ -1089,7 +1089,7 @@ async function sendFeedback(){const c=$('#fbC').value.trim();if(!c){toast('请�
 V.settings=()=>{const row=(label,sub,ctl)=>`<div class="li"><div style="flex:1"><div class="b" style="font-size:15px">${label}</div>${sub?`<div class="xs muted" style="margin-top:2px">${sub}</div>`:''}</div>${ctl}</div>`;
  return pageHdr('设置')+`<div class="pad">
   <div class="box" style="margin-top:0">${row('聊天自动翻译','中文 ⇄ 英语',sw(S.translate,"S.translate=!S.translate;render(false)"))}${row('新消息提醒','',sw(S.settings.notify,"S.settings.notify=!S.settings.notify;render(false)"))}${row('面试提醒','面试前一天提醒',sw(S.settings.ivRemind,"S.settings.ivRemind=!S.settings.ivRemind;render(false)"))}</div>
-  <div class="box">${row('企业信息',esc(S.company.name)+' · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','JobPaw 1.3.0','')}</div>
+  <div class="box">${row('企业信息',esc(S.company.name)+' · 已认证','<span class="muted">›</span>')}${row('数据连接',DB.on?'已连接云端数据库':'本地演示模式','')}${row('版本','ChinaPaw 1.3.0','')}</div>
   <div class="box"><div class="li" style="cursor:pointer" onclick="openSheet('<div class=&quot;b&quot; style=&quot;font-size:18px&quot;>清除本机数据？</div><p class=&quot;sm muted&quot; style=&quot;margin:8px 0 16px&quot;>会清除本机保存的聊天、收藏、面试和岗位草稿，不影响云端数据。</p><button class=&quot;bigbtn&quot; style=&quot;width:100%;background:var(--red)&quot; onclick=&quot;LS.clear();location.reload()&quot;>确认清除</button>')">${ic('trash')}<span>清除本机数据</span></div>
    <div class="li" style="cursor:pointer" onclick="toWelcome()">${ic('users')}<span>切换身份 / 返回欢迎页</span></div></div></div>`};
 
@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.7.0',APP_BUILD=71;
+const APP_VER='3.7.1',APP_BUILD=72;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -1325,7 +1325,7 @@ function locNow(ctx){
   toast('正在定位…');
   navigator.geolocation.getCurrentPosition(async p=>{const lat=+p.coords.latitude.toFixed(6),lng=+p.coords.longitude.toFixed(6);
       setLoc(ctx,{lat,lng,addr:'当前位置',approx:false});toast('定位成功');const a=await revGeo(lat,lng);if(a&&LOCS[ctx]&&LOCS[ctx].lat===lat){LOCS[ctx].addr=a;setLoc(ctx,LOCS[ctx],ctx==='post'?false:undefined)}},
-    e=>{toast(e.code===1?'没有定位权限：请在手机设置中允许 JobPaw 使用位置，或搜索地址':'定位失败，请到空旷处重试或搜索地址')},
+    e=>{toast(e.code===1?'没有定位权限：请在手机设置中允许 ChinaPaw 使用位置，或搜索地址':'定位失败，请到空旷处重试或搜索地址')},
     {enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
 function parseLL(s){s=(s||'').trim();let m=s.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/[?&](?:q|query|ll|destination)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/^(-?\d{1,2}\.\d+)\s*[, ]\s*(-?\d{1,3}\.\d+)$/);
   return m?{lat:+m[1],lng:+m[2]}:null}
@@ -1787,7 +1787,7 @@ Object.assign(T,{
  available_in:['Available in 54 African countries','Available in 54 African countries','非洲 54 国通用'],
  f_free:['Free for workers','Free for workers','求职免费'],f_lang:['In your language','In your language','本地语言'],f_near:['Jobs near you','Jobs near you','附近工作'],
  minwage_g:['Check the legal minimum wage in {c} before you agree on a salary.','Check the legal minimum wage in {c} before you agree on a salary.','约定工资前，请了解{c}法定最低工资。'],
- consent_g:['I agree that JobPaw shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','I agree that JobPaw shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','我同意 JobPaw 按{c}相关法律保护我的信息，并将档案提供给已认证雇主，可随时要求删除。'],
+ consent_g:['I agree that ChinaPaw shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','I agree that ChinaPaw shares my profile with verified employers and protects my data under the laws of {c}. I can ask for it to be deleted at any time.','我同意 ChinaPaw 按{c}相关法律保护我的信息，并将档案提供给已认证雇主，可随时要求删除。'],
  permit_g:['Do you have a work permit for {c}?','Do you have a work permit for {c}?','是否持有{c}工作许可？'],
 });
 const T_GH={minwage:T.minwage.slice(),consent:T.consent.slice(),permit:T.permit.slice()};
@@ -1848,14 +1848,14 @@ function countryListHTML(){const q=(S.cq||'').trim().toLowerCase();const zhUI=S.
   if(q)return all.map(row).join('')||'<div class="empty sm">—</div>';
   return `<div class="xs muted b" style="margin:6px 0 2px">${t('auto_detect')}</div>${row(AF[det])}`+REGIONS.map(r=>`<div class="xs muted b" style="margin:14px 0 2px">${zhUI?r[1]:r[2]}</div>${all.filter(c=>c.reg===r[0]).sort((a,b)=>(zhUI?a.zh.localeCompare(b.zh,'zh'):a.en.localeCompare(b.en))).map(row).join('')}`).join('')}
 function openCountry(){S.cq='';openSheet(countrySheet())}
-const countryPill=(dark)=>`<button onclick="openCountry()" style="display:inline-flex;align-items:center;gap:6px;border:0;border-radius:20px;padding:7px 12px;font-weight:700;font-size:14px;cursor:pointer;background:${dark?'#161616':'var(--card)'};color:${dark?'#fff':'var(--ink)'}"><span style="font-size:17px;line-height:1">${flagE(S.country)}</span>${S.lang==='zh'?C().zh:C().en}<span style="opacity:.5">▾</span></button>`;
+const countryPill=(dark)=>`<button onclick="openCountry()" style="display:inline-flex;align-items:center;gap:6px;border:0;border-radius:20px;padding:7px 12px;font-weight:700;font-size:14px;cursor:pointer;background:${dark?'#161616':'var(--card)'};color:${dark?'#fff':'var(--ink)'}"><span style="display:inline-flex;line-height:1">${ic('pin',15)}</span>${S.lang==='zh'?C().zh:C().en}<span style="opacity:.5">▾</span></button>`;
 
 /* ---------- 欢迎页重新设计 ---------- */
 V.welcome=()=>{const c=C();const zhUI=S.lang==='zh';const top=['GH','NG','KE','ZA','ET','TZ','EG','CI','CM','UG','SN','AO','ZM','MA'];
  return `<div class="pad" style="padding-top:16px;min-height:100%;display:flex;flex-direction:column">
- <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="JobPaw"><b style="font-size:18px">JobPaw</b></div>${countryPill()}</div>
+ <div class="row between"><div class="row gap6"><img class="logo" src="logo.svg" alt="ChinaPaw"><b style="font-size:18px">ChinaPaw</b></div>${countryPill()}</div>
  <h1 class="hero" style="font-size:36px;margin:24px 0 12px">${t('welcome_title')}</h1>
- <div class="sm muted row gap6" style="flex-wrap:wrap">${ic('pin',14)} ${zhUI?c.zh:c.en} · ${t('detected')}: <b style="color:var(--ink)">${(LANG_LIST.find(l=>l[0]===S.detected)||LANG_LIST[0])[1]}</b></div>
+ <div class="sm muted" style="font-weight:600;letter-spacing:.2px">${S.lang==='zh'?'非洲最专业的综合性用工平台':"Africa's most professional all-in-one hiring platform"}</div>
  <div class="chips wrap" style="margin-top:12px">${LANG_LIST.map(l=>`<span class="chip sm ${S.lang===l[0]?'on':''}" onclick="setLang('${l[0]}')">${l[1]}</span>`).join('')}</div>
  <div style="display:flex;flex-direction:column;gap:14px;margin-top:22px;flex:1">
   <div class="sc" style="margin:0;background:var(--lime);padding:22px 20px;min-height:172px;display:flex;flex-direction:column;justify-content:space-between;border-radius:32px" onclick="startWorker()">
@@ -2269,11 +2269,11 @@ function pushRow(zh){if(!pushAvail())return '';const on=PUSH.perm==='granted';
 async function pushFix(){if(!pushAvail())return;const P=Capacitor.Plugins.PushNotifications;let st=await P.checkPermissions();
   if(st.receive!=='granted')st=await P.requestPermissions();PUSH.perm=st.receive;
   if(st.receive==='granted'){await P.register();toast(S.mode==='wk'?t('push_on'):'锁屏通知已开启')}
-  else toast(S.mode==='wk'?t('push_hint'):'请到手机 设置 → 应用 → JobPaw → 通知 中允许通知');render(false)}
+  else toast(S.mode==='wk'?t('push_hint'):'请到手机 设置 → 应用 → ChinaPaw → 通知 中允许通知');render(false)}
 const _vme15=V.me;V.me=()=>{const h=_vme15();const r=pushRow(true);if(!r)return h;const i=h.lastIndexOf('<div class="box"');return i<0?h:h.slice(0,i)+`<div class="box">${r}</div>`+h.slice(i)};
 const _vwme15=V.w_me;V.w_me=()=>{const h=_vwme15();const r=pushRow(false);if(!r)return h;const i=h.lastIndexOf('<div class="box"');return i<0?h:h.slice(0,i)+`<div class="box">${r}</div>`+h.slice(i)};
 Object.assign(T,{push_title:['Lock-screen notifications','Lock-screen notifications','锁屏消息通知'],push_on:['On','On','已开启'],push_off:['Off · Turn on','Off · Turn on','未开启 · 去开启'],
-  push_hint:['Please allow notifications in Settings → Apps → JobPaw → Notifications','Please allow notifications in Settings → Apps → JobPaw → Notifications','请到手机 设置 → 应用 → JobPaw → 通知 中允许通知']});
+  push_hint:['Please allow notifications in Settings → Apps → ChinaPaw → Notifications','Please allow notifications in Settings → Apps → ChinaPaw → Notifications','请到手机 设置 → 应用 → ChinaPaw → 通知 中允许通知']});
 const _render15=render;render=function(top){_render15(top);if(msgCred()){if(!PUSH.inited)pushInit();else pushSync()}};
 document.addEventListener('visibilitychange',async()=>{if(document.hidden||!pushAvail()||!PUSH.inited)return;
   try{const st=await Capacitor.Plugins.PushNotifications.checkPermissions();if(st.receive!==PUSH.perm){PUSH.perm=st.receive;if(st.receive==='granted')Capacitor.Plugins.PushNotifications.register();render(false)}
@@ -2328,7 +2328,7 @@ Object.assign(T,{
   upd_retry:['Retry','Retry','重试'],
   upd_browser:['Download in browser','Download in browser','用浏览器下载'],
   upd_install:['Install now','Install now','立即安装'],
-  upd_perm:['Allow JobPaw to install updates: tap the button, turn on “Allow from this source”, then come back.','Allow JobPaw to install updates: tap the button, turn on “Allow from this source”, then come back.','需要允许 JobPaw 安装更新：点下方按钮，打开“允许来自此来源的应用”，然后返回 App 即可继续安装。'],
+  upd_perm:['Allow ChinaPaw to install updates: tap the button, turn on “Allow from this source”, then come back.','Allow ChinaPaw to install updates: tap the button, turn on “Allow from this source”, then come back.','需要允许 ChinaPaw 安装更新：点下方按钮，打开“允许来自此来源的应用”，然后返回 App 即可继续安装。'],
   upd_perm_btn:['Open settings','Open settings','去允许'],
   upd_ready:['Download complete','Download complete','下载完成'],
   upd_cancel:['Cancel','Cancel','取消'],
@@ -2339,7 +2339,7 @@ const UPX={st:'idle',pct:0,done:0,total:0,err:'',wait:false};
 const mb=n=>(n/1048576).toFixed(1)+' MB';
 function updSheet(){const s=UPX.st;const bar=`<div style="height:12px;border-radius:8px;background:#E7E1D4;overflow:hidden;margin-top:16px"><div id="updBar" style="height:100%;width:${Math.max(3,UPX.pct)}%;background:var(--lime);transition:width .25s"></div></div>
    <div class="row between sm" style="margin-top:8px"><span id="updPct" class="b">${UPX.pct>=0?UPX.pct+'%':''}</span><span id="updSz" class="muted">${UPX.total?mb(UPX.done)+' / '+mb(UPX.total):UPX.done?mb(UPX.done):''}</span></div>`;
-  const head=`<div class="row gap" style="align-items:center"><img src="logo.svg" style="width:52px;height:52px;border-radius:16px"><div><div class="b" style="font-size:20px">JobPaw v${esc((UPD.remote||{}).version||'')}</div><div class="sm muted">${s==='dl'?t('upd_dl'):s==='ready'?t('upd_ready'):s==='perm'?t('upd_install'):t('upd_dl_fail')}</div></div></div>`;
+  const head=`<div class="row gap" style="align-items:center"><img src="logo.svg" style="width:52px;height:52px;border-radius:16px"><div><div class="b" style="font-size:20px">ChinaPaw v${esc((UPD.remote||{}).version||'')}</div><div class="sm muted">${s==='dl'?t('upd_dl'):s==='ready'?t('upd_ready'):s==='perm'?t('upd_install'):t('upd_dl_fail')}</div></div></div>`;
   let body='';
   if(s==='dl')body=bar+`<button class="bigbtn" style="width:100%;margin-top:16px;background:var(--card);color:#161616" onclick="updCancel()">${t('upd_cancel')}</button>`;
   else if(s==='ready')body=bar+`<button class="bigbtn" style="width:100%;margin-top:16px" onclick="updInstall()">${t('upd_install')}</button>`;
@@ -2414,7 +2414,7 @@ const _close17=closeSheet;closeSheet=function(){const r=_close17();setTimeout(up
 /* 旧安装包：从 CDN 下载（不走 GitHub），并给出复制链接的备用方式 */
 const EXT_APK=()=>{const v=UPD.remote||{};return v.apkExt||'https://cdn.jsdelivr.net/gh/debaoqi/hiregh@main/www/app/JobPaw.apk'};
 updBrowser=function(){const u=EXT_APK();
-  openSheet(`<div class="row gap" style="align-items:center"><img src="logo.svg" style="width:52px;height:52px;border-radius:16px"><div><div class="b" style="font-size:20px">JobPaw v${esc((UPD.remote||{}).version||'')}</div><div class="sm muted">${t('upd_dl')}</div></div></div>
+  openSheet(`<div class="row gap" style="align-items:center"><img src="logo.svg" style="width:52px;height:52px;border-radius:16px"><div><div class="b" style="font-size:20px">ChinaPaw v${esc((UPD.remote||{}).version||'')}</div><div class="sm muted">${t('upd_dl')}</div></div></div>
    <div class="note-y" style="margin-top:14px;line-height:1.6">${t('upd_ext_tip')}</div>
    <div class="xs" style="margin-top:10px;word-break:break-all;background:var(--card);padding:10px;border-radius:12px">${esc(u)}</div>
    <div class="row gap" style="margin-top:14px"><button class="bigbtn" style="flex:1;background:var(--card);color:#161616" onclick="copyText('${esc(u)}')">${t('upd_copy')}</button><button class="bigbtn" style="flex:1" onclick="location.href='${esc(u)}'">${t('upd_apk')}</button></div>`);
@@ -2615,7 +2615,7 @@ V.vippay=()=>{const o=VIP.orders.find(x=>x.id===S.params.id);if(!o)return pageHd
   const head=`<div class="box" style="margin-top:0;text-align:center"><div class="sm muted">订单号 JP${o.id} · ${o.days} 天 VIP</div><div style="font-size:40px;font-weight:900;margin:4px 0">¥${o.amount}</div><div class="sm">${nm}支付</div></div>`;
   if(o.status==='paid')return pageHdr('付款')+`<div class="pad">${head}<div class="vipcard on"><b>已开通 VIP</b></div></div>`;
   const apiBlk=api?`<button class="bigbtn" style="width:100%;margin-top:14px;background:${ch==='wechat'?'#07C160':'#1677FF'}" onclick="vipApiPay(${o.id})">打开${nm}付款（自动到账）</button><div class="xs muted" style="text-align:center;margin-top:8px">付款完成后返回 App，会自动开通</div><div class="sec-h" style="margin-top:22px">或者扫码付款</div>`:'';
-  const steps=`<div class="box">${qr?`<div style="text-align:center"><img src="${qr}" style="width:220px;max-width:80%;border-radius:16px;background:#fff;padding:8px" alt="${nm}收款码"><div class="xs muted" style="margin-top:6px">${esc(pay.payee||'JobPaw')} · 长按图片保存到相册</div></div>`:`<div class="sm" style="color:var(--red)">平台${nm}收款码正在配置中，请稍后再试或联系客服。</div>`}
+  const steps=`<div class="box">${qr?`<div style="text-align:center"><img src="${qr}" style="width:220px;max-width:80%;border-radius:16px;background:#fff;padding:8px" alt="${nm}收款码"><div class="xs muted" style="margin-top:6px">${esc(pay.payee||'ChinaPaw')} · 长按图片保存到相册</div></div>`:`<div class="sm" style="color:var(--red)">平台${nm}收款码正在配置中，请稍后再试或联系客服。</div>`}
    <ol class="sm" style="line-height:1.8;padding-left:20px;margin:12px 0 0"><li>保存收款码，打开${nm}「扫一扫」→ 右上角「相册」选择这张图</li><li>付款 <b>¥${o.amount}</b>，备注填写 <b>JP${o.id}</b></li><li>付款后回到这里，填写付款单号或上传付款截图，点“提交”</li></ol></div>
    <div class="fl">付款单号 / 交易单号（任选其一）</div><input class="fi" id="vRef" maxlength="60" placeholder="在${nm}账单详情里可以看到" value="${esc(o.pay_ref||'')}">
    <div class="fl">付款截图</div><div class="row gap" style="align-items:center"><button class="bigbtn" style="flex:0 0 auto;padding:12px 16px;background:var(--card);color:#161616" onclick="vipPickProof()">${ic('doc',16)} 选择截图</button><span class="sm muted" id="vProofTxt">${VPAY.proof?'已选择 1 张截图':'未选择'}</span></div>
@@ -2736,7 +2736,7 @@ V.member=()=>{const m=(MEM.list||[]).find(x=>x.id===S.params.id);if(!m)return me
   return pageHdr(L2('会员详情','Member profile'))+`<div class="pad" style="padding-top:4px">${top}${body}</div>${bar}`};
 function memberAct(k){const m=(MEM.list||[]).find(x=>x.id===S.params.id);if(!m)return;
   const n=String((k==='wa'?m.whatsapp:m.phone)||m.phone||'').replace(/[^\d+]/g,'');if(!n)return toast(L2('该会员未留电话','No phone number'));
-  location.href=k==='wa'?'https://wa.me/'+n.replace('+','')+'?text='+encodeURIComponent(MZH()?'您好，我在 JobPaw 看到您的求职信息。':'Hello, I saw your profile on JobPaw.'):'tel:'+n}
+  location.href=k==='wa'?'https://wa.me/'+n.replace('+','')+'?text='+encodeURIComponent(MZH()?'您好，我在 ChinaPaw 看到您的求职信息。':'Hello, I saw your profile on ChinaPaw.'):'tel:'+n}
 (function(){const st=document.createElement('style');st.textContent=`
 .mtop{display:grid;grid-template-columns:44% 1fr;gap:12px;align-items:start}
 .mph{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:3/4;background:#ddd;box-shadow:0 6px 20px rgba(0,0,0,.12)}
@@ -2842,7 +2842,7 @@ V.mitem=()=>{const id=S.params.id;const x=MK.full[id]||(MK.list||[]).find(y=>y.i
 function mkContact(id,k){const x=MK.full[id]||(MK.list||[]).find(y=>y.id===id);if(!x)return;const d=x.data;
   if(d.test)return toast(L3('这是示例信息，仅用于演示','Sample listing, demo only'));
   const n=String((k==='wa'?d.whatsapp||d.phone:d.phone)||'').replace(/[^\d+]/g,'');if(!n)return toast(L3('卖家未留电话','No phone number'));
-  location.href=k==='wa'?'https://wa.me/'+n.replace('+','')+'?text='+encodeURIComponent((ZH()?'你好，我在 JobPaw 看到你发布的：':'Hi, I saw your JobPaw listing: ')+(d.title||'')):'tel:'+n}
+  location.href=k==='wa'?'https://wa.me/'+n.replace('+','')+'?text='+encodeURIComponent((ZH()?'你好，我在 ChinaPaw 看到你发布的：':'Hi, I saw your ChinaPaw listing: ')+(d.title||'')):'tel:'+n}
 async function mkReport(id){const ok=await submitReport({type:'二手信息',content:L3('举报二手信息','Report listing')+' #'+id,target:'market:'+id});if(ok)toast(L3('已提交，平台会尽快处理','Reported, thank you'))}
 /* 发布 / 编辑 */
 const mf=()=>MK.form||{};
@@ -2987,9 +2987,9 @@ V.legal=()=>{const tel=LEGAL.phone.replace(/[^\d+]/g,'');
    ${grp(L3('个人可以咨询','For workers'),[L3('工资拖欠、无故辞退、劳动合同纠纷','Unpaid wages, unfair dismissal, employment contracts'),L3('工伤、人身伤害及意外赔偿','Work injury and accident compensation'),L3('被收取“介绍费”“押金”等求职骗局','Job scams asking for fees or deposits'),L3('借款、债务等民事纠纷','Loans, debts and other civil disputes')])}
    ${grp(L3('企业可以咨询','For companies'),[L3('公司设立、合规经营与尽职调查','Company setup, compliance and due diligence'),L3('合同起草审查、商业及债务纠纷','Contracts, commercial and debt disputes'),L3('土地、厂房及建设工程合同','Land, premises and construction contracts'),L3('劳资关系、员工纠纷处理','Labour relations and employee disputes'),L3('股东纠纷、收购兼并、破产清算','Shareholder disputes, M&A, insolvency'),L3('商标等知识产权保护','Trademarks and intellectual property')])}
    <div class="box msec"><h4>${L3('执业领域','Practice areas')}</h4><div class="row gap6 wrap">${LEGAL.areas.map(a=>`<span class="chip sm" style="background:#F1ECDF;cursor:default">${ZH()?a[0]:a[1]}</span>`).join('')}</div></div>
-   <div class="note" style="margin-top:12px"><span class="xs" style="line-height:1.6">${L3('以上信息来自华商律师事务所官网。JobPaw 只提供联系方式，咨询内容、收费及服务由律所与你直接确认。','Information from the Huashang Law Firm website. JobPaw only shares contact details; advice and fees are agreed directly with the firm.')}</span></div>
+   <div class="note" style="margin-top:12px"><span class="xs" style="line-height:1.6">${L3('以上信息来自华商律师事务所官网。ChinaPaw 只提供联系方式，咨询内容、收费及服务由律所与你直接确认。','Information from the Huashang Law Firm website. ChinaPaw only shares contact details; advice and fees are agreed directly with the firm.')}</span></div>
    <div style="height:10px"></div></div>
-   <div class="bbar"><a class="bigbtn" style="flex:1;background:#fff;color:#161616;text-decoration:none;display:flex;align-items:center;justify-content:center" href="https://wa.me/${tel.replace('+','')}?text=${encodeURIComponent(ZH()?'您好，我在 JobPaw 看到贵所信息，想咨询法律问题。':'Hello, I found you on JobPaw and need legal advice.')}">WhatsApp</a><a class="bigbtn" style="flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px" href="tel:${tel}">${ic('phone',18)} ${L3('电话咨询','Call')}</a></div>`};
+   <div class="bbar"><a class="bigbtn" style="flex:1;background:#fff;color:#161616;text-decoration:none;display:flex;align-items:center;justify-content:center" href="https://wa.me/${tel.replace('+','')}?text=${encodeURIComponent(ZH()?'您好，我在 ChinaPaw 看到贵所信息，想咨询法律问题。':'Hello, I found you on ChinaPaw and need legal advice.')}">WhatsApp</a><a class="bigbtn" style="flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px" href="tel:${tel}">${ic('phone',18)} ${L3('电话咨询','Call')}</a></div>`};
 (function(){const st=document.createElement('style');st.textContent=`
 .lgcard{display:flex;gap:12px;align-items:center;background:var(--card);border-radius:24px;padding:14px 16px;cursor:pointer}
 .lgic{width:42px;height:42px;border-radius:14px;background:var(--gold);color:#161616;display:grid;place-items:center;flex:none}
@@ -3120,7 +3120,7 @@ function cosUpd(){const e=document.getElementById('cosList');if(!e)return;const 
   e.innerHTML=l.length?l.map(coCard).join(''):`<div class="empty">${ic('building',40)}<p style="margin-top:10px">${COS.list?L3('没有找到相关企业','No companies found'):L3('加载中…','Loading…')}</p></div>`}
 V.w_cos=()=>{if(!COS.list||Date.now()-COS._t>60000){COS._t=Date.now();setTimeout(cosLoad,0)}
   const l=coAll();const q=COS.q.trim().toLowerCase();const f=l.filter(c=>!q||[c.d.name,c.d.en,c.d.industry,c.d.city].join(' ').toLowerCase().includes(q));
-  return `<div class="pad"><div class="title" style="margin-top:6px">${L3('招聘中的企业','Hiring companies')}</div><div class="sm muted" style="margin-top:4px">${L3('在平台发布招工的企业 · 共 '+l.length+' 家',l.length+' hiring companies on JobPaw')}</div>
+  return `<div class="pad"><div class="title" style="margin-top:6px">${L3('招聘中的企业','Hiring companies')}</div><div class="sm muted" style="margin-top:4px">${L3('在平台发布招工的企业 · 共 '+l.length+' 家',l.length+' hiring companies on ChinaPaw')}</div>
    <div class="msearch" style="margin-top:14px">${ic('search')}<input placeholder="${L3('搜索企业名称、行业、城市','Search company, industry, city')}" value="${esc(COS.q)}" oninput="COS.q=this.value;cosUpd()"></div>
    <div id="cosList" style="margin-top:12px">${f.length?f.map(coCard).join(''):`<div class="empty">${ic('building',40)}<p style="margin-top:10px">${COS.list?L3('没有找到相关企业','No companies found'):L3('加载中…','Loading…')}</p></div>`}</div></div>`};
 V.w_co=()=>{const c=coAll().find(x=>x.key===S.params.key);
@@ -3474,7 +3474,7 @@ window.LX_PRE={"en": {"早上好": "Good morning", "认证中": "Verifying", "�
 (function(){
 const PRE=window.LX_PRE||{en:{},zh:{}};
 const HANR=/[㐀-鿿]/;
-const KEEP=/^(?:JobPaw|VIP|★ ?VIP|WhatsApp|GH₵[\d.,\s–\-k]*|＋|SSNIT|GIPC|HSK\d?|CNC|KTV|IT|OK|NEW|AI|[A-Z]{1,3}|[A-Z]{2,}\d+|[\d\s.,:;+\-–—/%₵kK×()（）#·|¥$›‹<>→←⇄✓★]+|\S+@\S+|https?:\/\/\S+|www\.\S+|\S+\.(?:com|gh|org|net)\S*|v\d[\d.]*(?:\s.*)?|[\d.]+\s*(?:cm|kg|km|m))$/;
+const KEEP=/^(?:JobPaw|ChinaPaw|VIP|★ ?VIP|WhatsApp|GH₵[\d.,\s–\-k]*|＋|SSNIT|GIPC|HSK\d?|CNC|KTV|IT|OK|NEW|AI|[A-Z]{1,3}|[A-Z]{2,}\d+|[\d\s.,:;+\-–—/%₵kK×()（）#·|¥$›‹<>→←⇄✓★]+|\S+@\S+|https?:\/\/\S+|www\.\S+|\S+\.(?:com|gh|org|net)\S*|v\d[\d.]*(?:\s.*)?|[\d.]+\s*(?:cm|kg|km|m))$/;
 const SEP=/(\s+·\s+|\s+\/\s+|,(?=[^\d\s]))/;
 const SKIPV=new Set(['contract','translate']);
 const MON={JAN:'1月',FEB:'2月',MAR:'3月',APR:'4月',MAY:'5月',JUN:'6月',JUL:'7月',AUG:'8月',SEP:'9月',OCT:'10月',NOV:'11月',DEC:'12月'};

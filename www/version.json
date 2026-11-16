@@ -1,6 +1,6 @@
 {
-  "version": "3.7.0",
-  "build": 71,
+  "version": "3.7.1",
+  "build": 72,
   "date": "2026-11-15",
   "force": false,
   "minNative": 48,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "语言统一：英文界面不再出现中文，中文界面不再出现英文"
+      "App 更名为 ChinaPaw；首页新增广告语"
     ],
     "en": [
-      "Consistent language across the whole app"
+      "Renamed to ChinaPaw; new tagline"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
