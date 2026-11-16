@@ -1120,7 +1120,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.8.8',APP_BUILD=81;
+const APP_VER='3.8.9',APP_BUILD=82;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3650,16 +3650,15 @@ setTimeout(lxAll,0);
 </script><script>(function(){
 /* 律所页头：logo 加大跨两行；名称与标语两端对齐、右端与下方正文对齐 */
 function fitLgHead(){const h=document.getElementById('lgHead');if(!h)return;const lg=document.getElementById('lgLogo'),nm=document.getElementById('lgName'),sl=document.getElementById('lgSlo'),tx=document.getElementById('lgTxt');
-  const W=h.clientWidth;if(!W)return;nm.style.display='inline-block';sl.style.display='inline-block';sl.style.whiteSpace='nowrap';const gap=12;h.style.gap=gap+'px';
-  nm.style.fontSize='100px';nm.style.letterSpacing='0px';const rn=nm.offsetWidth/100;if(!rn)return;
+  const W=h.clientWidth;if(!W)return;nm.style.display='inline-block';sl.style.display='inline-block';sl.style.whiteSpace='nowrap';nm.style.whiteSpace='nowrap';const gap=12;h.style.gap=gap+'px';
+  tx.style.display='flex';tx.style.flexDirection='column';tx.style.alignItems='flex-start';h.style.alignItems='center';
   const ar=(lg.naturalWidth&&lg.naturalHeight)?lg.naturalWidth/lg.naturalHeight:90/128;
-  let f=20;for(let i=0;i<12;i++){const lh=1.05*(2.1*f+4);f=Math.max(12,(W-gap-lh*ar)/rn)}
-  f=Math.min(f,26);const lh=1.05*(2.1*f+4);
-  nm.style.fontSize=f+'px';lg.style.height=lh+'px';tx.style.display='flex';tx.style.flexDirection='column';tx.style.alignItems='flex-start';
-  const wn=nm.offsetWidth;const s=f*0.62;sl.style.fontSize=s+'px';sl.style.letterSpacing='0px';sl.style.marginRight='0px';
-  const txt=sl.textContent.trim();const n=[...txt].length;const ws=sl.offsetWidth;
-  if(n>1){const ls=(wn-ws)/n;sl.style.letterSpacing=ls+'px';sl.style.marginRight=(-ls)+'px'}
-  let k=0;while(lg.offsetWidth+gap+tx.scrollWidth>W+1&&k++<20){f*=.985;nm.style.fontSize=f+'px'}}
+  const lay=f=>{nm.style.fontSize=f+'px';nm.style.letterSpacing='0px';sl.style.fontSize=(f*0.62)+'px';sl.style.letterSpacing='0px';sl.style.marginRight='0px';
+    const wn=nm.offsetWidth,n=[...sl.textContent.trim()].length,ws=sl.offsetWidth;if(n>1){const ls=(wn-ws)/n;sl.style.letterSpacing=ls+'px';sl.style.marginRight=(-ls)+'px'}
+    const H=tx.offsetHeight;lg.style.height=H+'px';lg.style.width=(H*ar)+'px';return {wn,H}};
+  /* 以实际渲染高度确定 logo 大小（手机 WebView 字体缩放时也与两行文字等高） */
+  let f=22;for(let i=0;i<8;i++){const {wn,H}=lay(f);const avail=W-gap-H*ar;if(!wn)return;const nf=Math.min(26,f*avail/wn);if(Math.abs(nf-f)<.1){f=nf;break}f=nf}
+  lay(f);let k=0;while(lg.offsetWidth+gap+tx.scrollWidth>W+1&&k++<30){f*=.985;lay(f)}}
 window.fitLgHead=fitLgHead;
 /* 执业领域：按文字长短装箱，每行铺满、两端对齐 */
 function packAreas(){const box=document.getElementById('lgAreas');if(!box)return;const W=box.clientWidth;if(!W)return;const gap=8;
@@ -3674,6 +3673,14 @@ function packAreas(){const box=document.getElementById('lgAreas');if(!box)return
   rows.sort((a,b)=>b.items.length-a.items.length||b.w-a.w);box.innerHTML='';box.style.flexDirection='column';box.style.flexWrap='nowrap';box.style.alignItems='stretch';
   rows.forEach(r=>{const d=document.createElement('div');d.className='lgrow';r.items.forEach(e=>{e.style.flex='1 1 auto';d.appendChild(e)});box.appendChild(d)})}
 window.packAreas=packAreas;
+/* 语言列表：官方语言含英语的国家显示 英语+官方语言+中文；否则只显示 官方语言+中文（如布基纳法索：Français / 中文） */
+function fixLangs(){try{const c=C();const off=(c.langs||['en']).slice();const ls=[...new Set([...off,'zh'])];
+  LANG_LIST.splice(0,LANG_LIST.length,...ls.map(l=>[l,LN[l]||l]));
+  if(!ls.includes(S.lang)){const ph=(navigator.languages||[navigator.language||'']).map(x=>(x||'').slice(0,2).toLowerCase());const l=ph.find(x=>ls.includes(x))||off[0];S.lang=l;document.documentElement.lang=l;try{ensureLang(l)}catch(e){}}
+  if(!ls.includes(S.detected))S.detected=typeof pickLang==='function'?pickLang(S.country):off[0]}catch(e){}}
+window.fixLangs=fixLangs;
+const _apC=applyCountry;applyCountry=function(){const r=_apC.apply(this,arguments);fixLangs();return r};
+fixLangs();setTimeout(()=>{fixLangs();render(false)},0);
 /* 首页：语言切换合并为一个按钮（放在定位前面） */
 window.langBtn=()=>{const cur=S.lang;const i=LANG_LIST.findIndex(l=>l[0]===cur);const nx=LANG_LIST[(i+1)%LANG_LIST.length];const lab=nx[0]==='zh'?'中':nx[0].toUpperCase();
   return `<button class="langbtn" data-notr onclick="setLang('${nx[0]}')" title="${esc(nx[1])}">${lab}</button>`};

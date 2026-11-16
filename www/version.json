@@ -1,6 +1,6 @@
 {
-  "version": "3.8.8",
-  "build": 81,
+  "version": "3.8.9",
+  "build": 82,
   "date": "2026-11-16",
   "force": false,
   "minNative": 104,
@@ -8,10 +8,12 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
   "notes": {
     "zh": [
-      "首页入口卡标题一行显示"
+      "律所 logo 在手机上按文字实际高度显示",
+      "非英语国家只显示官方语言和中文"
     ],
     "en": [
-      "Home tile titles fit on one line"
+      "Law firm logo sized correctly on phones",
+      "Language switch shows official language + Chinese"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
