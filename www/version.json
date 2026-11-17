@@ -1,19 +1,19 @@
 {
-  "version": "3.10.3",
-  "build": 92,
+  "version": "3.10.4",
+  "build": 93,
   "date": "2026-11-16",
   "force": false,
   "minNative": 128,
   "forceNative": false,
-  "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/JobPaw.apk",
+  "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "VIP 岗位卡片改为青绿色"
+      "名称统一为 ChinaPaw（安装包、下载链接、推送通知）"
     ],
     "en": [
-      "VIP job cards are now teal"
+      "Unified ChinaPaw naming for downloads and notifications"
     ]
   },
-  "apkMirror": "https://hiregh.pages.dev/app/JobPaw.apk",
-  "apkExt": "https://cdn.jsdelivr.net/gh/debaoqi/hiregh@main/www/app/JobPaw.apk"
+  "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
+  "apkExt": "https://cdn.jsdelivr.net/gh/debaoqi/hiregh@main/www/app/ChinaPaw.apk"
 }
