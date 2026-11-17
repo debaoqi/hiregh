@@ -1,17 +1,17 @@
 {
-  "version": "3.10.4",
-  "build": 93,
-  "date": "2026-11-16",
+  "version": "3.10.5",
+  "build": 94,
+  "date": "2026-11-17",
   "force": false,
   "minNative": 128,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "名称统一为 ChinaPaw（安装包、下载链接、推送通知）"
+      "求职者免注册浏览岗位和企业，看中了再注册"
     ],
     "en": [
-      "Unified ChinaPaw naming for downloads and notifications"
+      "Browse jobs and companies without signing up"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",

@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.10.4',APP_BUILD=93;
+const APP_VER='3.10.5',APP_BUILD=94;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3837,6 +3837,31 @@ if(PLAY){
   stripDemo();const _sdb=syncDB;syncDB=async function(){const r=await _sdb.apply(this,arguments);stripDemo();return r};
   setTimeout(()=>{stripDemo();render(false)},0);
 }
+})();
+</script><script>(function(){
+/* ===== v3.11 求职者免注册浏览：岗位、企业列表随便看；点开岗位/企业详情、申请、消息、我的时才注册 ===== */
+const GATED=['w_job','w_co','w_apps','w_me','w_msgs','w_chat'];
+const guest=()=>S.mode==='wk'&&!S.me;
+Object.assign(T,{find_job_sub:['Browse jobs free, no sign-up needed','Browse jobs free, no sign-up needed','免注册，先看岗位和企业']});
+window.startWorker=startWorker=function(){S.mode='wk';S.hist=[];S.view='w_home';S.params={};render(true)};
+window.regGo=function(){closeSheet();S.mode='wk';S.reg=newReg();S.hist=[{view:'w_home',params:{},top:0}];S.view='w_reg';S.params={};render(true)};
+window.needReg=function(tgt){S.afterReg=tgt||null;
+  const what=tgt&&tgt.v==='w_co'?L3('查看企业详情','view company details'):tgt&&tgt.v==='w_job'?L3('查看岗位详情和企业信息','view job and company details'):L3('使用这个功能','use this');
+  openSheet(`<div class="row gap" style="align-items:center"><span style="width:46px;height:46px;border-radius:15px;background:var(--lime);display:grid;place-items:center;flex:none">${ic('user')}</span><div><div class="b" style="font-size:19px">${L3('创建求职档案后即可','Create your profile to ')+what}</div><div class="xs muted" style="margin-top:3px">${L3('只需 3 步，免费','3 quick steps, free')}</div></div></div>
+   <p class="sm" style="line-height:1.7;margin:14px 0 0">${L3('注册后可以查看企业详情、申请岗位、直接和老板在线聊天，老板也能找到你并邀请面试。','After registering you can see company details, apply, chat with employers, and get interview invitations.')}</p>
+   <button class="bigbtn" style="width:100%;margin-top:16px;background:var(--lime);color:#161616" onclick="regGo()">${L3('创建求职档案','Create my profile')}</button>
+   <button class="bigbtn" style="width:100%;margin-top:10px;background:var(--card);color:#161616" onclick="S.afterReg=null;closeSheet()">${L3('继续浏览','Keep browsing')}</button>`)};
+const _rG=render;render=function(top){
+  if(guest()&&GATED.includes(S.view)){const tgt={v:S.view,p:S.params};const prev=S.hist.pop();S.view=prev&&!GATED.includes(prev.view)?prev.view:'w_home';S.params=prev?prev.params:{};
+    const r=_rG.call(this,false);setTimeout(()=>needReg(tgt),0);return r}
+  if(S.mode==='wk'&&S.me&&S.afterReg&&S.view==='w_home'){const a=S.afterReg;S.afterReg=null;S.hist=[{view:'w_home',params:{},top:0}];S.view=a.v;S.params=a.p||{};top=true}
+  return _rG.call(this,top)};
+/* 求职首页：游客顶部提示 */
+const _vwhG=V.w_home;V.w_home=()=>{let h=_vwhG();if(S.me)return h;
+  h=h.replace(`<div class="muted sm">${t('hello')},</div><div class="b"></div>`,`<div class="muted sm">${L3('游客浏览','Browsing as guest')}</div><div class="b">${L3('看中岗位再注册','Register when you find a job')}</div>`);
+  const ban=`<div class="box" style="margin-top:14px;display:flex;align-items:center;gap:12px;background:var(--lime)"><div style="flex:1;min-width:0"><div class="b" style="font-size:15px">${L3('岗位和企业免注册浏览','Browse jobs and companies freely')}</div><div class="xs" style="margin-top:3px;opacity:.75">${L3('看中了再建档，3 步完成即可申请和聊天','Create a profile when you find one you like')}</div></div><button class="pill" style="background:#161616;color:#fff;border:0;padding:8px 14px;flex:none" onclick="regGo()">${L3('创建档案','Sign up')}</button></div>`;
+  const i=h.indexOf('<div class="searchbar"');return i<0?ban+h:h.slice(0,i)+ban+h.slice(i)};
+const _apG=applyJob;applyJob=function(id){if(!S.me)return needReg({v:'w_job',p:{id}});return _apG.apply(this,arguments)};
 })();
 </script></body>
 </html>
