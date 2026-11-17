@@ -452,7 +452,7 @@ render();
 </script>
 <script>
 /* ================= 自动刷新 + 新提交提醒 ================= */
-const AR={sec:+(localStorage.getItem('hg_ar')??10),timer:null,seen:null,last:0,fresh:{W:0,E:0,J:0,R:0},busy:false,baseTitle:document.title};
+const AR={sec:5,timer:null,seen:null,last:0,fresh:{W:0,E:0,J:0,R:0},busy:false,baseTitle:document.title};
 const arSnap=()=>({W:new Set(S.W.map(x=>x.id)),E:new Set(S.E.map(x=>x.id)),J:new Set(S.J.map(x=>x.id)),R:new Set(S.R.map(x=>x.id))});
 /* 登录令牌快到期时自动续期，避免自动刷新中途掉线 */
 const _login0=API.login;
@@ -489,7 +489,7 @@ function arAgo(){if(!AR.last)return '尚未刷新';const s=Math.round((Date.now(
 function arBar(){const top=document.querySelector('.main .top');if(!top)return;
   let el=document.getElementById('arBox');if(!el){el=document.createElement('div');el.id='arBox';el.style.cssText='display:flex;align-items:center;gap:8px;font-size:13px';const rb=top.querySelector('button[onclick="reload()"]');top.insertBefore(el,rb||null)}
   el.innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:${AR.sec?'#3BB273':'#bbb'};${AR.sec?'box-shadow:0 0 0 4px rgba(59,178,115,.18)':''}"></span>
-   <select id="arSel" class="btn" style="padding:7px 10px" onchange="arSet(this.value)">${[[0,'自动刷新：关'],[5,'自动刷新：5 秒'],[10,'自动刷新：10 秒'],[30,'自动刷新：30 秒']].map(o=>`<option value="${o[0]}" ${AR.sec===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>
+   <span id="arSel" class="btn" style="padding:7px 12px;cursor:default">自动刷新：5 秒</span>
    <span id="arAgo" style="color:var(--muted);min-width:56px">${arAgo()}</span>`;
   const f=AR.fresh,t=f.W+f.E+f.J+f.R;let bn=document.getElementById('arNew');
   if(t){const page=f.W?'review':f.E?'employers':f.J?'jobs':'reports';
