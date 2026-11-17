@@ -29,7 +29,7 @@ else:
         w,h=Image.open(f).size; im=Image.new('RGB',(w,h),BG); s=int(min(w,h)*0.30)
         im.paste(icon(s),((w-s)//2,(h-s)//2),icon(s)); im.save(f)
     for dn,sz in (('mdpi',24),('hdpi',36),('xhdpi',48),('xxhdpi',72),('xxxhdpi',96)):
-        os.makedirs(res+'/drawable-'+dn,exist_ok=True);paw(sz).save(res+'/drawable-'+dn+'/ic_stat_jobpaw.png')
+        os.makedirs(res+'/drawable-'+dn,exist_ok=True);paw(sz).save(res+'/drawable-'+dn+'/ic_stat_chinapaw.png')
     p=res+'/values/ic_launcher_background.xml'
     if os.path.exists(p):
         x=open(p).read().replace('#FFFFFF','#93BEEE').replace('#CFE36B','#93BEEE')
