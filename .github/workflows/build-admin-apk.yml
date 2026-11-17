@@ -32,7 +32,7 @@ jobs:
           button{margin-top:18px;border:0;border-radius:24px;padding:12px 28px;font-size:16px;font-weight:700;background:#C7E65A;color:#161616}</style></head>
           <body><div><div style="font-size:44px">📡</div><h2>网络连接失败</h2><p style="opacity:.7">请检查网络后重试</p><button onclick="location.href='https://hiregh.pages.dev/admin/'">重新加载</button></div></body></html>
           HTML
-          printf '{"appId":"com.jobpaw.admin","appName":"ChinaPaw 管理","webDir":"admin-shell","server":{"url":"https://hiregh.pages.dev/admin/","errorPath":"offline.html","androidScheme":"https"},"android":{"backgroundColor":"#161616"}}\n' > capacitor.config.json
+          printf '{"appId":"com.chinapaw.admin","appName":"ChinaPaw 管理","webDir":"admin-shell","server":{"url":"https://hiregh.pages.dev/admin/","errorPath":"offline.html","androidScheme":"https"},"android":{"backgroundColor":"#161616"}}\n' > capacitor.config.json
           cat capacitor.config.json
       - run: npx cap add android
       - run: python3 native/admin_icons.py android
@@ -59,23 +59,23 @@ jobs:
           PY
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
-      - run: cp android/app/build/outputs/apk/debug/app-debug.apk JobPaw-Admin.apk
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk ChinaPaw-Admin.apk
       - name: Check signature
-        run: $ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)/apksigner verify --print-certs JobPaw-Admin.apk | head -3
+        run: $ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)/apksigner verify --print-certs ChinaPaw-Admin.apk | head -3
       - uses: actions/upload-artifact@v4
-        with: { name: JobPaw-Admin-apk, path: JobPaw-Admin.apk }
+        with: { name: ChinaPaw-Admin-apk, path: ChinaPaw-Admin.apk }
       - name: Publish release (not marked latest, so the worker app link is unchanged)
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
-          gh release create "admin-${{ github.run_number }}" JobPaw-Admin.apk --title "ChinaPaw 管理后台 v${VER}" --notes "后台管理 App：在手机上打开本页，点击 JobPaw-Admin.apk 下载安装。" --latest=false
+          gh release create "admin-${{ github.run_number }}" ChinaPaw-Admin.apk --title "ChinaPaw 管理后台 v${VER}" --notes "后台管理 App：在手机上打开本页，点击 ChinaPaw-Admin.apk 下载安装。" --latest=false
       - name: Mirror APK to Cloudflare
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
           for i in 1 2 3 4 5; do
             rm -rf mirror && git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" mirror && cd mirror
-            git config user.name "jobpaw-bot"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            mkdir -p www/app && cp ../JobPaw-Admin.apk www/app/JobPaw-Admin.apk
-            SZ=$(stat -c%s www/app/JobPaw-Admin.apk); SHA=$(sha256sum www/app/JobPaw-Admin.apk | cut -d' ' -f1)
+            git config user.name "chinapaw-bot"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git rm -q --ignore-unmatch www/app/JobPaw-Admin.apk; mkdir -p www/app && cp ../ChinaPaw-Admin.apk www/app/ChinaPaw-Admin.apk
+            SZ=$(stat -c%s www/app/ChinaPaw-Admin.apk); SHA=$(sha256sum www/app/ChinaPaw-Admin.apk | cut -d' ' -f1)
             printf '{"build":%s,"version":"%s","size":%s,"sha256":"%s"}\n' "${{ github.run_number }}" "$VER" "$SZ" "$SHA" > www/app/admin-apk.json
             git add www/app && git commit -q -m "Admin APK build ${{ github.run_number }} mirror" && git push -q origin HEAD:main && break
             cd .. ; sleep 8

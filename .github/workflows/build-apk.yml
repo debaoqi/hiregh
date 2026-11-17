@@ -33,8 +33,8 @@ jobs:
         run: |
           M=android/app/src/main/AndroidManifest.xml
           sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>#' $M
-          sed -i 's#</application>#    <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_jobpaw" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/jobpaw_accent" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="messages" />\n    </application>#' $M
-          printf '<?xml version="1.0" encoding="utf-8"?>\n<resources><color name="jobpaw_accent">#5B8CFF</color></resources>\n' > android/app/src/main/res/values/jobpaw_colors.xml
+          sed -i 's#</application>#    <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_chinapaw" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/chinapaw_accent" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="messages" />\n    </application>#' $M
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<resources><color name="chinapaw_accent">#5B8CFF</color></resources>\n' > android/app/src/main/res/values/chinapaw_colors.xml
           grep -n "string/app_name\|label" $M | head -3; cat android/app/src/main/res/values/strings.xml
           grep -n "permission" $M
       - name: In-app updater (download + install inside the app)
@@ -71,26 +71,26 @@ jobs:
           PY
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
-      - run: cp android/app/build/outputs/apk/debug/app-debug.apk JobPaw.apk && cp JobPaw.apk HireGH.apk
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk ChinaPaw.apk && cp ChinaPaw.apk HireGH.apk
       - name: Check signature
-        run: $ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)/apksigner verify --print-certs JobPaw.apk | head -3
+        run: $ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)/apksigner verify --print-certs ChinaPaw.apk | head -3
       - uses: actions/upload-artifact@v4
-        with: { name: JobPaw-apk, path: JobPaw.apk }
+        with: { name: ChinaPaw-apk, path: ChinaPaw.apk }
       - name: Publish release
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
-          gh release create "build-${{ github.run_number }}" JobPaw.apk HireGH.apk --title "JobPaw v${VER} (build ${{ github.run_number }})" --notes "Open this page on your phone and tap JobPaw.apk to download and install. Push notifications: ${PUSH:-0}" --latest
+          gh release create "build-${{ github.run_number }}" ChinaPaw.apk HireGH.apk --title "ChinaPaw v${VER} (build ${{ github.run_number }})" --notes "Open this page on your phone and tap ChinaPaw.apk to download and install. Push notifications: ${PUSH:-0}" --latest
       - name: Mirror APK to Cloudflare (fast download, no GitHub)
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
           for i in 1 2 3; do
             rm -rf mirror && git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" mirror && cd mirror
-            git config user.name "jobpaw-bot"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            mkdir -p www/app && cp ../JobPaw.apk www/app/JobPaw.apk
-            SZ=$(stat -c%s www/app/JobPaw.apk); SHA=$(sha256sum www/app/JobPaw.apk | cut -d' ' -f1)
+            git config user.name "chinapaw-bot"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git rm -q --ignore-unmatch www/app/JobPaw.apk; mkdir -p www/app && cp ../ChinaPaw.apk www/app/ChinaPaw.apk
+            SZ=$(stat -c%s www/app/ChinaPaw.apk); SHA=$(sha256sum www/app/ChinaPaw.apk | cut -d' ' -f1)
             printf '{"build":%s,"version":"%s","size":%s,"sha256":"%s"}\n' "${{ github.run_number }}" "$VER" "$SZ" "$SHA" > www/app/apk.json
             git add www/app && git commit -q -m "APK build ${{ github.run_number }} mirror" && git push -q origin HEAD:main && break
             cd .. ; sleep 5
           done
-          sleep 20; curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/www/app/JobPaw.apk" | head -c 300 || true
+          sleep 20; curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/www/app/ChinaPaw.apk" | head -c 300 || true
           curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/www/app/apk.json" | head -c 300 || true
