@@ -1,4 +1,4 @@
-# JobPaw 管理后台 APK 图标：熊猫 logo + 深色底 + 绿色盾牌徽章。用法：python3 native/admin_icons.py android
+# ChinaPaw 管理后台 APK 图标：熊猫 logo + 深色底 + 绿色盾牌徽章。用法：python3 native/admin_icons.py android
 import glob, os
 from PIL import Image, ImageDraw
 DARK=(22,22,22); LIME=(199,230,90)

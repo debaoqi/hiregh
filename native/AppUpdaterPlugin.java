@@ -16,14 +16,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/** JobPaw 应用内更新：下载新版 APK（带进度），然后调起系统安装界面 */
+/** ChinaPaw 应用内更新：下载新版 APK（带进度），然后调起系统安装界面 */
 @CapacitorPlugin(name = "AppUpdater")
 public class AppUpdaterPlugin extends Plugin {
     private volatile boolean cancelled = false;
     private volatile boolean busy = false;
     private volatile HttpURLConnection cur = null;
 
-    private File apkFile() { return new File(getContext().getCacheDir(), "update/JobPaw-update.apk"); }
+    private File apkFile() { return new File(getContext().getCacheDir(), "update/ChinaPaw-update.apk"); }
 
     @PluginMethod
     public void download(final PluginCall call) {
@@ -40,7 +40,7 @@ public class AppUpdaterPlugin extends Plugin {
                     c = (HttpURLConnection) new URL(url).openConnection(); cur = c;
                     c.setInstanceFollowRedirects(false);
                     c.setConnectTimeout(15000); c.setReadTimeout(20000);
-                    c.setRequestProperty("User-Agent", "JobPaw-Updater");
+                    c.setRequestProperty("User-Agent", "ChinaPaw-Updater");
                     int code = c.getResponseCode();
                     if (code >= 300 && code < 400 && hops++ < 6) { url = new URL(new URL(url), c.getHeaderField("Location")).toString(); c.disconnect(); continue; }
                     if (code != 200) throw new Exception("HTTP " + code);
