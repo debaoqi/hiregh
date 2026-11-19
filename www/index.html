@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='3.10.5',APP_BUILD=94;
+const APP_VER='4.0.0',APP_BUILD=95;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3840,13 +3840,13 @@ if(PLAY){
 })();
 </script><script>(function(){
 /* ===== v3.11 求职者免注册浏览：岗位、企业列表随便看；点开岗位/企业详情、申请、消息、我的时才注册 ===== */
-const GATED=['w_job','w_co','w_apps','w_me','w_msgs','w_chat'];
+const GATED=['w_co','w_apps','w_me','w_msgs','w_chat'];
 const guest=()=>S.mode==='wk'&&!S.me;
 Object.assign(T,{find_job_sub:['Browse jobs free, no sign-up needed','Browse jobs free, no sign-up needed','免注册，先看岗位和企业']});
 window.startWorker=startWorker=function(){S.mode='wk';S.hist=[];S.view='w_home';S.params={};render(true)};
 window.regGo=function(){closeSheet();S.mode='wk';S.reg=newReg();S.hist=[{view:'w_home',params:{},top:0}];S.view='w_reg';S.params={};render(true)};
 window.needReg=function(tgt){S.afterReg=tgt||null;
-  const what=tgt&&tgt.v==='w_co'?L3('查看企业详情','view company details'):tgt&&tgt.v==='w_job'?L3('查看岗位详情和企业信息','view job and company details'):L3('使用这个功能','use this');
+  const what=tgt&&tgt.v==='w_co'?L3('查看企业详情','view company details'):tgt&&tgt.v==='w_job'?L3('申请岗位、和老板聊天','apply and chat with the employer'):L3('使用这个功能','use this');
   openSheet(`<div class="row gap" style="align-items:center"><span style="width:46px;height:46px;border-radius:15px;background:var(--lime);display:grid;place-items:center;flex:none">${ic('user')}</span><div><div class="b" style="font-size:19px">${L3('创建求职档案后即可','Create your profile to ')+what}</div><div class="xs muted" style="margin-top:3px">${L3('只需 3 步，免费','3 quick steps, free')}</div></div></div>
    <p class="sm" style="line-height:1.7;margin:14px 0 0">${L3('注册后可以查看企业详情、申请岗位、直接和老板在线聊天，老板也能找到你并邀请面试。','After registering you can see company details, apply, chat with employers, and get interview invitations.')}</p>
    <button class="bigbtn" style="width:100%;margin-top:16px;background:var(--lime);color:#161616" onclick="regGo()">${L3('创建求职档案','Create my profile')}</button>
@@ -3862,6 +3862,272 @@ const _vwhG=V.w_home;V.w_home=()=>{let h=_vwhG();if(S.me)return h;
   const ban=`<div class="box" style="margin-top:14px;display:flex;align-items:center;gap:12px;background:var(--lime)"><div style="flex:1;min-width:0"><div class="b" style="font-size:15px">${L3('岗位和企业免注册浏览','Browse jobs and companies freely')}</div><div class="xs" style="margin-top:3px;opacity:.75">${L3('看中了再建档，3 步完成即可申请和聊天','Create a profile when you find one you like')}</div></div><button class="pill" style="background:#161616;color:#fff;border:0;padding:8px 14px;flex:none" onclick="regGo()">${L3('创建档案','Sign up')}</button></div>`;
   const i=h.indexOf('<div class="searchbar"');return i<0?ban+h:h.slice(0,i)+ban+h.slice(i)};
 const _apG=applyJob;applyJob=function(id){if(!S.me)return needReg({v:'w_job',p:{id}});return _apG.apply(this,arguments)};
+})();
+</script><script>(function(){
+/* ===== v4.0 界面重构：实用招聘风（白底灰底、信息密度高、工资醒目、品牌灰绿色只用在操作上） ===== */
+const P='#028C92',PD='#016A70',PL='#E6F4F4',SAL='#E8590C';
+try{IND.forEach(i=>{i.color='#F2F3F5';i.ink='#1F2329'})}catch(e){}
+const css=`
+:root{--bg:#F4F5F7;--card:#fff;--ink:#1F2329;--muted:#8F959E;--line:#E8EAED;--soft:#F2F3F5;--lime:${PL};--gold:#FFF4E5;--red:#F54A45;--orange:${SAL};--purple:#5B6BD6;--lilac:#EEF0FB;--blue:#3370FF;--green:#1E7A4C;--r:8px;--p:${P};--pd:${PD};--pl:${PL};--sal:${SAL};--t2:#646A73}
+body{background:#E9EBEE!important;background-image:none!important}
+@media (min-width:520px){.phone{border-radius:40px!important;border-width:10px!important}.sbar{background:#fff!important}}
+.screen{background:var(--bg)}
+/* 字号收敛 */
+.title{font-size:20px!important;font-weight:700!important;letter-spacing:0!important;line-height:1.3!important}
+.hero{font-size:22px!important;font-weight:700!important;letter-spacing:0!important;margin:14px 0 12px!important;line-height:1.35!important}
+.hero .hl{background:none!important;color:${P};padding:0!important;transform:none!important}
+.sec-h{font-size:16px!important;font-weight:600!important;margin:20px 0 10px!important}
+.sec-h a{color:var(--muted)!important}
+.b{font-weight:600}
+/* 通用块 */
+.box{border-radius:8px!important;padding:16px!important;margin-top:10px!important;box-shadow:none!important}
+.box h4{font-size:15px;font-weight:600}
+.stat{border-radius:8px!important}
+.stat .n{font-size:20px!important;font-weight:700!important;letter-spacing:0!important}
+.icbtn{width:36px!important;height:36px!important;box-shadow:none!important;background:transparent!important}
+.icbtn.dark{background:transparent!important;color:var(--ink)!important}
+.searchbar{border-radius:6px!important;background:#fff!important;border:1px solid var(--line);padding:6px 6px 6px 12px!important;min-height:40px}
+.searchbar input{font-size:14px!important}
+.pill{border-radius:4px!important;padding:5px 10px!important;font-size:12.5px!important;font-weight:500!important}
+.pill.dark{background:${P}!important;color:#fff!important}
+.badge{border-radius:3px!important;padding:3px 7px!important;font-size:12px!important;font-weight:400!important;background:#F2F3F5!important;color:var(--t2)!important}
+.badge.lime{background:${PL}!important;color:${PD}!important}
+.chip{border-radius:4px!important;background:#F2F3F5!important;color:var(--t2)!important;font-weight:400!important;border:0!important}
+.chip.on{background:${PL}!important;color:${PD}!important;font-weight:600!important}
+.tg{border-radius:4px!important;border:1px solid var(--line)!important}
+.tg.on{background:${PL}!important;color:${PD}!important;border-color:${P}!important}
+.tabx{border-radius:4px!important;font-weight:500!important;background:#fff!important;font-size:13.5px!important;padding:7px 12px!important}
+.seg{background:#F2F3F5!important;border-radius:6px!important;padding:3px!important}
+.seg button{border-radius:5px!important;padding:7px!important}
+.seg button.on{background:#fff!important;color:${P}!important;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+[style*="background:#161616"]:not(.vipcard *):not(.vipb){background:${P}!important;color:#fff!important}
+[style*="background:#161616"] svg{stroke:#fff}
+.hdr[style*="background"]{background:#fff!important;border-bottom:1px solid var(--line)}
+.cohero{background:#fff!important;color:var(--ink)!important;border-radius:8px!important;border:1px solid var(--line)}.cohero .cov{background:#F2F3F5!important;color:#646A73!important;border-radius:3px!important}.cohero .cov:first-child{background:${PL}!important;color:${PD}!important}
+#empHero{display:none!important}
+.hdr .icbtn[style*="#161616"]{background:transparent!important;color:var(--ink)!important}.hdr .icbtn[style*="#161616"] svg{stroke:currentColor}
+.trban{background:#fff!important;color:var(--ink)!important;border-radius:8px!important;border:1px solid var(--line);box-shadow:none!important}.trban svg{color:${P}}
+.trtabs{background:#F2F3F5!important;border-radius:6px!important}.trtabs button{border-radius:5px!important}.trtabs button.on{background:#fff!important;color:${P}!important}
+[style*="background:var(--lime)"]{background:${PL}!important}
+[style*="background:var(--gold)"]{background:#FFF4E5!important}
+.bigbtn{border-radius:6px!important;height:46px!important;font-size:15px!important;font-weight:600!important;background:${P}!important;color:#fff!important;box-shadow:none!important}
+.bigbtn.lime{background:${P}!important;color:#fff!important}
+.bigbtn[style*="background:var(--card)"]{background:#fff!important;color:var(--ink)!important;border:1px solid var(--line)}
+.sqbtn{border-radius:6px!important;width:46px!important;height:46px!important;background:#fff!important;border:1px solid var(--line)}
+.bbar{background:#fff!important;box-shadow:none!important;border-top:1px solid var(--line);padding:10px 14px 14px!important}
+.jbar .jchat{background:#fff!important;color:${P}!important;border:1px solid ${P}!important;box-shadow:none!important}
+.jbar>.bigbtn:not(.jchat){flex:1.4 1 0!important}
+.jbar.jap>.bigbtn:not(.jchat){background:#F2F3F5!important;color:var(--muted)!important}
+.empty{color:var(--muted);font-size:14px}
+/* 表单 */
+.formwrap{background:#fff!important;border-radius:0!important;margin-top:0!important;color:var(--ink)!important}
+.formwrap h2{font-size:20px!important;font-weight:700!important;letter-spacing:0!important}
+.fl{font-size:14px!important;font-weight:600!important;margin:16px 0 6px!important}
+.fi{border-radius:6px!important;border:1px solid #DEE0E3!important;background:#fff!important;padding:11px 12px!important;font-size:15px!important}
+.fi:focus{border-color:${P}!important;background:#fff!important}
+.fi::placeholder{color:#B4B9C0!important}
+textarea.fi{border-radius:6px!important}
+.formwrap .chip{background:#F2F3F5!important;color:var(--t2)!important}.formwrap .chip.on{background:${PL}!important;color:${PD}!important}
+.stepper{border-radius:6px!important;border:1px solid #DEE0E3!important;background:#fff!important}
+.stepper button{border-radius:4px!important;background:#F2F3F5!important;color:var(--ink)!important;width:34px!important;height:34px!important}
+.regwrap .fi{background:#fff!important;border-color:#DEE0E3!important}
+.regwrap .stepper{background:#fff!important}
+.steps i{height:3px!important;background:#E5E6EB!important}.steps i.on{background:${P}!important}
+.consent{border-radius:6px!important;background:#fff!important;border:1px solid var(--line)}
+.consent input{accent-color:${P}!important}
+.up{border-radius:8px!important;border:1px dashed #C9CDD4!important;background-color:#fff!important}
+.select{border-radius:4px!important;background:#fff!important;border:1px solid var(--line)!important}
+.note-y{background:#FFF7E8!important;border:1px solid #FFE1B3;border-radius:6px!important;color:#7A4A00}
+/* 详情头部：去掉彩色大圆角 */
+.dhead{background:#fff!important;color:var(--ink)!important;border-radius:0!important;text-align:left!important;padding:6px 16px 16px!important}
+.dhead .row.between>span.b{font-size:13px;color:var(--muted);font-weight:400}
+.dhead .name{font-size:22px!important;font-weight:700!important;letter-spacing:0!important;margin-top:8px!important}
+.dhead .rpill{background:none!important;padding:0!important;margin-top:6px!important;font-size:13.5px!important;color:var(--t2)!important;font-weight:400!important;border-radius:0}
+.dhead .kv{justify-content:flex-start!important;gap:6px!important}
+.dhead .kv span{background:#F2F3F5!important;border-radius:3px!important;font-size:12.5px!important;font-weight:400!important;padding:4px 8px!important;color:var(--t2)!important}
+.dhead .kv span:first-child{background:none!important;color:${SAL}!important;font-size:19px!important;font-weight:700!important;padding:0!important;width:100%;margin-bottom:4px}
+.dhead .av.lg{border-color:#fff!important}
+.inf .v{font-weight:600}
+/* 工作台/首页 */
+.ccard{background:#fff!important;border-radius:8px!important;border:1px solid var(--line);padding:14px 16px!important}
+.ccard:after{display:none!important}
+.ccard .cn{font-size:18px!important;font-weight:700!important;margin-top:6px!important}
+.ccard .row3 div{background:#F7F8FA!important;border-radius:6px!important}
+.ccard .row3 b{font-size:18px!important}
+.ccard .pill{background:#FFF4E5!important;color:#B35A00!important}
+.stack .sc{border-radius:0!important;margin-top:0!important;padding:13px 14px!important;background:#fff!important;color:var(--ink)!important;border-bottom:1px solid var(--line)}
+.stack .sc:first-child{border-radius:8px 8px 0 0!important}.stack .sc:last-child{border-radius:0 0 8px 8px!important;border-bottom:0}
+.sc .t{font-size:15px!important;font-weight:600!important}
+.sc .ic{background:${PL}!important;color:${P}!important;width:34px!important;height:34px!important;border-radius:6px!important}
+.sc .go{background:none!important;color:var(--muted)!important}
+.natc,.mc{border-radius:8px!important}
+.qa button{border-radius:8px!important}
+.qa .qi{border-radius:8px!important;background:${PL}!important;color:${P}!important}
+.wc{border-radius:8px!important}
+.wc h3{font-size:18px!important;letter-spacing:0!important;font-weight:600!important}
+.li{padding:13px 0!important}
+.lgcard,.msgrow,.coc{border-radius:8px!important}
+.mri{background:${PL}!important;color:${P}!important;border-radius:8px!important}
+.datebox{background:${PL}!important;color:${PD}!important;border-radius:6px!important}
+.ivc{border-radius:8px!important}
+.stage{border-radius:8px!important;margin-top:8px!important}
+.stage .s{background:${P}!important}
+.stage .t{font-size:17px!important}
+.vf .ok{background:${PL}!important;color:${P}}
+/* 消息 */
+.cb{background:#fff!important;color:var(--ink)!important;border-radius:0!important;margin:0!important;box-shadow:none!important;border-bottom:1px solid var(--line);padding:13px 14px!important}
+.cb:first-child{border-radius:8px 8px 0 0!important}
+.cb .tail{display:none!important}
+.cb .un{background:var(--red)!important;width:18px!important;height:18px!important;font-size:10.5px!important}
+.cb .msg{color:var(--t2)}
+.m{border-radius:8px!important;font-size:14.5px!important}
+.m.them{background:#fff!important}
+.m.me{background:${P}!important;color:#fff!important}
+.inputbar{background:#F7F8FA!important;border-top:1px solid var(--line)}
+.inputbar input{border-radius:6px!important;background:#fff!important;border:1px solid var(--line)!important;padding:11px 12px!important}
+.inputbar button{border-radius:6px!important}
+.quick{background:#F7F8FA!important}
+.chead{background:#fff!important;border-bottom:1px solid var(--line)}
+/* 弹层、提示 */
+.sheet{background:#fff!important;border-radius:12px 12px 0 0!important;padding:10px 18px 24px!important}
+.sheet .grab{background:#DEE0E3!important;width:36px!important;height:4px!important}
+.toast{border-radius:6px!important;background:rgba(31,35,41,.92)!important;padding:10px 14px!important}
+.mask{background:rgba(0,0,0,.45)!important}
+/* 底部导航 */
+.tnav{background:#fff!important;box-shadow:none!important;border-top:1px solid var(--line)!important;padding-top:4px!important}
+.tnav button{color:#8F959E!important}
+.tnav button.on{color:${P}!important}
+.tnav button.on .ti{background:none!important}
+.tnav .tl{font-size:10.5px!important;font-weight:500!important}
+.tnav button.on .tl{font-weight:600!important}
+.tbdg{background:#F54A45!important;box-shadow:0 0 0 2px #fff!important}
+/* VIP */
+.vipb{background:#FFF1E0!important;color:#C2410C!important;border-radius:3px!important;font-weight:600!important;padding:1px 5px!important;font-size:10.5px!important}
+.vipcard{border-radius:8px!important;background:#2B2F36!important;color:#F2C46D!important}
+.vipcard.on{background:#FFF7E8!important;color:#7A4A00!important;border:1px solid #FFE1B3}
+.vplan,.paych{border-radius:8px!important;border-width:1px!important;border-color:var(--line)!important;background:#fff!important}
+.vplan.on,.paych.on{border-color:${P}!important;background:${PL}!important}
+.vplan .tag{border-radius:3px!important;background:${SAL}!important}
+.wtile,.sc,.mc{box-shadow:none!important}
+/* ---- 新岗位卡片 ---- */
+.jA{background:#fff;padding:13px 16px 12px;margin:0 -20px 8px;cursor:pointer;position:relative}
+.jA:active{background:#F7F8FA}
+.jA1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.jA1 b{font-size:16px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.jAs{color:${SAL};font-weight:600;font-size:15px;white-space:nowrap;flex:none}
+.jAs small{font-size:11.5px;font-weight:400;color:#8F959E;margin-left:1px}
+.jAt{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.jAt span{font-size:12px;color:#646A73;background:#F2F3F5;padding:2px 7px;border-radius:3px;line-height:18px}
+.jAt span.ap{background:${PL};color:${PD}}
+.jAc{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;color:#646A73;min-width:0}
+.jAc .cl{width:20px;height:20px;border-radius:4px;display:grid;place-items:center;font-size:10.5px;font-weight:600;color:#fff;flex:none}
+.jAc .cn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.jAc .vf2{color:${P};display:inline-flex;flex:none}
+.jAc .ct{margin-left:auto;color:#8F959E;flex:none;padding-left:8px}
+.jAtop{font-size:10.5px;color:${SAL};border:1px solid #F7C9A8;border-radius:3px;padding:0 4px;line-height:16px;font-weight:500;flex:none}
+/* ---- 首页（服务入口） ---- */
+.hA{background:#fff;padding:10px 16px 14px;margin:-12px -20px 0}
+.hA .tr{display:flex;align-items:center;gap:10px}
+.hA .lg{width:28px;height:28px;border-radius:6px;flex:none}
+.hA .nm{font-weight:700;font-size:17px;flex:1}
+.hA .cbtn{display:flex;align-items:center;gap:4px;font-size:13.5px;color:#1F2329;padding:5px 2px;flex:none}
+.hA .lbtn{font-size:12.5px;border:1px solid #DEE0E3;border-radius:4px;padding:3px 8px;flex:none;color:#1F2329;background:#fff}
+.hA .sr{margin-top:12px;height:38px;border-radius:6px;background:#F2F3F5;display:flex;align-items:center;gap:8px;padding:0 12px;color:#8F959E;font-size:14px;cursor:pointer}
+.svc{display:grid;grid-template-columns:repeat(5,1fr);background:#fff;margin:0 -20px;padding:4px 8px 16px}
+.svc button{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#1F2329;padding:6px 0}
+.svc .si{width:42px;height:42px;border-radius:10px;display:grid;place-items:center}
+.hire{display:flex;align-items:center;gap:12px;background:#fff;margin:8px -20px 0;padding:14px 16px;cursor:pointer}
+.hire .hi{width:40px;height:40px;border-radius:8px;background:${PL};color:${P};display:grid;place-items:center;flex:none}
+.hire .hb{font-size:13px;font-weight:600;color:#fff;background:${P};border-radius:4px;padding:6px 12px;flex:none}
+.lsh{display:flex;justify-content:space-between;align-items:center;padding:16px 0 8px;font-size:15px;font-weight:600}
+.lsh a{font-size:12.5px;color:#8F959E;font-weight:400;cursor:pointer}
+.ftA{text-align:center;font-size:12px;color:#8F959E;padding:14px 0 4px;line-height:1.7}
+.ftA a{color:${P};cursor:pointer}
+/* 行业筛选条 */
+.fA{display:flex;gap:6px;overflow-x:auto;margin:10px -20px 0;padding:0 20px 2px;scrollbar-width:none}
+.fA::-webkit-scrollbar{display:none}
+.fA button{font-size:12.5px;background:#fff;color:#646A73;padding:5px 11px;border-radius:4px;white-space:nowrap;flex:none;border:1px solid var(--line)}
+.fA button.on{background:${PL};color:${PD};border-color:${PL};font-weight:600}
+/* 企业工作台 */
+.kA{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-radius:8px;padding:14px 0;margin-top:12px}
+.kA div{text-align:center;border-right:1px solid var(--line);cursor:pointer}.kA div:last-child{border:0}
+.kA b{display:block;font-size:21px;font-weight:700}
+.kA span{font-size:12px;color:#646A73}
+`;
+const st=document.createElement('style');st.id='themeA';st.textContent=css;document.head.appendChild(st);
+/* 主题样式始终放在最后，压住后面动态插入的旧样式 */
+new MutationObserver(()=>{if(document.head.lastElementChild!==st)document.head.appendChild(st)}).observe(document.head,{childList:true});
+
+const colOf=s=>{const C=['#2F6FB2','#B4432F','#2E7D5B','#6B5B2E','#7A4FA0','#C2410C','#1E7A8C','#5B6BD6'];let h=0;for(const ch of String(s||''))h=(h*31+ch.charCodeAt(0))>>>0;return C[h%C.length]};
+window.colOf=colOf;
+const firstCh=s=>{s=String(s||'').trim();return s?Array.from(s)[0].toUpperCase():'?'};
+
+/* ---- 岗位卡片：一种写法，所有列表通用 ---- */
+window.wJobCard=wJobCard=function(j){
+  const ap=S.applied.has(j.id),vip=typeof isVipJob==='function'&&isVipJob(j);let co='';try{co=coT(j)}catch(e){co=j.company||''}
+  const tags=[expT(j.exp)];if(j.stay)tags.push(L3('包住宿','Housing'));if(j.zh)tags.push(L3('会中文优先','Chinese a plus'));tags.push(L3(j.n+' 人',j.n+(j.n==1?' opening':' openings')));
+  const nav=S.mode==='wk'?'':"S.mode='wk';";
+  return `<div class="jA" onclick="${nav}go('w_job',{id:${j.id}})"><div class="jA1"><b><span style="overflow:hidden;text-overflow:ellipsis">${esc(roleT(j.title))}</span>${vip?`<span class="jAtop">${L3('置顶','Top')}</span>`:''}</b><span class="jAs">GH₵${j.sal}<small>${L3('/月','/mo')}</small></span></div>
+   <div class="jAt">${tags.map(x=>`<span>${x}</span>`).join('')}${ap?`<span class="ap">${L3('已申请','Applied')}</span>`:''}</div>
+   <div class="jAc"><span class="cl" style="background:${colOf(j.company)}">${esc(firstCh(co))}</span><span class="cn">${esc(co)}</span><span class="vf2">${ic('shield',14)}</span><span class="ct">${esc(cityT(j.city))}</span></div></div>`};
+
+/* ---- 求职首页：顶部行业筛选 ---- */
+S.wInd=S.wInd||'all';
+const _vwhA=V.w_home;V.w_home=()=>{const all=S.jobs;let h;
+  if(S.wInd!=='all')S.jobs=all.filter(j=>j.ind===S.wInd);try{h=_vwhA()}finally{S.jobs=all}
+  const chips=`<div class="fA">${[['all',L3('全部','All')],...IND.map(i=>[i.id,indT(i.id)])].map(([k,l])=>`<button class="${S.wInd===k?'on':''}" onclick="S.wInd='${k}';render(false)">${l}</button>`).join('')}</div>`;
+  const k='<div class="searchbar"';const i=h.indexOf(k);if(i<0)return h;const e=h.indexOf('</div>',h.indexOf('<input',i))+6;return h.slice(0,e)+chips+h.slice(e)};
+
+/* ---- 首页：服务入口 + 最新岗位（像 58 同城：先看到东西，再决定身份） ---- */
+const _vwelA=V.welcome;
+V.welcome=()=>{const old=_vwelA();const lm=old.match(/<button[^>]*onclick="setLang\('[^']*'\)"[^>]*>([\s\S]*?)<\/button>/);
+  const lang=lm?`<button class="lbtn" onclick="${lm[0].match(/onclick="([^"]*)"/)[1]}">${lm[1].replace(/<[^>]+>/g,'').trim()}</button>`:'';
+  let c={};try{c=C()}catch(e){}
+  const jobs=S.jobs.filter(j=>j.status==='open'&&(typeof inC!=='function'||inC(j)));
+  const vipF=j=>typeof isVipJob==='function'&&isVipJob(j)?1:0;const list=jobs.slice().sort((a,b)=>vipF(b)-vipF(a)).slice(0,8);
+  const reg=S.company&&S.company.registered;
+  const sv=[['brief',L3('找工作','Find jobs'),'startWorker()','#E6F4F4','#028C92'],['users',L3('招工人','Hire'),'startEmployer()','#FFF1E6','#E8590C'],['tag',L3('二手','Market'),"go('market')",'#EEF0FB','#5B6BD6'],['cap',L3('技能培训','Training'),"go('training')",'#E8F5EC','#1E7A4C'],['scale',L3('法律咨询','Legal'),"go('legal')",'#F5F0E6','#8A6A2B']];
+  return `<div class="pad"><div class="hA"><div class="tr"><img class="lg" src="logo.svg?v=2" alt=""><span class="nm">ChinaPaw</span>
+    <button class="cbtn" onclick="openCountry()">${ic('pin',15)}${esc(S.lang==='zh'?(c.zh||''):(c.en||''))}${ic('right',12)}</button>${lang}</div>
+    <div class="sr" onclick="startWorker();setTimeout(()=>{const i=document.querySelector('.searchbar input');i&&i.focus()},80)">${ic('search',16)}${L3('搜索岗位、公司、城市','Search jobs, companies, cities')}</div></div>
+   <div class="svc">${sv.map(x=>`<button onclick="${x[2]}"><span class="si" style="background:${x[3]};color:${x[4]}">${ic(x[0],22)}</span>${x[1]}</button>`).join('')}</div>
+   <div class="hire" onclick="startEmployer()"><span class="hi">${ic('building',20)}</span><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">${reg?esc(S.company.name||L3('我的企业','My company')):L3('我是老板，要招人','I am hiring')}</div><div style="font-size:12.5px;color:#8F959E;margin-top:2px">${reg?L3('进入招聘工作台','Open your hiring desk'):L3('免费发布岗位，当天就有人申请','Post jobs free and get applicants today')}</div></div><span class="hb">${reg?L3('进入','Open'):L3('发布岗位','Post a job')}</span></div>
+   <div class="lsh">${L3('最新岗位','Latest jobs')}<a onclick="startWorker()">${L3('全部 '+jobs.length+' 个','All '+jobs.length)} ›</a></div>
+   ${list.map(wJobCard).join('')||`<div class="empty">${L3('这个国家暂时还没有岗位','No jobs in this country yet')}</div>`}
+   <div class="ftA">${L3('覆盖非洲 54 国','Available in 54 African countries')} · <a onclick="openCountry()">${L3('切换国家','Change country')}</a><br>${L3('找工作全程免费，任何收费都请举报','Finding a job is always free. Report anyone who asks for money.')}</div></div>`};
+
+/* ---- 底部导航：消息单独成一栏 ---- */
+try{WK_TAB.w_msgs='msgs';WK_TAB.w_chat='msgs';EM_TAB.chats='msgs';EM_TAB.chat='msgs'}catch(e){}
+const _tnavFor=tnavFor;
+tnavFor=function(){const v=S.view;let set=null,on=null;
+  if(v==='welcome'){set='g';on='home'}else if(S.mode==='wk'&&WK_TAB[v]){set='w';on=WK_TAB[v]}else if(S.mode==='emp'&&EM_TAB[v]){set='e';on=EM_TAB[v]}
+  if(set!=='w'&&set!=='e')return _tnavFor();
+  const it=(k,icon,label,extra)=>`<button class="${on===k?'on':''}" onclick="tnavGo('${set}','${k}')" aria-label="${label}"><span class="ti">${ic(icon,22)}${extra||''}</span><span class="tl">${label}</span></button>`;
+  const home=it('home','home',L3('首页','Home'));
+  if(set==='w')return `<nav class="tnav">${home}${it('job','brief',L3('找工作','Jobs'))}${it('cos','building',L3('企业','Companies'))}${it('msgs','chat',L3('消息','Messages'),bdg(unW()))}${it('me','user',L3('我的','Me'))}</nav>`;
+  return `<nav class="tnav">${home}${it('desk','grid','工作台')}${it('talent','users','人才')}${it('msgs','chat','消息',bdg(unE()))}${it('me','user','我的')}</nav>`};
+const _tnavGo=tnavGo;
+tnavGo=window.tnavGo=function(set,k){
+  if(set==='w'&&k==='msgs'){S.hist=[];S.view='w_msgs';S.params={};return render(true)}
+  if(set==='e'&&k==='msgs')return tab('chats');
+  return _tnavGo(set,k)};
+
+/* ---- 我的：补上“我的申请”入口（导航栏换成了消息） ---- */
+const _vwmeA=V.w_me;V.w_me=()=>{let h=_vwmeA();const row=`<div class="msgrow" onclick="S.view='w_apps';S.hist=[{view:'w_me',params:{},top:0}];render(true)"><span class="mri">${ic('doc',20)}</span><div style="flex:1;min-width:0"><div class="b" style="font-size:15px">${L3('我的申请','My applications')}</div><div class="xs muted" style="margin-top:2px">${L3('已申请 '+S.applied.size+' 个岗位','Applied to '+S.applied.size+' jobs')}</div></div>${ic('right')}</div>`;
+  const i=h.indexOf('<div class="msgrow"');return i<0?h:h.slice(0,i)+row+h.slice(i)};
+
+/* ---- 招聘工作台：顶部三个关键数字 + 发布按钮 ---- */
+const _vhomeA=V.home;V.home=()=>{let h=_vhomeA();if(!(S.company&&S.company.registered))return h;
+  const mine=S.jobs.filter(j=>j.owner==='me'||(j.emp&&S.company.dbid&&+j.emp===+S.company.dbid));
+  const apps=mine.reduce((a,j)=>a+(+j.apps||0),0),open=mine.filter(j=>j.status==='open').length,iv=(S.interviews||[]).length;
+  const blk=`<div class="kA"><div onclick="tab('jobs')"><b>${apps}</b><span>收到申请</span></div><div onclick="go('interviews')"><b>${iv}</b><span>面试安排</span></div><div onclick="tab('jobs')"><b>${open}</b><span>在招岗位</span></div></div>
+   <button class="bigbtn" style="width:100%;margin-top:10px" onclick="go('post')">${ic('plus',18)} 发布新岗位</button>`;
+  const k='<div class="searchbar"';const i=h.indexOf(k);return i<0?h:h.slice(0,i)+blk+'<div style="height:12px"></div>'+h.slice(i)};
+
+/* ---- 文案：去掉口号腔 ---- */
+const _vpostA=V.post;V.post=()=>_vpostA().replace('嘿，发布新的招工','发布岗位');
+/* ---- 游客：聊天也要先建档 ---- */
+const _jc=window.jobChat;if(_jc)window.jobChat=function(id){if(!S.me&&window.needReg)return needReg({v:'w_job',p:{id}});return _jc(id)};
 })();
 </script></body>
 </html>
