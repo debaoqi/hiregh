@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.1.0',APP_BUILD=100;
+const APP_VER='4.2.0',APP_BUILD=102;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3659,7 +3659,7 @@ function fitLgHead(){const h=document.getElementById('lgHead');if(!h)return;cons
     const H=tx.offsetHeight;lg.style.height=H+'px';lg.style.width=(H*ar)+'px';return {wn,H}};
   /* 以实际渲染高度确定 logo 大小（手机 WebView 字体缩放时也与两行文字等高） */
   let f=22;for(let i=0;i<8;i++){const {wn,H}=lay(f);const avail=W-gap-H*ar;if(!wn)return;const nf=Math.min(26,f*avail/wn);if(Math.abs(nf-f)<.1){f=nf;break}f=nf}
-  lay(f);let k=0;while(lg.offsetWidth+gap+tx.scrollWidth>W+1&&k++<30){f*=.985;lay(f)}}
+  lay(f);const hr=()=>h.getBoundingClientRect().right-4,over=()=>{const ls=parseFloat(sl.style.letterSpacing)||0;return lg.offsetWidth+gap+tx.scrollWidth>W+1||nm.getBoundingClientRect().right>hr()||sl.getBoundingClientRect().right-Math.max(0,ls)>hr()};let k=0;while(over()&&k++<40){f*=.985;lay(f)}}
 window.fitLgHead=fitLgHead;
 /* 执业领域：按文字长短装箱，每行铺满、两端对齐 */
 function packAreas(){const box=document.getElementById('lgAreas');if(!box)return;const W=box.clientWidth;if(!W)return;const gap=8;
@@ -3886,76 +3886,83 @@ const _gMe48=gMe;gMe=window.gMe=function(){const r=_gMe48.apply(this,arguments);
   if(sh)sh.querySelectorAll('button').forEach(b=>{if((b.getAttribute('onclick')||'').includes('startWorker()'))b.setAttribute('onclick','closeSheet();regGo()')});return r};
 })();
 </script><script>(function(){
-/* ===== v4.1 iOS 风格配色：版式和字号不动，颜色换成 iOS 系统色（明亮、干净） ===== */
-const TINT='#007AFF',INK='#1C1C1E';
-try{const M={ind:['#5856D6','#fff'],agr:['#FFCC00',INK],svc:['#FF9500',INK],con:['#34C759',INK],min:['#1C1C1E','#fff'],log:['#007AFF','#fff'],oth:['#8E8E93','#fff']};
+/* ===== v4.2 iOS 的干净明亮 + 一点非洲色彩（加纳国旗的绿、金、红，肯特布条纹点缀） ===== */
+const TINT='#0B7A4B',INK='#1C1C1E',GOLD='#F2B705',TERRA='#D8432E',KENTE='linear-gradient(90deg,#0B7A4B 0 25%,#F2B705 25% 50%,#D8432E 50% 75%,#2B2118 75% 100%)';
+try{const M={ind:['#7B4FA0','#fff'],agr:['#F2B705',INK],svc:['#D8432E','#fff'],con:['#0B7A4B','#fff'],min:['#2B2118','#fff'],log:['#2367B0','#fff'],oth:['#8A7A66','#fff']};
   IND.forEach(i=>{const m=M[i.id];if(m){i.color=m[0];i.ink=m[1]}})}catch(e){}
 const css=`
-:root{--bg:#F2F2F7;--card:#FFFFFF;--ink:#1C1C1E;--muted:#8E8E93;--line:#E5E5EA;--soft:#F2F2F7;
---purple:#AF52DE;--lilac:#F1E4FA;--gold:#FFCC00;--red:#FF3B30;--lime:#D8F5E0;--orange:#FF9500;--blue:#007AFF;--green:#34C759}
+:root{--bg:#F7F5F0;--card:#FFFFFF;--ink:#1C1C1E;--muted:#8A8478;--line:#ECE7DE;--soft:#F7F5F0;
+--purple:#7B4FA0;--lilac:#EFE6F6;--gold:#F2B705;--red:#D8432E;--lime:#E3F3EA;--orange:#E87A2B;--blue:#2367B0;--green:#0B7A4B}
 html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",Roboto,sans-serif!important;color:var(--ink);background:#E5E5EA!important;background-image:none!important}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",Roboto,sans-serif!important;color:var(--ink);background:#E9E5DC!important;background-image:none!important}
 .phone,.sbar{background:var(--bg)}
 /* ---- 主操作：iOS 蓝 ---- */
 [style*="background:#161616"]{background:${TINT}!important;color:#fff!important}
 [style*="background:#161616"]>svg{stroke:#fff}
 .icbtn.dark,.pill.dark,.chip.on,.m.me,.stage .s{background:${TINT}!important;color:#fff!important}
-.seg{background:#E3E3E8!important}.seg button{color:#3C3C43!important}.seg button.on{background:#fff!important;color:${INK}!important;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.seg{background:#EDE8DF!important}.seg button{color:#4A4036!important}.seg button.on{background:#fff!important;color:${INK}!important;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .tg.on{background:${TINT}!important;border-color:${TINT}!important;color:#fff!important}
 .bigbtn{background:${TINT};color:#fff;box-shadow:none}
-.bigbtn.lime{background:#34C759!important;color:#fff!important}
+.bigbtn.lime{background:${GOLD}!important;color:${INK}!important}
 .steps i.on{background:${TINT}!important}
 .stepper button{background:${TINT}!important}
 .consent input{accent-color:${TINT}}
 .fi:focus,.regwrap .fi:focus{border-color:${TINT}!important}
 .vplan.on,.paych.on{border-color:${TINT}!important}
 .nav{background:${INK}!important}
-.cb .un{background:#FF3B30!important}
+.cb .un{background:${TERRA}!important}
 .toast{background:rgba(28,28,30,.92)!important}
-.sheet .grab{background:#C7C7CC!important}
+.sheet .grab{background:#D5CEC2!important}
 /* ---- 彩色块：iOS 系统色 ---- */
-.wtile[style*="#E8703F"]{background:#E8650C!important}
-.wtile[style*="#2F6FD0"]{background:#007AFF!important}
+.wtile[style*="#E8703F"]{background:#C8552D!important}
+.wtile[style*="#2F6FD0"]{background:#2367B0!important}
 .formwrap{background:#FFFFFF!important}
-.formwrap .fi{background:#F2F2F7!important;border-color:transparent!important}
+.formwrap .fi{background:#F7F5F0!important;border-color:transparent!important}
 .formwrap .fi:focus{border-color:${TINT}!important;background:#fff!important}
-.dhead[style*="#3A3A3A"]{background:#1C1C1E!important}
-.badge.cream,.chip[style*="#F1ECDF"]{background:#F2F2F7!important}
-.badge.grey{background:#E5E5EA!important}
-[style*="background:#F1ECDF"]{background:#F2F2F7!important}
+.dhead[style*="#3A3A3A"]{background:#2B2118!important}
+.badge.cream,.chip[style*="#F1ECDF"]{background:#F4F0E8!important}
+.badge.grey{background:#E8E3DA!important}
+[style*="background:#F1ECDF"]{background:#F4F0E8!important}
 .chip{background:#fff}
-.mri{background:#E5F1FF!important;color:${TINT}!important}
-.tnav{background:rgba(249,249,249,.94)!important;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid rgba(60,60,67,.29)!important;box-shadow:none!important}
-.tnav button{color:#8E8E93!important}.tnav button.on{color:${TINT}!important}
+.mri{background:#E3F3EA!important;color:${TINT}!important}
+.tnav{background:rgba(251,249,245,.94)!important;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid rgba(90,70,40,.22)!important;box-shadow:none!important}
+.tnav button{color:#8A8478!important}.tnav button.on{color:${TINT}!important}
 .tnav button.on .ti{background:transparent!important}
-.tbdg{background:#FF3B30!important;box-shadow:0 0 0 2px #F9F9F9!important}
-.dot{background:#FF3B30!important}
-.ccard{background:linear-gradient(135deg,#E8F2FF,#CFE3FF)!important}
+.tbdg{background:${TERRA}!important;box-shadow:0 0 0 2px #FBF9F5!important}
+.dot{background:${TERRA}!important}
+.ccard{background:linear-gradient(135deg,#FFF6DC,#FBE6B0)!important}
+.ccard:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:${KENTE};z-index:1}
 .ccard:after{display:none!important;content:none!important}
 .ccard .row3 div{background:rgba(255,255,255,.65)!important}
-.wc.jc:not(.vipc){border-color:#E5E5EA!important;box-shadow:0 1px 2px rgba(0,0,0,.04)!important}
+.wc.jc:not(.vipc){border-color:#ECE7DE!important;box-shadow:0 1px 2px rgba(0,0,0,.04)!important}
 div[style="position:relative"]>.wc.jc:not(.vipc){background:linear-gradient(135deg,#FFFBEA 0%,#FFF1BF 100%)!important;border-color:#FFE18A!important}
-.wc.jc:not(.vipc) .jct .chip.sm,.wc.jc:not(.vipc) .jct .badge{background:#F2F2F7!important;color:#3C3C43!important}
-.jbar .jchat{background:#FF9500!important;color:#fff!important;box-shadow:none!important}
-.vipcard{background:linear-gradient(135deg,#2C2C2E,#1C1C1E)!important;color:#FFD60A!important}
-.note-y{background:#FFF4CC!important}
-.datebox{background:#FFF4CC!important}
-.hero .hl{background:#FFCC00!important}
-[style*="background:#CFE36B"],[style*="background: #CFE36B"]{background:#D8F5E0!important}
-[style*="background:#E2B2FA"]{background:#F1E4FA!important}
-.trban{background:linear-gradient(135deg,#0A84FF,#0062CC)!important}
+.wc.jc:not(.vipc) .jct .chip.sm,.wc.jc:not(.vipc) .jct .badge{background:#F4F0E8!important;color:#4A4036!important}
+.jbar .jchat{background:#C8552D!important;color:#fff!important;box-shadow:none!important}
+.vipcard{background:linear-gradient(135deg,#2E2419,#1E1812)!important;color:${GOLD}!important}
+.note-y{background:#FDF0C8!important}
+.datebox{background:#FDF0C8!important}
+.hero .hl{background:${GOLD}!important}
+[style*="background:#CFE36B"],[style*="background: #CFE36B"]{background:#E3F3EA!important}
+[style*="background:#E2B2FA"]{background:#EFE6F6!important}
+.trban{background:linear-gradient(135deg,#0E8A55,#0A6A40)!important;position:relative;overflow:hidden}
+.trban:after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:${KENTE}}
 .cb{box-shadow:0 1px 3px rgba(0,0,0,.05)!important}
-.cb[style*="#EE5A47"],.cb [style*="#EE5A47"]{background:#FFE4E1!important}
-.cb[style*="#F8C94A"],.cb [style*="#F8C94A"]{background:#FFF4CC!important}
-.cb[style*="#FF9F43"],.cb [style*="#FF9F43"]{background:#FFEBD1!important}
-.cb[style*="#5B8CFF"],.cb [style*="#5B8CFF"]{background:#DDEBFF!important}
-.cb[style*="#E2B2FA"],.cb [style*="#E2B2FA"]{background:#F1E4FA!important}
-.cb[style*="#CFE36B"],.cb [style*="#CFE36B"]{background:#D8F5E0!important}
+.cb[style*="#EE5A47"],.cb [style*="#EE5A47"]{background:#FBE3DC!important}
+.cb[style*="#F8C94A"],.cb [style*="#F8C94A"]{background:#FFF1C7!important}
+.cb[style*="#FF9F43"],.cb [style*="#FF9F43"]{background:#FCE6D2!important}
+.cb[style*="#5B8CFF"],.cb [style*="#5B8CFF"]{background:#DFE9F5!important}
+.cb[style*="#E2B2FA"],.cb [style*="#E2B2FA"]{background:#EFE6F6!important}
+.cb[style*="#CFE36B"],.cb [style*="#CFE36B"]{background:#E3F3EA!important}
 .cb[style*="#5B8CFF"],.cb[style*="#5B8CFF"] *:not(.un),.cb[style*="#EE5A47"],.cb[style*="#EE5A47"] *:not(.un){color:#1C1C1E!important}
-.formwrap .chip{background:#F2F2F7!important;color:#1C1C1E!important}
+.formwrap .chip{background:#F4F0E8!important;color:#1C1C1E!important}
 .formwrap .chip.on{background:${TINT}!important;color:#fff!important}
-.cols .l,.trflow i{color:#8E8E93}
-[style*="#E4DFD3"]{background-color:#F2F2F7!important}
+.cols .l,.trflow i{color:#857F73}
+[style*="#E4DFD3"]{background-color:#F4F0E8!important}
+.lghero{background:#FFF5F4!important;color:#1C1C1E!important;border:1px solid #FFD9D4}
+.lghero #lgName{color:#1C1C1E}
+.lghero #lgSlo{opacity:1!important;color:#6B2A24}
+.lghero .lgdesc{opacity:1!important;color:#1C1C1E}
+#lgLogo{filter:brightness(0) saturate(100%) invert(13%) sepia(96%) saturate(5800%) hue-rotate(353deg) brightness(88%) contrast(112%)!important}
 a,.sec-h a{color:${TINT}}
 /* ---- 字号阶梯：标题 30 / 24 / 22 / 19 / 17，粗细统一到 700–800 ---- */
 .hero{font-size:30px!important;font-weight:800!important;letter-spacing:-.5px!important;line-height:1.22!important}
@@ -3981,6 +3988,38 @@ a,.sec-h a{color:${TINT}}
 `;
 const st=document.createElement('style');st.id='harmony';st.textContent=css;document.head.appendChild(st);
 new MutationObserver(()=>{if(document.head.lastElementChild!==st)document.head.appendChild(st)}).observe(document.head,{childList:true});
+})();
+</script><script>(function(){
+/* ===== v4.2 网页自动更新：发现新版本后自动刷新，不再需要用户点“更新” ===== */
+const BUSY_VIEWS=['w_reg','e_reg','post','contract','mpost','chat','w_chat','vippay'];
+const busy=()=>{const a=document.activeElement;return BUSY_VIEWS.includes(S.view)||(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))||document.getElementById('sheet').classList.contains('on')};
+let pend=null;
+async function apply(v){
+  const k=LS.get('autoUpd',null);
+  /* 防止反复刷新：同一版本 10 分钟内只自动刷新一次，失败就退回到原来的提示方式 */
+  if(k&&k.b===v.build&&Date.now()-k.t<10*60e3)return false;
+  LS.set('autoUpd',{b:v.build,t:Date.now(),from:APP_VER});try{persist&&persist()}catch(e){}
+  try{toast((S.lang==='zh'?'正在更新到 v':'Updating to v')+v.version)}catch(e){}
+  try{if('serviceWorker' in navigator){const rg=await navigator.serviceWorker.getRegistration();if(rg){await rg.update().catch(()=>{});if(rg.waiting)rg.waiting.postMessage('skip')}}
+    if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(x=>caches.delete(x)))}}catch(e){}
+  setTimeout(()=>location.replace(location.pathname+'?v='+v.build+'&t='+Date.now()+location.hash),700);return true}
+const _cu=checkUpdate;
+checkUpdate=window.checkUpdate=async function(manual){
+  if(manual||location.protocol!=='https:')return _cu.apply(this,arguments);
+  let v=null;try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(r.ok)v=await r.json()}catch(e){}
+  if(v&&(+v.build||0)>APP_BUILD){
+    if(busy()){pend=v;return}
+    if(await apply(v))return}
+  return _cu.apply(this,arguments)};
+/* 正在填表/聊天时先不打断，离开后再更新 */
+const _rA=render;render=function(){const r=_rA.apply(this,arguments);if(pend&&!busy()){const v=pend;pend=null;setTimeout(()=>{if(!busy())apply(v);else pend=v},300)}return r};
+document.addEventListener('focusout',()=>{if(pend)setTimeout(()=>{if(pend&&!busy()){const v=pend;pend=null;apply(v)}},500)});
+/* 检查更频繁：每 5 分钟一次，另外回到前台、联网时立即检查 */
+if(location.protocol==='https:'){setInterval(()=>checkUpdate(false),5*60e3);addEventListener('online',()=>checkUpdate(false));addEventListener('pageshow',e=>{if(e.persisted)checkUpdate(false)})}
+/* 更新完成：轻提示，不弹窗 */
+const k=LS.get('autoUpd',null);
+if(k&&k.from&&k.from!==APP_VER){LS.set('autoUpd',{b:k.b,t:k.t});try{LS.set('updFrom',null)}catch(e){}
+  setTimeout(()=>{try{toast((S.lang==='zh'?'已更新到 v':'Updated to v')+APP_VER)}catch(e){}},900)}
 })();
 </script></body>
 </html>

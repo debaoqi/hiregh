@@ -1,6 +1,6 @@
 {
-  "version": "4.1.0",
-  "build": 100,
+  "version": "4.2.0",
+  "build": 102,
   "date": "2026-11-19",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,14 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "全新 iOS 风格配色，更明亮清爽"
+      "网页版自动更新：有新版本时自动刷新",
+      "配色加入非洲元素：加纳绿、金、红和肯特布条纹",
+      "法律咨询页：浅色底、红色律所标志"
     ],
     "en": [
-      "New iOS-style colors: brighter and cleaner"
+      "Web version now updates itself automatically",
+      "Colors with an African touch: Ghana green, gold, red and kente stripes",
+      "Legal page: lighter background and red firm logo"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
