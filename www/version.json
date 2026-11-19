@@ -1,6 +1,6 @@
 {
-  "version": "4.0.1",
-  "build": 96,
+  "version": "4.0.2",
+  "build": 97,
   "date": "2026-11-19",
   "force": false,
   "minNative": 128,
@@ -8,12 +8,12 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "恢复原来的版式",
-      "统一配色和字号，整体更柔和"
+      "修复 VIP 岗位卡片文字看不清",
+      "修复发布岗位页选中项看不清"
     ],
     "en": [
-      "Original layout restored",
-      "Softer, more consistent colors and text sizes"
+      "Fixed hard-to-read VIP job cards",
+      "Fixed hard-to-read selections on the post-a-job form"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",

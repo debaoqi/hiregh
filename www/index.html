@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.0.1',APP_BUILD=96;
+const APP_VER='4.0.2',APP_BUILD=97;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3903,12 +3903,11 @@ body{color:var(--ink);background:#E6E2D9!important;background-image:none!importa
 .dot{background:#E5574B!important}
 .ccard{background:linear-gradient(135deg,#D6EEE5,#B5DCCD)!important}
 .ccard:after{opacity:.06!important}
-.wc.jc{border-color:#E4DED2!important;box-shadow:0 1px 2px rgba(40,35,20,.06)!important}
-div[style="position:relative"]>.wc.jc{background:linear-gradient(135deg,#FFF6DE 0%,#F9E6B8 100%)!important;border-color:#EBCF8C!important}
-.wc.jc .jct .chip.sm,.wc.jc .jct .badge{background:#EFE9DC!important;color:#5A5040!important}
+.wc.jc:not(.vipc){border-color:#E4DED2!important;box-shadow:0 1px 2px rgba(40,35,20,.06)!important}
+div[style="position:relative"]>.wc.jc:not(.vipc){background:linear-gradient(135deg,#FFF6DE 0%,#F9E6B8 100%)!important;border-color:#EBCF8C!important}
+.wc.jc:not(.vipc) .jct .chip.sm,.wc.jc:not(.vipc) .jct .badge{background:#EFE9DC!important;color:#5A5040!important}
 .jbar .jchat{background:#E2805A!important;box-shadow:0 6px 16px -6px rgba(226,128,90,.55)!important}
 .vipcard{background:linear-gradient(135deg,#2B3436,#1F2B2D)!important;color:#F0CE7C!important}
-.vipb{background:linear-gradient(135deg,#F3D891,#E4B44A)!important}
 .note-y{background:#F7E3A8!important}
 .datebox{background:var(--gold)!important}
 [style*="background:#CFE36B"],[style*="background: #CFE36B"]{background:#CFE9DF!important}
@@ -3921,6 +3920,9 @@ div[style="position:relative"]>.wc.jc{background:linear-gradient(135deg,#FFF6DE 
 .cb[style*="#E2B2FA"],.cb [style*="#E2B2FA"]{background:#E4DAF5!important}
 .cb[style*="#CFE36B"],.cb [style*="#CFE36B"]{background:#CFE9DF!important}
 .cb[style*="#5B8CFF"],.cb[style*="#5B8CFF"] *:not(.un),.cb[style*="#EE5A47"],.cb[style*="#EE5A47"] *:not(.un){color:#1C2122!important}
+.formwrap .chip.on{background:#fff!important;color:${INK}!important}
+.formwrap .chip{background:${INK}!important;color:#E9E6DF!important}
+.cols .l,.trflow i{color:#8D897F}
 /* ---- 字号阶梯：标题 30 / 24 / 22 / 19 / 17，粗细统一到 700–800 ---- */
 .hero{font-size:30px!important;font-weight:800!important;letter-spacing:-.5px!important;line-height:1.22!important}
 .hero .hl{background:var(--gold)!important}
