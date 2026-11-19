@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.2.1',APP_BUILD=103;
+const APP_VER='4.2.2',APP_BUILD=104;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4022,6 +4022,21 @@ if(location.protocol==='https:'){setInterval(()=>checkUpdate(false),5*60e3);addE
 const k=LS.get('autoUpd',null);
 if(k&&k.from&&k.from!==APP_VER){LS.set('autoUpd',{b:k.b,t:k.t});try{LS.set('updFrom',null)}catch(e){}
   setTimeout(()=>{try{toast((S.lang==='zh'?'已更新到 v':'Updated to v')+APP_VER)}catch(e){}},900)}
+})();
+(function(){
+/* ===== v4.2.2 中文界面下品牌名显示为“华宝招聘”，其他语言仍为 ChinaPaw ===== */
+const RE=/ChinaPaw(?![\w-]*\.(?:apk|aab|com|dev|io|png|svg|json)\b)/g,ZH='华宝招聘';
+const zh=()=>S.lang==='zh';let busy=false;
+function fix(root){if(!zh()||!root)return;busy=true;try{
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentElement;return p&&!/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.tagName)&&n.nodeValue.includes('ChinaPaw')?1:2}});
+  const ns=[];let n;while((n=w.nextNode()))ns.push(n);ns.forEach(t=>{t.nodeValue=t.nodeValue.replace(RE,ZH)});
+  root.querySelectorAll&&root.querySelectorAll('[placeholder*="ChinaPaw"],[title*="ChinaPaw"],[aria-label*="ChinaPaw"],img[alt*="ChinaPaw"]').forEach(e=>{['placeholder','title','aria-label','alt'].forEach(a=>{const v=e.getAttribute(a);if(v&&v.includes('ChinaPaw'))e.setAttribute(a,v.replace(RE,ZH))})});
+  if(document.title.includes('ChinaPaw'))document.title=document.title.replace(RE,ZH)}finally{busy=false}}
+const TITLE0=document.title;
+new MutationObserver(ms=>{if(busy)return;if(!zh()){if(document.title!==TITLE0&&!document.title.includes('ChinaPaw'))document.title=TITLE0;return}
+  for(const m of ms){if(m.type==='characterData'){if(m.target.nodeValue&&m.target.nodeValue.includes('ChinaPaw'))fix(m.target.parentElement)}else m.addedNodes.forEach(x=>{if(x.nodeType===1)fix(x);else if(x.nodeType===3&&x.nodeValue.includes('ChinaPaw'))fix(x.parentElement)})}})
+ .observe(document.body,{childList:true,subtree:true,characterData:true});
+fix(document.body);
 })();
 </script></body>
 </html>
