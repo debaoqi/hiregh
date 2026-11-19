@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.2.0',APP_BUILD=102;
+const APP_VER='4.2.1',APP_BUILD=103;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3931,7 +3931,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","H
 .tbdg{background:${TERRA}!important;box-shadow:0 0 0 2px #FBF9F5!important}
 .dot{background:${TERRA}!important}
 .ccard{background:linear-gradient(135deg,#FFF6DC,#FBE6B0)!important}
-.ccard:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:${KENTE};z-index:1}
+
 .ccard:after{display:none!important;content:none!important}
 .ccard .row3 div{background:rgba(255,255,255,.65)!important}
 .wc.jc:not(.vipc){border-color:#ECE7DE!important;box-shadow:0 1px 2px rgba(0,0,0,.04)!important}
@@ -3963,6 +3963,8 @@ div[style="position:relative"]>.wc.jc:not(.vipc){background:linear-gradient(135d
 .lghero #lgSlo{opacity:1!important;color:#6B2A24}
 .lghero .lgdesc{opacity:1!important;color:#1C1C1E}
 #lgLogo{filter:brightness(0) saturate(100%) invert(13%) sepia(96%) saturate(5800%) hue-rotate(353deg) brightness(88%) contrast(112%)!important}
+.sc[onclick="startWorker()"]{background:${GOLD}!important;color:${INK}!important}
+.sc[onclick="startWorker()"] .muted,.sc[onclick="startWorker()"] .sm,.sc[onclick="startWorker()"] .xs{color:#3D3220!important;opacity:1!important}
 a,.sec-h a{color:${TINT}}
 /* ---- 字号阶梯：标题 30 / 24 / 22 / 19 / 17，粗细统一到 700–800 ---- */
 .hero{font-size:30px!important;font-weight:800!important;letter-spacing:-.5px!important;line-height:1.22!important}
