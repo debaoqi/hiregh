@@ -1,6 +1,6 @@
 {
-  "version": "4.0.0",
-  "build": 95,
+  "version": "4.0.1",
+  "build": 96,
   "date": "2026-11-19",
   "force": false,
   "minNative": 128,
@@ -8,12 +8,12 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "全新界面：更清爽、工资更醒目、一屏看更多岗位",
-      "首页直接浏览岗位，底部新增“消息”入口"
+      "恢复原来的版式",
+      "统一配色和字号，整体更柔和"
     ],
     "en": [
-      "New design: cleaner, salary easier to see, more jobs per screen",
-      "Browse jobs right from Home; new Messages tab"
+      "Original layout restored",
+      "Softer, more consistent colors and text sizes"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
