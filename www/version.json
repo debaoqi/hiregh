@@ -1,6 +1,6 @@
 {
-  "version": "4.0.4",
-  "build": 99,
+  "version": "4.1.0",
+  "build": 100,
   "date": "2026-11-19",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "去掉卡片上的半透明 ChinaPaw 水印"
+      "全新 iOS 风格配色，更明亮清爽"
     ],
     "en": [
-      "Removed the faint ChinaPaw watermark from cards"
+      "New iOS-style colors: brighter and cleaner"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
