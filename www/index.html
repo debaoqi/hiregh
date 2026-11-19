@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.0.2',APP_BUILD=97;
+const APP_VER='4.0.3',APP_BUILD=98;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -3862,6 +3862,28 @@ const _vwhG=V.w_home;V.w_home=()=>{let h=_vwhG();if(S.me)return h;
   const ban=`<div class="box" style="margin-top:14px;display:flex;align-items:center;gap:12px;background:var(--lime)"><div style="flex:1;min-width:0"><div class="b" style="font-size:15px">${L3('岗位和企业免注册浏览','Browse jobs and companies freely')}</div><div class="xs" style="margin-top:3px;opacity:.75">${L3('看中了再建档，3 步完成即可申请和聊天','Create a profile when you find one you like')}</div></div><button class="pill" style="background:#161616;color:#fff;border:0;padding:8px 14px;flex:none" onclick="regGo()">${L3('创建档案','Sign up')}</button></div>`;
   const i=h.indexOf('<div class="searchbar"');return i<0?ban+h:h.slice(0,i)+ban+h.slice(i)};
 const _apG=applyJob;applyJob=function(id){if(!S.me)return needReg({v:'w_job',p:{id}});return _apG.apply(this,arguments)};
+
+/* ===== v4.0.3 “我的”：按已注册的身份显示；两个身份都注册了，两边都能看到并一键切换 ===== */
+const empReg=()=>!!(S.company&&S.company.registered);
+/* 求职端点“我的”：没有求职档案但已注册招聘方 → 直接显示招聘方的“我的” */
+const _tg48=tnavGo;tnavGo=window.tnavGo=function(set,k){
+  if(set==='w'&&k==='me'&&!S.me&&empReg()){S.mode='emp';return tab('me')}
+  return _tg48(set,k)};
+const _r48b=render;render=function(top){
+  if(S.mode==='wk'&&!S.me&&S.view==='w_me'&&empReg()){S.mode='emp';S.hist=[];S.view='me';S.params={}}
+  return _r48b.apply(this,arguments)};
+/* 两个身份卡片 */
+const idCard=(icon,title,sub,btn,on)=>`<div class="msgrow idcard" onclick="${on}"><span class="mri">${ic(icon,20)}</span><div style="flex:1;min-width:0"><div class="b" style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${title}</div><div class="xs muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div></div><span class="pill" style="background:var(--lime);color:#161616;padding:6px 12px;flex:none">${btn}</span></div>`;
+const ins=(h,card)=>{const i=h.indexOf('<div class="msgrow"');return i<0?h+card:h.slice(0,i)+card+h.slice(i)};
+const _vwme48=V.w_me;V.w_me=()=>{const h=_vwme48();if(!S.me||!empReg())return h;
+  return ins(h,idCard('building',L3('我的招聘企业','My company')+' · '+esc(S.company.name||''),L3('已注册招聘方 · 查看岗位、人才和消息','Registered employer · jobs, talent, messages'),L3('切换到招人','Hiring'),"S.mode='emp';tab('me')"))};
+const _vme48=V.me;V.me=()=>{const h=_vme48();if(!empReg())return h;
+  const c=S.me?idCard('user',L3('我的求职档案','My job profile')+' · '+esc(S.me.name||''),(typeof roleT==='function'?roleT(S.me.role):S.me.role)+' · '+L3('已申请 '+S.applied.size+' 个岗位','Applied to '+S.applied.size+' jobs'),L3('切换到找工作','Job seeker'),"S.mode='wk';S.hist=[];S.view='w_me';S.params={};render(true)")
+   :idCard('user',L3('我也想找工作','I also want a job'),L3('创建求职档案，3 步完成','Create a job profile in 3 steps'),L3('去创建','Create'),'regGo()');
+  return ins(h,c)};
+/* 什么都没注册时，“我的”里的“我要找工作”直接进入建档 */
+const _gMe48=gMe;gMe=window.gMe=function(){const r=_gMe48.apply(this,arguments);const sh=document.querySelector('.sheet.on');
+  if(sh)sh.querySelectorAll('button').forEach(b=>{if((b.getAttribute('onclick')||'').includes('startWorker()'))b.setAttribute('onclick','closeSheet();regGo()')});return r};
 })();
 </script><script>(function(){
 /* ===== v4.0.1 配色与字号统一：版式不动，只把颜色收成一个色系、字号收成一套阶梯 ===== */

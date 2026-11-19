@@ -1,6 +1,6 @@
 {
-  "version": "4.0.2",
-  "build": 97,
+  "version": "4.0.3",
+  "build": 98,
   "date": "2026-11-19",
   "force": false,
   "minNative": 128,
@@ -8,12 +8,12 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "修复 VIP 岗位卡片文字看不清",
-      "修复发布岗位页选中项看不清"
+      "“我的”按已注册身份显示，不再重复要求注册",
+      "同时注册招人和找工作，两边都能看到并一键切换"
     ],
     "en": [
-      "Fixed hard-to-read VIP job cards",
-      "Fixed hard-to-read selections on the post-a-job form"
+      "“Me” now shows the profile you already registered",
+      "Registered as both employer and job seeker? Switch between them in one tap"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
