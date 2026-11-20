@@ -1,17 +1,19 @@
 {
-  "version": "4.2.2",
-  "build": 104,
-  "date": "2026-11-19",
+  "version": "4.3.0",
+  "build": 105,
+  "date": "2026-11-20",
   "force": false,
   "minNative": 128,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "中文界面下品牌名显示为“华宝招聘”"
+      "新增加纳华人群招聘信息和二手信息",
+      "招聘、二手详情页可直接打电话、发 WhatsApp、复制微信号"
     ],
     "en": [
-      "Brand name shown as 华宝招聘 in Chinese"
+      "New jobs and second-hand listings from Ghana community groups",
+      "Call, WhatsApp or copy WeChat ID right from the listing"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",

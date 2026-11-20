@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.2.2',APP_BUILD=104;
+const APP_VER='4.3.0',APP_BUILD=105;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4037,6 +4037,50 @@ new MutationObserver(ms=>{if(busy)return;if(!zh()){if(document.title!==TITLE0&&!
   for(const m of ms){if(m.type==='characterData'){if(m.target.nodeValue&&m.target.nodeValue.includes('ChinaPaw'))fix(m.target.parentElement)}else m.addedNodes.forEach(x=>{if(x.nodeType===1)fix(x);else if(x.nodeType===3&&x.nodeValue.includes('ChinaPaw'))fix(x.parentElement)})}})
  .observe(document.body,{childList:true,subtree:true,characterData:true});
 fix(document.body);
+})();
+</script><script>(function(){
+/* ===== v4.3 群信息导入：招聘（工资文字、联系方式、待核实）+ 二手（面议、示意图、无电话时的联系方式） ===== */
+try{[['加纳','Ghana'],['东部省','Eastern Region'],['西非（国家未注明）','West Africa (country not stated)'],['尼日利亚','Nigeria'],['科特迪瓦',"Côte d'Ivoire"],['几内亚','Guinea']].forEach(c=>{if(!CITIES.find(x=>x[0]===c[0]))CITIES.push(c)})}catch(e){}
+const zh=()=>S.lang==='zh';
+const intl=p=>{p=String(p||'').replace(/[^\d+]/g,'');if(!p)return '';if(p[0]==='+')return p;if(/^1\d{10}$/.test(p))return '+86'+p;if(/^0\d{9}$/.test(p))return '+233'+p.slice(1);if(/^[2-5]\d{8}$/.test(p))return '+233'+p;return p};
+window.ctCall=p=>{const n=intl(p);if(n)location.href='tel:'+n};
+window.ctWa=(p,t)=>{const n=intl(p).replace('+','');if(n)openExt('https://wa.me/'+n+'?text='+encodeURIComponent((zh()?'你好，我在华宝招聘看到你的信息：':'Hi, I saw your post on ChinaPaw: ')+(t||'')))};
+window.ctCopy=w=>{const done=()=>toast(L3('微信号已复制：'+w,'WeChat ID copied: '+w));try{navigator.clipboard.writeText(w).then(done,done)}catch(e){done()}};
+const ctBlock=(c,title,src)=>{c=c||{};const b=[];
+  if(c.phone)b.push(`<button class="bigbtn" style="flex:1 1 40%;min-width:0" onclick="ctCall('${esc(c.phone)}')">${ic('phone',17)} ${L3('打电话','Call')}</button>`);
+  const wa=c.whatsapp||c.phone;if(wa&&/^(0\d{9}|\+233|[2-5]\d{8})/.test(String(wa).replace(/[^\d+]/g,'')))b.push(`<button class="bigbtn" style="flex:1 1 40%;min-width:0;background:#1F9D55" onclick="ctWa('${esc(wa)}','${esc(title).replace(/'/g,'')}')">WhatsApp</button>`);
+  if(c.wechat)b.push(`<button class="bigbtn" style="flex:1 1 40%;min-width:0;background:#07C160" onclick="ctCopy('${esc(c.wechat)}')">${L3('复制微信号','Copy WeChat')}</button>`);
+  const lines=[c.name?L3('联系人：','Contact: ')+esc(c.name):'',c.phone?L3('电话：','Phone: ')+esc(c.phone):'',c.whatsapp&&c.whatsapp!==c.phone?'WhatsApp：'+esc(c.whatsapp):'',c.wechat?L3('微信：','WeChat: ')+esc(c.wechat):'',c.note?esc(c.note):''].filter(Boolean);
+  return `<div class="box msec"><h4>${L3('联系方式','How to contact')}</h4>${lines.length?`<div class="sm" style="line-height:1.8">${lines.join('<br>')}</div><div class="row gap" style="margin-top:12px;flex-wrap:wrap">${b.join('')}</div>`
+    :`<div class="sm muted" style="line-height:1.7">${L3('原信息未留联系方式，发布人通过华人群发布。','The original post did not include contact details.')}</div>`}
+   <div class="xs muted" style="margin-top:10px;line-height:1.6">${src?L3('信息来源：加纳华人群公开信息，平台整理。','Source: public posts in Chinese community groups in Ghana.')+' ':''}${L3('求职、交易请先核实，任何要求先交钱的都可能是骗局。','Please verify first. Anyone asking for money upfront may be a scammer.')}</div></div>`};
+
+/* ---------- 招聘 ---------- */
+const salTxt=j=>zh()?j.salTxt:(j.salTxtEn||j.salTxt);
+const _wjc53=wJobCard;wJobCard=window.wJobCard=function(j){let h=_wjc53(j);if(!j||!j.src)return h;
+  if(j.salTxt)h=h.replace(/(<div class="l">)GH₵[^<]*(<\/div><div class="v">)[^<]*(<\/div>)/,`$1${L3('薪资','Pay')}$2${esc(salTxt(j))}$3`);
+  h=h.replace(ic('shield',13),'');
+  if(j.verify)h=h.replace(/(<h3[^>]*>)/,`$1<span class="chip sm" style="background:#FDF0C8!important;color:#7A4A00!important;padding:1px 7px!important;font-size:10.5px!important;margin-right:4px">${L3('待核实','Unverified')}</span>`);
+  return h};
+const _vwj53=V.w_job;V.w_job=()=>{let h=_vwj53();const j=S.jobs.find(x=>x.id===S.params.id);if(!j||!j.src)return h;
+  h=h.replace(' · '+t('verified'),' · '+L3('华人群信息','Community post'));
+  if(j.salTxt)h=h.replace(new RegExp('GH₵'+j.sal.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[^<]*'),esc(salTxt(j)));
+  const blk=ctBlock(j.contact,(zh()?j.title:(j.en||j.title)),true)+(j.verify?`<div class="note-y" style="margin-top:10px;font-size:12.5px">${L3('这条是外地或雇主信息不完整的招聘，请先向发布人核实工作地点、雇主和待遇。','This job is abroad or the employer details are incomplete. Please confirm the location, employer and pay first.')}</div>`:'');
+  h=h.replace(/<button class="bigbtn jchat"[^>]*>[\s\S]*?<\/button>/,'');const i=h.lastIndexOf('<div class="bbar');return i<0?h+blk:h.slice(0,i)+`<div class="pad" style="padding-top:0">${blk}</div>`+h.slice(i)};
+/* “中国公司”只是统称，不在企业列表里单独成一家 */
+const GENERIC=['中国公司'];
+const _coAll53=coAll;coAll=window.coAll=function(){return _coAll53.apply(this,arguments).filter(c=>!(c.name&&GENERIC.includes(c.name)))};
+
+/* ---------- 二手 ---------- */
+const NEGO=()=>L3('价格面议','Ask for price');
+const fixPrice=h=>h.replace(/<b style="color:#D2452F"><\/b>/g,`<b style="color:#D2452F;font-size:13px">${NEGO()}</b>`).replace(/<b style="font-size:26px;color:#D2452F"><\/b>/g,`<b style="font-size:22px;color:#D2452F">${NEGO()}</b>`);
+const _mkUpd53=mkUpd;mkUpd=window.mkUpd=function(){const r=_mkUpd53.apply(this,arguments);const e=document.getElementById('mkList');if(e){const n=fixPrice(e.innerHTML);if(n!==e.innerHTML)e.innerHTML=n;
+  (MK.list||[]).forEach(x=>{if(x.data&&x.data.illus){e.querySelectorAll(`.mkc[onclick="go('mitem',{id:${x.id}})"] .mkph`).forEach(p=>{if(!p.querySelector('.mkill'))p.insertAdjacentHTML('beforeend',`<span class="mkill">${L3('示意图','Stock photo')}</span>`)})}})}return r};
+const _vmi53=V.mitem;V.mitem=()=>{let h=fixPrice(_vmi53());const id=S.params.id;const x=MK.full[id]||(MK.list||[]).find(y=>y.id===id);if(!x||!x.data||!x.data.src)return h;const d=x.data;
+  if(d.illus){const cr=`<div class="xs muted" style="margin-top:6px;line-height:1.5">${L3('图片为网络示意图，非实物','Stock photo, not the actual item')}${d.credit?` · ${esc(d.credit)}`:''}</div>`;const k='<div style="margin-top:14px">';const i=h.indexOf(k);if(i>0)h=h.slice(0,i)+cr+h.slice(i)}
+  const blk=ctBlock({phone:d.phone,whatsapp:d.whatsapp,wechat:d.wechat,name:d.name,note:d.cnote},d.title,true);
+  const i=h.lastIndexOf('<div class="bbar');h=i<0?h:h.slice(0,i);const j=h.lastIndexOf('</div>');return h.slice(0,j)+blk+h.slice(j)};
+const st=document.createElement('style');st.textContent='.mkph{position:relative}.mkill{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;pointer-events:none}';document.head.appendChild(st);
 })();
 </script></body>
 </html>
