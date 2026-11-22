@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.3.0',APP_BUILD=105;
+const APP_VER='4.3.1',APP_BUILD=106;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4081,6 +4081,10 @@ const _vmi53=V.mitem;V.mitem=()=>{let h=fixPrice(_vmi53());const id=S.params.id;
   const blk=ctBlock({phone:d.phone,whatsapp:d.whatsapp,wechat:d.wechat,name:d.name,note:d.cnote},d.title,true);
   const i=h.lastIndexOf('<div class="bbar');h=i<0?h:h.slice(0,i);const j=h.lastIndexOf('</div>');return h.slice(0,j)+blk+h.slice(j)};
 const st=document.createElement('style');st.textContent='.mkph{position:relative}.mkill{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;pointer-events:none}';document.head.appendChild(st);
+/* 企业端底部导航：发布放在人才前面 */
+const _tf53=tnavFor;tnavFor=window.tnavFor=function(){let h=_tf53.apply(this,arguments);
+  const re=k=>new RegExp(`<button[^>]*onclick="tnavGo\\('e','${k}'\\)"[\\s\\S]*?<\\/button>`);const a=h.match(re('talent')),b=h.match(re('post'));
+  if(a&&b&&h.indexOf(a[0])<h.indexOf(b[0])){h=h.replace(a[0],'\u0000T').replace(b[0],a[0]).replace('\u0000T',b[0])}return h};
 })();
 </script></body>
 </html>
