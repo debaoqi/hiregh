@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.3.2',APP_BUILD=107;
+const APP_VER='4.3.3',APP_BUILD=108;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4111,6 +4111,25 @@ const _r54=render;render=function(){const r=_r54.apply(this,arguments);requestAn
 /* 局部刷新的列表（二手、培训、企业）也处理 */
 new MutationObserver(ms=>{if(ms.some(m=>m.addedNodes.length))requestAnimationFrame(()=>{try{fitTitles()}catch(e){}})}).observe(document.getElementById('screen')||document.body,{childList:true,subtree:true});
 addEventListener('resize',()=>{document.querySelectorAll('[data-fit1]').forEach(e=>{delete e.dataset.fit1;e.style.fontSize=''});fitTitles()});
+})();
+</script><script>(function(){
+/* ===== v4.3.3 更新更可靠：所有入口（网页 / 主屏幕 / 安卓 App）都能及时拿到新版本 ===== */
+if(location.protocol!=='https:')return;
+/* 1) 更频繁、更多时机检查：窗口获得焦点、回到前台、网络恢复、电脑唤醒后，最多每 20 秒检查一次 */
+let last=0;const kick=()=>{if(Date.now()-last<20e3)return;last=Date.now();try{checkUpdate(false)}catch(e){}};
+addEventListener('focus',kick);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')kick()});
+addEventListener('online',kick);
+let tick=Date.now();setInterval(()=>{const n=Date.now();if(n-tick>90e3)kick();tick=n},30e3); /* 电脑休眠唤醒 */
+/* 2) 刷新后如果拿到的还是旧版本（CDN 还没换完），1 分钟后自动再试，最多 3 次，之后才改为提示 */
+const k=LS.get('autoUpd',null);
+if(k&&k.b>APP_BUILD){const c=LS.get('autoUpdN',null),n=(c&&c.b===k.b?c.n:0)+1;LS.set('autoUpdN',{b:k.b,n});
+  if(n<=3){LS.set('autoUpd',Object.assign({},k,{t:Date.now()-10*60e3+50e3}));setTimeout(()=>{last=0;kick()},60e3)}}
+/* 3) 让 Service Worker 立即接管新版本 */
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistration().then(rg=>{if(!rg)return;
+  const sk=w=>w&&w.postMessage('skip');sk(rg.waiting);
+  rg.addEventListener('updatefound',()=>{const w=rg.installing;w&&w.addEventListener('statechange',()=>{if(w.state==='installed')sk(w)})});
+  rg.update().catch(()=>{})}).catch(()=>{})}
 })();
 </script></body>
 </html>

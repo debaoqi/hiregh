@@ -1,6 +1,6 @@
 {
-  "version": "4.3.2",
-  "build": 107,
+  "version": "4.3.3",
+  "build": 108,
   "date": "2026-11-23",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "卡片标题统一显示为一行，放不下时自动缩小字号"
+      "更新更及时：网页版、主屏幕版和安卓 App 打开或回到前台时自动升级到最新版"
     ],
     "en": [
-      "Card titles now stay on one line and shrink to fit"
+      "More reliable updates: web, home-screen and Android app upgrade automatically"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
