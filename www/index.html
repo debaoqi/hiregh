@@ -1121,7 +1121,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.3.1',APP_BUILD=106;
+const APP_VER='4.3.2',APP_BUILD=107;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4085,6 +4085,32 @@ const st=document.createElement('style');st.textContent='.mkph{position:relative
 const _tf53=tnavFor;tnavFor=window.tnavFor=function(){let h=_tf53.apply(this,arguments);
   const re=k=>new RegExp(`<button[^>]*onclick="tnavGo\\('e','${k}'\\)"[\\s\\S]*?<\\/button>`);const a=h.match(re('talent')),b=h.match(re('post'));
   if(a&&b&&h.indexOf(a[0])<h.indexOf(b[0])){h=h.replace(a[0],'\u0000T').replace(b[0],a[0]).replace('\u0000T',b[0])}return h};
+})();
+</script><script>(function(){
+/* ===== v4.3.2 卡片标题一律一行：放不下时先缩小字号（最多缩到 72%），仍放不下才用省略号 ===== */
+const CARD='.trc,.mkc,.wc,.coc,.cb,.sc,.msgrow,.lgcard,.box,.ivc,.natc,.mc,.wtile,.cohero,.ccard,.stage,.li,.mrow,[onclick]';
+const lines=el=>{let mx=0;for(const n of el.childNodes){if(n.nodeType!==3||!n.textContent.trim())continue;const r=document.createRange();r.selectNodeContents(n);const tops=new Set();for(const x of r.getClientRects()){if(x.width>1)tops.add(Math.round(x.top/4))}mx=Math.max(mx,tops.size)}return mx};
+function fitOne(el){
+  if(el.dataset.fit1)return;const cs=getComputedStyle(el);const fs=parseFloat(cs.fontSize);
+  el.dataset.fit1='1';el.style.whiteSpace='nowrap';el.style.overflow='hidden';el.style.textOverflow='ellipsis';el.style.minWidth='0';el.style.maxWidth='100%';
+  if(cs.display==='inline')el.style.display='inline-block';
+  const card=el.closest(CARD);for(let a=el.parentElement;a&&a!==card;a=a.parentElement){if(getComputedStyle(a).minWidth==='auto')a.style.minWidth='0'}
+  const mn=Math.min(fs,Math.max(fs*0.6,11));let f=fs,k=0;while(el.scrollWidth>el.clientWidth+1&&f>mn&&k++<20){f=Math.max(mn,f*0.95);el.style.fontSize=f.toFixed(2)+'px'}
+}
+function fitTitles(root){root=root||document.getElementById('screen');if(!root)return;
+  const cand=[];root.querySelectorAll('div,span,b,h3,h4,strong,a').forEach(el=>{
+    if(el.dataset.fit1||el.closest('.bigbtn,button,.chips,.inputbar,.m,input,textarea'))return;
+    const t=el.textContent.trim();if(t.length<2||t.length>40)return;
+    if(el.querySelector(':scope>small')&&el.dataset.fitw!=='1'){const cs0=getComputedStyle(el);if((+cs0.fontWeight)>=600&&parseFloat(cs0.fontSize)>=13.5&&el.closest(CARD)&&lines(el)>1){el.dataset.fitw='1';const sp=document.createElement('span');sp.style.display='block';[...el.childNodes].filter(n=>n.nodeType===3&&n.textContent.trim()).forEach(n=>sp.appendChild(n));el.insertBefore(sp,el.firstChild);cand.push(sp)}return}
+    if(el.children.length>3)return;if([...el.children].some(c=>/^(DIV|P|UL|OL|H3|H4|TABLE|SMALL)$/.test(c.tagName)))return;const own=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim();if(own.length<2)return;
+    const cs=getComputedStyle(el);if((+cs.fontWeight)<600||parseFloat(cs.fontSize)<13.5)return;
+    if(!el.closest(CARD))return;if(lines(el)>1)cand.push(el)});
+  cand.forEach(fitOne)}
+window.fitTitles=fitTitles;
+const _r54=render;render=function(){const r=_r54.apply(this,arguments);requestAnimationFrame(()=>{try{fitTitles()}catch(e){}});setTimeout(()=>{try{fitTitles()}catch(e){}},350);return r};
+/* 局部刷新的列表（二手、培训、企业）也处理 */
+new MutationObserver(ms=>{if(ms.some(m=>m.addedNodes.length))requestAnimationFrame(()=>{try{fitTitles()}catch(e){}})}).observe(document.getElementById('screen')||document.body,{childList:true,subtree:true});
+addEventListener('resize',()=>{document.querySelectorAll('[data-fit1]').forEach(e=>{delete e.dataset.fit1;e.style.fontSize=''});fitTitles()});
 })();
 </script></body>
 </html>

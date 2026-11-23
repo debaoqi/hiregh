@@ -1,19 +1,17 @@
 {
-  "version": "4.3.1",
-  "build": 106,
-  "date": "2026-11-22",
+  "version": "4.3.2",
+  "build": 107,
+  "date": "2026-11-23",
   "force": false,
   "minNative": 128,
   "forceNative": false,
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "企业端底部导航：“发布”与“人才”调换位置",
-      "二手信息更新：新增车辆信息和实拍图片"
+      "卡片标题统一显示为一行，放不下时自动缩小字号"
     ],
     "en": [
-      "Employer tab bar: Post now comes before Talent",
-      "Second-hand market: more vehicle listings with real photos"
+      "Card titles now stay on one line and shrink to fit"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
