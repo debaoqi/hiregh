@@ -9,11 +9,13 @@
   "notes": {
     "zh": [
       "大幅节省流量：照片改为图片链接，列表有变化才重新下载",
-      "消息推送与全局刷新共用一条连接，打开更快、更省电"
+      "消息推送与全局刷新共用一条连接",
+      "“我的”招聘方信息卡排版更简洁"
     ],
     "en": [
       "Much less data use: photos are now links, lists refresh only when changed",
-      "Messages and live refresh share one connection"
+      "Messages and live refresh share one connection",
+      "Cleaner employer card in Me"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",

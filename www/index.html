@@ -4281,5 +4281,53 @@ if(typeof msgLoop==='function'){
     _mpT=setTimeout(async()=>{_mpT=null;_mpDue=0;if(!document.hidden)await msgPoll();msgLoop()},d)};
 }
 })();
+</script><script>(function(){
+/* ===== v4.4.0 “我的”招聘方信息卡：主次分明的简洁排版 =====
+   名字最大；下面一行小字“个人雇主 / 企业 · 已认证”；联系方式、位置用小号灰字；招聘需求用小标签 */
+const st=document.createElement('style');st.textContent=`
+.ccard.emc{padding:18px 18px 16px}
+.ccard.emc .emtop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ccard.emc .emname{font-size:22px;font-weight:800;line-height:1.25;color:#1C1C1E;margin:0;word-break:break-all}
+.ccard.emc .emmeta{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:5px;font-size:12.5px;color:#6B6458;font-weight:600}
+.ccard.emc .emok{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;padding:2px 8px 2px 6px;border-radius:999px}
+.ccard.emc .emok .i{width:12px!important;height:12px!important}
+.ccard.emc .emedit{flex:none;display:inline-flex;align-items:center;gap:4px;border:1px solid rgba(28,28,30,.18);background:rgba(255,255,255,.7);color:#1C1C1E;
+  font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer}
+.ccard.emc .emedit .i{width:13px!important;height:13px!important}
+.ccard.emc .eminfo{margin-top:12px;display:flex;flex-direction:column;gap:5px;font-size:13px;color:#4A4439;line-height:1.45}
+.ccard.emc .eminfo>div{display:flex;align-items:center;gap:6px;min-width:0}
+.ccard.emc .eminfo .i{width:14px!important;height:14px!important;flex:none;opacity:.7}
+.ccard.emc .eminfo a{color:inherit;text-decoration:none;border-bottom:1px dotted rgba(74,68,57,.5);cursor:pointer}
+.ccard.emc .emlbl{margin-top:12px;font-size:11.5px;font-weight:600;color:#8A8172;letter-spacing:.2px}
+.ccard.emc .emneeds{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ccard.emc .emneeds span{font-size:12px;font-weight:600;color:#3A3428;background:rgba(255,255,255,.65);border-radius:999px;padding:4px 10px;line-height:1.3}
+.ccard.emc .emwarn{margin-top:8px;font-size:12.5px;color:#B42318}
+.ccard.emc .row3{margin-top:14px}`;
+document.head.appendChild(st);
+const ST={approved:['已认证','#E3F3EA','#0B7A4B','shield'],pending:['认证审核中','#FFF3D1','#8A6100','clock'],rejected:['认证未通过','#FDE3DE','#B42318','x'],disabled:['已停用','#ECEAE5','#6B6458','x']};
+function card(){const c=S.company;const s=ST[c.status||'pending']||ST.pending;const per=c.type==='personal';
+  const ph=c.phone?String(c.phone).replace(/(\d{3})\d+(\d{3})$/,'$1 **** $2'):'';
+  const who=(c.contact||'').trim(),showWho=who&&who!==(c.name||'').trim();
+  const ind=!per&&c.ind?((IND.find(i=>i.id===c.ind)||{}).zh||''):'';
+  const sub=per?(c.license?'用工场景：'+c.license:''):(c.license?'注册号：'+c.license:'');
+  const icon=k=>{try{return ic(k,14)}catch(e){return ''}};
+  return `<div class="emtop"><div style="min-width:0">
+      <div class="emname">${esc(c.name||'')}</div>
+      <div class="emmeta"><span>${per?'个人雇主':'企业'}${ind?' · '+esc(ind):''}</span><span class="emok" style="background:${s[1]};color:${s[2]}">${icon('shield')}${s[0]}</span></div>
+      ${!per&&c.en?`<div style="font-size:12px;color:#8A8172;margin-top:3px">${esc(c.en)}</div>`:''}
+    </div><button class="emedit" onclick="go('company')">${icon('edit')}修改</button></div>
+   <div class="eminfo">
+     ${(showWho||ph)?`<div>${icon('user')}<span>${showWho?esc(who):''}${showWho&&ph?' · ':''}${ph?esc(ph):''}</span></div>`:''}
+     ${sub?`<div>${icon('doc')}<span>${esc(sub)}</span></div>`:''}
+     <div>${icon('pin')}<a onclick="openExt(mapLink(S.company.loc))">${esc((c.loc&&c.loc.addr)||c.city||'设置位置')}</a><span style="opacity:.55;font-size:12px">谷歌地图</span></div>
+   </div>
+   ${c.needs&&c.needs.length?`<div class="emlbl">招聘需求${c.start?' · '+({now:'尽快到岗',w1:'1周内到岗',m1:'1个月内到岗'}[c.start]||''):''}</div><div class="emneeds">${c.needs.map(x=>`<span>${esc(x.role)} × ${x.n}</span>`).join('')}</div>`:''}
+   ${c.status==='rejected'&&c.review?`<div class="emwarn">原因：${esc(c.review)}</div>`:''}`}
+const _vme=V.me;
+V.me=function(){let h=_vme.apply(this,arguments);if(!S.company||!S.company.registered)return h;
+  const a=h.indexOf('<div class="ccard"');if(a<0)return h;const gt=h.indexOf('>',a);const b=h.indexOf('<div class="row3">',gt);
+  const nx=h.indexOf('<div class="ccard"',gt);if(b<0||(nx>0&&nx<b))return h;
+  return h.slice(0,a)+'<div class="ccard emc" style="margin-top:14px">'+card()+h.slice(b)};
+})();
 </script></body>
 </html>
