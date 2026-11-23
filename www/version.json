@@ -1,6 +1,6 @@
 {
-  "version": "4.4.0",
-  "build": 111,
+  "version": "4.4.1",
+  "build": 112,
   "date": "2026-11-23",
   "force": false,
   "minNative": 128,
@@ -8,14 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "大幅节省流量：照片改为图片链接，列表有变化才重新下载",
-      "消息推送与全局刷新共用一条连接",
-      "“我的”招聘方信息卡排版更简洁"
+      "照片上传更稳定：遇到网络临时错误自动重试"
     ],
     "en": [
-      "Much less data use: photos are now links, lists refresh only when changed",
-      "Messages and live refresh share one connection",
-      "Cleaner employer card in Me"
+      "More reliable photo upload with automatic retry"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",

@@ -1135,7 +1135,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.4.0',APP_BUILD=111;
+const APP_VER='4.4.1',APP_BUILD=112;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4193,8 +4193,14 @@ async function upImg(du){
     const h=await sha1(u8);if(upCache[h])return upCache[h];
     const ext=m[2]==='png'?'png':m[2]==='webp'?'webp':'jpg',type=ext==='jpg'?'image/jpeg':'image/'+ext;
     const name='p/'+h.slice(0,2)+'/'+h+'.'+ext;
-    const r=await fetch(BASE+'/storage/v1/object/media/'+name,{method:'POST',headers:{...HDR,'Content-Type':type,'cache-control':'max-age=31536000','x-upsert':'false'},body:new Blob([u8],{type})});
-    let ok=r.ok;if(!ok){const t=await r.text().catch(()=>'');ok=/Duplicate|already exists|KeyAlreadyExists/i.test(t)}
+    /* 偶尔会遇到服务器临时错误（如 520），自动重试 4 次 */
+    let ok=false;
+    for(let a=0;a<4&&!ok;a++){
+      if(a)await new Promise(z=>setTimeout(z,[0,800,2000,4500][a]));
+      try{const r=await fetch(BASE+'/storage/v1/object/media/'+name,{method:'POST',headers:{...HDR,'Content-Type':type,'cache-control':'max-age=31536000','x-upsert':'false'},body:new Blob([u8],{type})});
+        if(r.ok){ok=true;break}
+        const t=await r.text().catch(()=>'');if(/Duplicate|already exists|KeyAlreadyExists/i.test(t)){ok=true;break}
+        if(r.status<500&&r.status!==429)break}catch(e){}}
     if(!ok)return du;
     const url=BASE+'/storage/v1/object/public/media/'+name;
     upCache[h]=url;const ks=Object.keys(upCache);if(ks.length>200)delete upCache[ks[0]];LS.set('mediaUp',upCache);
