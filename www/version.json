@@ -1,6 +1,6 @@
 {
-  "version": "4.4.2",
-  "build": 113,
+  "version": "4.4.3",
+  "build": 114,
   "date": "2026-11-23",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "手机桌面版启动画面不再出现大号图标，与安卓 App 一致"
+      "底部导航文字和图标改为黑色，更醒目；选中项为绿色"
     ],
     "en": [
-      "Home-screen app launch screen no longer shows an oversized logo"
+      "Bottom tab bar: bolder black labels, green for the selected tab"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
