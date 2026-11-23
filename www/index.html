@@ -1135,7 +1135,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.4.3',APP_BUILD=114;
+const APP_VER='4.4.4',APP_BUILD=115;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4348,6 +4348,21 @@ nav.tnav .tl{font-size:11.5px!important;font-weight:700!important;letter-spacing
 nav.tnav button.on .tl{font-weight:800!important}
 nav.tnav .ti svg{stroke-width:2.1!important}`;
 document.head.appendChild(st);
+})();
+</script><script>(function(){
+/* v4.4.4 机器翻译把品牌名 ChinaPaw / CHINAPAW 译成“中国爪”：统一改为“华宝” */
+const RE=/中国爪/g,TO='华宝';let busy=false;
+function fix(root){if(!root)return;busy=true;try{
+  if(root.nodeType===3){if(RE.test(root.nodeValue)){RE.lastIndex=0;root.nodeValue=root.nodeValue.replace(RE,TO)}RE.lastIndex=0;return}
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.indexOf('中国爪')>=0?1:2});
+  const ns=[];let n;while((n=w.nextNode()))ns.push(n);ns.forEach(t=>{t.nodeValue=t.nodeValue.replace(RE,TO)});
+  const SEL='[placeholder*="中国爪"],[title*="中国爪"],[alt*="中国爪"],[aria-label*="中国爪"]';root.querySelectorAll&&[...(root.matches&&root.matches(SEL)?[root]:[]),...root.querySelectorAll(SEL)].forEach(e=>{['placeholder','title','alt','aria-label'].forEach(a=>{const v=e.getAttribute(a);if(v&&v.includes('中国爪'))e.setAttribute(a,v.replace(RE,TO))})});
+  if(document.title.includes('中国爪'))document.title=document.title.replace(RE,TO)}finally{busy=false}}
+new MutationObserver(ms=>{if(busy)return;for(const m of ms){if(m.type==='characterData'){if(m.target.nodeValue&&m.target.nodeValue.indexOf('中国爪')>=0)fix(m.target)}else m.addedNodes.forEach(x=>{if(x.nodeType===1)fix(x);else if(x.nodeType===3&&x.nodeValue.indexOf('中国爪')>=0)fix(x)})}})
+ .observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+fix(document.body);
+/* 已缓存的翻译结果里也一并替换，避免下次再出现 */
+try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);const v=localStorage.getItem(k);if(v&&v.indexOf('中国爪')>=0)localStorage.setItem(k,v.replace(RE,TO))}}catch(e){}
 })();
 </script></body>
 </html>
