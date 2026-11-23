@@ -1135,7 +1135,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.3.5',APP_BUILD=110;
+const APP_VER='4.4.0',APP_BUILD=111;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4168,6 +4168,118 @@ async function send(){try{if(!DB||!DB.on)return;const p=probe();
   await DB.q('rpc/client_ping',{method:'POST',body:JSON.stringify({p:info})})}catch(e){}}
 window.__sizeProbe=probe;
 setTimeout(send,6000);
+})();
+</script><script>(function(){
+/* ===== v4.4.0 免费版省流量优化 =====
+   1) 照片不再以文字形式塞进资料：上传到图片存储，资料里只保存图片链接（列表下载量减少约 95%）
+   2) 列表“有变化才下载”：先问一下服务器数据版本号（几百字节），没变化就不重新下载整份列表
+   3) 推送连接合二为一：消息提醒和全局刷新共用一条实时连接，同时在线人数上限翻倍
+   4) 已连上推送时，消息兜底轮询放慢（新消息仍然靠推送即时到达） */
+if(!DB||!DB.on)return;
+const BASE=CFG.supabaseUrl.replace(/\/$/,''),KEY=CFG.supabaseAnonKey;
+const HDR={apikey:KEY,Authorization:'Bearer '+KEY};
+
+/* ---------- 1) 图片上传到存储，资料中只保留链接 ---------- */
+const MEDIA_KEYS=['photo','photos','thumb','logo','avatar','cover','image','img','pics','images'];
+const SEND_PATHS=/^rpc\/(register_worker|update_worker|market_post|market_edit|register_employer|update_employer|post_job)$/;
+const upCache=LS.get('mediaUp',{})||{};
+async function sha1(buf){const h=await crypto.subtle.digest('SHA-1',buf);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function upImg(du){
+  if(typeof du!=='string'||!du.startsWith('data:image/'))return du;
+  const m=/^data:(image\/(jpeg|jpg|png|webp));base64,([\s\S]*)$/.exec(du);if(!m)return du;
+  try{
+    const bin=atob(m[3]);if(bin.length>590000)return du;
+    const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+    const h=await sha1(u8);if(upCache[h])return upCache[h];
+    const ext=m[2]==='png'?'png':m[2]==='webp'?'webp':'jpg',type=ext==='jpg'?'image/jpeg':'image/'+ext;
+    const name='p/'+h.slice(0,2)+'/'+h+'.'+ext;
+    const r=await fetch(BASE+'/storage/v1/object/media/'+name,{method:'POST',headers:{...HDR,'Content-Type':type,'cache-control':'max-age=31536000','x-upsert':'false'},body:new Blob([u8],{type})});
+    let ok=r.ok;if(!ok){const t=await r.text().catch(()=>'');ok=/Duplicate|already exists|KeyAlreadyExists/i.test(t)}
+    if(!ok)return du;
+    const url=BASE+'/storage/v1/object/public/media/'+name;
+    upCache[h]=url;const ks=Object.keys(upCache);if(ks.length>200)delete upCache[ks[0]];LS.set('mediaUp',upCache);
+    return url}catch(e){return du}}
+async function liftMedia(d){if(!d||typeof d!=='object')return d;const o={...d};
+  for(const k of MEDIA_KEYS){const v=o[k];
+    if(typeof v==='string')o[k]=await upImg(v);
+    else if(Array.isArray(v))o[k]=await Promise.all(v.map(x=>typeof x==='string'?upImg(x):x))}
+  return o}
+window.upImg=upImg;window.liftMedia=liftMedia;
+const _q=DB.q;
+DB.q=async function(path,opt){
+  if(opt&&typeof opt.body==='string'&&SEND_PATHS.test(path)&&opt.body.includes('data:image/')){
+    try{const b=JSON.parse(opt.body);if(b.p_data){b.p_data=await liftMedia(b.p_data);opt={...opt,body:JSON.stringify(b)}}}catch(e){}}
+  return _q.call(DB,path,opt)};
+
+/* ---------- 2) 数据版本号：没变化就不重新下载 ---------- */
+const REV={s:null,t:0,busy:null};
+function revGet(maxAge){
+  if(REV.s&&Date.now()-REV.t<maxAge)return Promise.resolve(REV.s);
+  if(REV.busy)return REV.busy;
+  REV.busy=_q.call(DB,'rpc/sync_state',{method:'POST',body:'{}'}).then(r=>{if(r&&typeof r==='object'){REV.s=r;REV.t=Date.now()}return REV.s}).catch(()=>null).finally(()=>{REV.busy=null});
+  return REV.busy}
+window.revGet=revGet;
+const gsOk=()=>typeof GS!=='undefined'&&GS.ok;
+const kWJ=s=>s?[s.w,s.j,s.e].join('/'):null;
+let seenWJ=null,seenMe=null,seenCo=null,seenVip=null,seenM=null;
+/* 全局列表（求职者 + 岗位 + VIP） */
+const _sdb=syncDB;
+syncDB=async function(force){
+  const st=await revGet(force?15000:(gsOk()?55000:20000));const k=kWJ(st);
+  if(k&&k===seenWJ){try{_syncAt=Date.now()}catch(e){}return}
+  let before=0;try{before=_syncAt}catch(e){}
+  const r=await _sdb.apply(this,arguments);
+  let after=0;try{after=_syncAt}catch(e){}
+  if(k&&after!==before)seenWJ=k;
+  return r};
+/* 自己的求职档案 / 招聘方认证状态 / VIP：对应数据没变化就不重复查询 */
+if(typeof syncMe==='function'){const _sm=syncMe;syncMe=async function(){const st=await revGet(gsOk()?55000:20000);const k=st?st.w:null;
+  if(k!=null&&k===seenMe)return;const r=await _sm.apply(this,arguments);if(k!=null)seenMe=k;return r}}
+if(typeof syncCo==='function'){const _sc=syncCo;syncCo=async function(){const st=await revGet(gsOk()?55000:20000);const k=st?st.e:null;
+  if(k!=null&&k===seenCo)return;const r=await _sc.apply(this,arguments);if(k!=null)seenCo=k;return r}}
+if(typeof vipSync==='function'){const _vs=vipSync;vipSync=async function(){const st=await revGet(gsOk()?55000:20000);const k=st?st.e:null;
+  if(k!=null&&k===seenVip)return;const r=await _vs.apply(this,arguments);if(k!=null)seenVip=k;return r}}
+/* 二手列表 */
+if(typeof mkLoad==='function'){const _ml=mkLoad;mkLoad=async function(){const st=await revGet(15000);const k=st?st.m:null;
+  if(k!=null&&k===seenM&&MK.list){MK._t=Date.now();if(S.view==='market')mkUpd();return}
+  const r=await _ml.apply(this,arguments);if(k!=null&&MK.list)seenM=k;return r}}
+/* 有人发布 / 修改 / 审核时，服务器广播提醒 → 立即重新确认版本号 */
+const bump=()=>{REV.t=0};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)bump()},true);
+
+/* ---------- 3) 实时连接合二为一 ---------- */
+const ALL='realtime:hgm-all';
+function attachAll(ws){if(!ws||ws.__all)return;ws.__all=1;
+  const join=()=>{try{ws.send(JSON.stringify({topic:ALL,event:'phx_join',payload:{config:{broadcast:{self:false},presence:{key:''},private:false},access_token:KEY},ref:'all'+Date.now(),join_ref:'9'}))}catch(e){}};
+  if(ws.readyState===1)join();else ws.addEventListener('open',join);
+  ws.addEventListener('message',e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}
+    if(m.topic!==ALL)return;
+    if(m.event==='phx_reply'&&m.payload&&m.payload.status==='ok'){GS.ok=true;GS.shared=ws}
+    else if(m.event==='broadcast'){bump();clearTimeout(GS.t);GS.t=setTimeout(()=>{syncDB(true);typeof syncMe==='function'&&syncMe();typeof syncCo==='function'&&syncCo();if(S.view==='market'&&typeof mkLoad==='function')mkLoad()},400)}});
+  ws.addEventListener('close',()=>{if(GS.shared===ws){GS.shared=null;GS.ok=false;setTimeout(()=>gsConnect(),1500)}})}
+if(typeof rtConnect==='function'&&typeof gsConnect==='function'){
+  const _rc=rtConnect;
+  rtConnect=function(){const r=_rc.apply(this,arguments);if(RTC.ws){attachAll(RTC.ws);
+      /* 消息连接已经承担全局提醒，关掉单独的全局连接 */
+      if(GS.ws&&GS.ws!==RTC.ws){const w=GS.ws;GS.ws=null;clearInterval(GS.hb);clearTimeout(GS.rt);try{w.onclose=null;w.close()}catch(e){}}}
+    return r};
+  const _gc=gsConnect;
+  gsConnect=function(){
+    if(typeof msgCred==='function'&&msgCred()&&RTC.ws&&RTC.ws.readyState<=1){attachAll(RTC.ws);return}
+    const r=_gc.apply(this,arguments);
+    if(GS.ws&&!GS.ws.__b){GS.ws.__b=1;GS.ws.addEventListener('message',e=>{try{const m=JSON.parse(e.data);if(m.event==='broadcast')bump()}catch(x){}})}
+    return r};
+  /* 已注册用户：现在就切换到共用连接 */
+  setTimeout(()=>{try{if(msgCred()){rtConnect()}}catch(e){}},2500);
+}
+
+/* ---------- 4) 消息兜底轮询放慢（推送正常时） ---------- */
+if(typeof msgLoop==='function'){
+  msgLoop=function(force){const chat=['chat','w_chat','chats','w_msgs'].includes(S.view);
+    const d=RTC.ok?(chat?8000:60000):(chat?4000:20000);const due=Date.now()+d;
+    if(!force&&_mpT&&_mpDue&&_mpDue<=due)return;clearTimeout(_mpT);_mpDue=due;
+    _mpT=setTimeout(async()=>{_mpT=null;_mpDue=0;if(!document.hidden)await msgPoll();msgLoop()},d)};
+}
 })();
 </script></body>
 </html>
