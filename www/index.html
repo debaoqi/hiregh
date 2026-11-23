@@ -2,7 +2,21 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><script>(function(){try{
+/* v4.3.5 让手机浏览器 / 主屏幕版与安卓 App 的文字大小、间距一致。
+   安卓 App（WebView）只按系统字体大小放大“文字”，间距不变；
+   新版 Chrome 则按系统字体大小把“整页”放大（文字和间距都变大）。
+   这里让 Chrome 也改成只放大文字，与 App 保持一致。 */
+var ua=navigator.userAgent;
+if(/; wv\)/.test(ua)||/MicroMessenger/i.test(ua))return;          /* App 内（WebView）保持原样 */
+if(!/Android/i.test(ua))return;                                      /* 只处理安卓手机浏览器 */
+if(!(window.matchMedia&&matchMedia('(pointer:coarse)').matches))return;
+var m=document.createElement('meta');m.name='text-scale';m.content='scale';document.head.appendChild(m);
+var st=document.createElement('style');st.id='tsfix';
+st.textContent='html.tsfix{font-size:16px;-webkit-text-size-adjust:calc(100% * env(preferred-text-scale,1));text-size-adjust:calc(100% * env(preferred-text-scale,1))}';
+document.head.appendChild(st);document.documentElement.classList.add('tsfix');
+}catch(e){}})();
+</script>
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ChinaPaw"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#EDE8DC">
 <title>ChinaPaw</title>
@@ -1121,7 +1135,7 @@ const _vme=V.w_me;V.w_me=()=>_vme().replace(`S.reg={...S.reg,step:1};S.view='w_r
 </script>
 <script>
 /* ================= v1.4 · 版本更新检测 ================= */
-const APP_VER='4.3.4',APP_BUILD=109;
+const APP_VER='4.3.5',APP_BUILD=110;
 Object.assign(T,{
  upd_title:['New version available','Đã có phiên bản mới','发现新版本'],
  upd_now:['Update now','Cập nhật ngay','立即更新'],
@@ -4139,6 +4153,21 @@ const _vm=V.market;
 V.market=function(){const h=_vm.apply(this,arguments);
   const fill=()=>{if(S.view==='market'&&document.getElementById('mkList'))try{mkUpd()}catch(e){}};
   setTimeout(fill,0);requestAnimationFrame(fill);return h};
+})();
+</script><script>(function(){
+/* v4.3.5 显示尺寸诊断：记录各版本（App / 浏览器 / 主屏幕）的屏幕与文字缩放数据，便于核对是否一致 */
+function probe(){const d=document.createElement('div');d.style.cssText='position:absolute;left:-9999px;top:0;width:calc(100px * env(preferred-text-scale,7));height:1px';
+  const s=document.createElement('span');s.textContent='国';s.style.cssText='position:absolute;left:-9999px;top:0;font-size:20px;line-height:1;display:inline-block;white-space:nowrap';
+  document.body.appendChild(d);document.body.appendChild(s);const w=d.getBoundingClientRect().width,h=s.getBoundingClientRect().height,fs=getComputedStyle(s).fontSize;d.remove();s.remove();
+  return {envScale:w>650?null:+(w/100).toFixed(3),txtH:+h.toFixed(2),txtFs:fs}}
+async function send(){try{if(!DB||!DB.on)return;const p=probe();
+  const info={did:LS.get('did',null),why:'metrics',webBuild:APP_BUILD,isNative:typeof isNative==='function'&&isNative(),
+    standalone:matchMedia('(display-mode: standalone)').matches,tsfix:document.documentElement.classList.contains('tsfix'),
+    iw:innerWidth,ih:innerHeight,sw:screen.width,sh:screen.height,dpr:+devicePixelRatio.toFixed(3),vvs:window.visualViewport?+visualViewport.scale.toFixed(3):null,
+    ...p,ua:navigator.userAgent.slice(0,120)};
+  await DB.q('rpc/client_ping',{method:'POST',body:JSON.stringify({p:info})})}catch(e){}}
+window.__sizeProbe=probe;
+setTimeout(send,6000);
 })();
 </script></body>
 </html>

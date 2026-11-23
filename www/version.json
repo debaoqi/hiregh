@@ -1,6 +1,6 @@
 {
-  "version": "4.3.4",
-  "build": 109,
+  "version": "4.3.5",
+  "build": 110,
   "date": "2026-11-23",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "修复：二手市场切换分类后列表空白"
+      "手机浏览器 / 主屏幕版的文字大小和间距与安卓 App 保持一致"
     ],
     "en": [
-      "Fixed: market list going blank after switching category"
+      "Phone browser / home-screen version now matches the Android app text size and spacing"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
