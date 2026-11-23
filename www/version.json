@@ -1,6 +1,6 @@
 {
-  "version": "4.4.1",
-  "build": 112,
+  "version": "4.4.2",
+  "build": 113,
   "date": "2026-11-23",
   "force": false,
   "minNative": 128,
@@ -8,10 +8,10 @@
   "apk": "https://github.com/debaoqi/hiregh/releases/latest/download/ChinaPaw.apk",
   "notes": {
     "zh": [
-      "照片上传更稳定：遇到网络临时错误自动重试"
+      "手机桌面版启动画面不再出现大号图标，与安卓 App 一致"
     ],
     "en": [
-      "More reliable photo upload with automatic retry"
+      "Home-screen app launch screen no longer shows an oversized logo"
     ]
   },
   "apkMirror": "https://hiregh.pages.dev/app/ChinaPaw.apk",
